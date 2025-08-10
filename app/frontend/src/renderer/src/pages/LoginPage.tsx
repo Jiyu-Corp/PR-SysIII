@@ -3,8 +3,7 @@ import { AuthLayout } from '../components/authlayout'
 import { Input } from '../components/input'
 import { Button } from '../components/button'
 import './LoginPage.css'
-
-// const { access } = window.electron
+import { requestPRSYS } from '@renderer/utils/http'
 
 export const LoginPage: React.FC = () => {
   const [login, setLogin] = useState('')
@@ -18,8 +17,10 @@ export const LoginPage: React.FC = () => {
   async function handleForgotPassword(evt: MouseEvent) {
     evt.preventDefault()
     evt.stopPropagation()
-    // const result = await access.forgotPassword()
-    // console.log('Forgot password:', result)
+    const result = await requestPRSYS('access', 'forgotPassword', 'POST', {
+      idAccess: 1
+    })
+    console.log('Forgot password:', result)
   }
 
   return (
