@@ -9,7 +9,7 @@ export class Access {
     @Column("character varying", { name: "username", length: 50 })
     username: string;
 
-    @Column("character varying", { name: "password", length: 255 })
+    @Column("character varying", { name: "password", length: 255, select: false})
     password: string;
 
     @Column("character varying", { name: "email", length: 255 })
