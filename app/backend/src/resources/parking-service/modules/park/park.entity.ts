@@ -16,6 +16,6 @@ export class Park {
   @Column("character varying", { name: "description", length: 100 })
   description: string;
 
-  @OneToMany(() => ParkingService, (parkingService) => parkingService.idPark)
+  @OneToMany(() => ParkingService, (parkingService) => parkingService.park)
   parkingServices: ParkingService[];
 }

@@ -50,21 +50,21 @@ export class ParkingService {
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_agreement", referencedColumnName: "idAgreement" }])
-  idAgreement: Agreement;
+  agreement: Agreement;
 
   @ManyToOne(() => Client, (client) => client.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_client_entry", referencedColumnName: "idClient" }])
-  idClientEntry: Client;
+  clientEntry: Client;
 
   @ManyToOne(() => Park, (park) => park.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_park", referencedColumnName: "idPark" }])
-  idPark: Park;
+  park: Park;
 
   @ManyToOne(() => PriceTable, (priceTable) => priceTable.parkingServices, {
     onDelete: "RESTRICT",
@@ -73,12 +73,12 @@ export class ParkingService {
   @JoinColumn([
     { name: "id_price_table", referencedColumnName: "idPriceTable" },
   ])
-  idPriceTable: PriceTable;
+  priceTable: PriceTable;
 
   @ManyToOne(() => Vehicle, (vehicle) => vehicle.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_vehicle", referencedColumnName: "idVehicle" }])
-  idVehicle: Vehicle;
+  vehicle: Vehicle;
 }

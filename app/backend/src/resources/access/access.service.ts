@@ -17,7 +17,7 @@ import { DefaultAccessNotDefined, LoginNotExists, WrongPassword } from './access
 export class AccessService {
     constructor(
         @InjectRepository(Access)
-        private readonly acessRepo: Repository<Access>,
+        private readonly accessRepo: Repository<Access>,
         private readonly mailService: MailService,
         private readonly encryptService: EncryptionService,
         private readonly authService: AuthService
@@ -25,12 +25,12 @@ export class AccessService {
 
     async getDefault(seePassword: boolean): Promise<Access> {
         const [dbError, firstCreatedAccess] = await promiseCatchError(seePassword
-            ? this.acessRepo
+            ? this.accessRepo
                 .createQueryBuilder('access')
                 .addSelect('access.password')
                 .orderBy('access.idAccess', 'ASC')
                 .getOne()
-            : this.acessRepo
+            : this.accessRepo
                 .findOne({
                     order: {
                         idAccess: "ASC"
@@ -50,7 +50,7 @@ export class AccessService {
     }
 
     async forgotPassword(idAccess: number): Promise<void> {
-        const [dbError, access] = await promiseCatchError(this.acessRepo
+        const [dbError, access] = await promiseCatchError(this.accessRepo
             .findOne({
                 where: { idAccess: idAccess }
             }));
@@ -63,7 +63,7 @@ export class AccessService {
 
         try {
             access.password = newPasswordEncrypted;
-            await this.acessRepo.save(access);
+            await this.accessRepo.save(access);
 
             await this.mailService.sendResetPassword(
                 access.email,
@@ -79,7 +79,7 @@ export class AccessService {
     }
 
     async login(loginDto: LoginDto): Promise<AccessAuthDto> {
-        const [loginError, loginAccess] = await promiseCatchError(this.acessRepo
+        const [loginError, loginAccess] = await promiseCatchError(this.accessRepo
             .createQueryBuilder('access')
             .addSelect('access.password')
             .where('access.username = :username', { username: loginDto.username })
@@ -114,7 +114,7 @@ export class AccessService {
         const newPasswordEncrypted = this.encryptService.encrypt(changePasswordDto.newPassword);
         loginAccess.password = newPasswordEncrypted;
        
-        const [changePassDBError] = await promiseCatchError(this.acessRepo.save(loginAccess));
+        const [changePassDBError] = await promiseCatchError(this.accessRepo.save(loginAccess));
         if(changePassDBError) throw new DatabaseError();
 
         return this.login({

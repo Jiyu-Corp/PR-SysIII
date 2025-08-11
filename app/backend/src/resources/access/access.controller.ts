@@ -6,6 +6,7 @@ import { ChangePasswordDto } from './dto/change-password-dto';
 import { Public } from 'src/decorators/public.decorator';
 import { promiseCatchErrorHTTPDefault } from 'src/utils/utils';
 
+// Implement DTO validation 
 @Controller('access')
 export class AccessController {
     constructor(private readonly accessService: AccessService) {}

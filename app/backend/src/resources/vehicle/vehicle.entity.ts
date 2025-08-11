@@ -36,7 +36,7 @@ export class Vehicle {
   @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
   dateUpdate: string;
 
-  @OneToMany(() => ParkingService, (parkingService) => parkingService.idVehicle)
+  @OneToMany(() => ParkingService, (parkingService) => parkingService.vehicle)
   parkingServices: ParkingService[];
 
   @ManyToOne(() => Client, (client) => client.vehicles, {
@@ -44,12 +44,12 @@ export class Vehicle {
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_client", referencedColumnName: "idClient" }])
-  idClient: Client;
+  client: Client;
 
   @ManyToOne(() => Model, (model) => model.vehicles, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_model", referencedColumnName: "idModel" }])
-  idModel: Model;
+  model: Model;
 }

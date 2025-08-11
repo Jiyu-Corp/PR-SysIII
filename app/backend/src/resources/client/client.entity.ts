@@ -19,9 +19,6 @@ export class Client {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_client" })
   idClient: number;
 
-  @Column("integer", { name: "id_client_enterprise", nullable: true })
-  idClientEnterprise: number | null;
-
   @Column("character varying", { name: "name", length: 100 })
   name: string;
 
@@ -46,15 +43,17 @@ export class Client {
   @OneToMany(() => Agreement, (agreement) => agreement.idClient)
   agreements: Agreement[];
 
-  @OneToOne(() => Client, (client) => client.client, {
-    onDelete: "SET NULL",
+  @ManyToOne(() => Client, (client) => client.enterpriseClients, {
+    onDelete: "RESTRICT",
     onUpdate: "CASCADE",
   })
-  @JoinColumn([{ name: "id_client", referencedColumnName: "idClient" }])
-  idClient2: Client;
+  @JoinColumn([
+    { name: "id_client_enterprise", referencedColumnName: "idClientEnterprise" },
+  ])
+  clientEnterprise: Client;
 
-  @OneToOne(() => Client, (client) => client.idClient2)
-  client: Client;
+  @OneToMany(() => Client, (client) => client.clientEnterprise)
+  enterpriseClients: Client[];
 
   @ManyToOne(() => ClientType, (clientType) => clientType.clients, {
     onDelete: "RESTRICT",
@@ -63,14 +62,14 @@ export class Client {
   @JoinColumn([
     { name: "id_client_type", referencedColumnName: "idClientType" },
   ])
-  idClientType: ClientType;
+  clientType: ClientType;
 
   @OneToMany(
     () => ParkingService,
-    (parkingService) => parkingService.idClientEntry
+    (parkingService) => parkingService.clientEntry
   )
   parkingServices: ParkingService[];
 
-  @OneToMany(() => Vehicle, (vehicle) => vehicle.idClient)
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.client)
   vehicles: Vehicle[];
 }

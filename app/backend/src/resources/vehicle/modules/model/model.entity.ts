@@ -25,7 +25,7 @@ export class Model {
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_brand", referencedColumnName: "idBrand" }])
-  idBrand: Brand;
+  brand: Brand;
 
   @ManyToOne(() => VehicleType, (vehicleType) => vehicleType.models, {
     onDelete: "RESTRICT",
@@ -34,8 +34,8 @@ export class Model {
   @JoinColumn([
     { name: "id_vehicle_type", referencedColumnName: "idVehicleType" },
   ])
-  idVehicleType: VehicleType;
+  vehicleType: VehicleType;
 
-  @OneToMany(() => Vehicle, (vehicle) => vehicle.idModel)
+  @OneToMany(() => Vehicle, (vehicle) => vehicle.model)
   vehicles: Vehicle[];
 }

@@ -1,4 +1,142 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ParkingService } from './parking-service.entity';
+import { FindOptionsWhere, Repository, TypeORMError } from 'typeorm';
+import { DatabaseError } from 'src/utils/app.errors';
+import { CreateParkingServiceDto } from './dto/create-parking-service-dto';
+import { CreateVehicleDto } from '../vehicle/dto/create-vehicle-dto';
+import { promiseCatchError } from 'src/utils/utils';
+import { VehicleService } from '../vehicle/vehicle.service';
+import { CreateClientDto } from '../client/dto/create-client-dto';
+import { ClientService } from '../client/client.service';
+import { Client } from '../client/client.entity';
+import { ParkService } from './modules/park/park.service';
+import { ServiceValueDto } from './dto/service-value-dto';
+import { PriceTableService } from './modules/price-table/price-table.service';
+import { ParkingServiceNotExists } from './parking-service.errors';
+import { AgreementService } from '../client/modules/agreement/agreement.service';
 
 @Injectable()
-export class ParkingServiceService {}
+export class ParkingServiceService {
+    constructor(
+        @InjectRepository(ParkingService)
+        private readonly parkingServiceRepo: Repository<ParkingService>,
+        private readonly clientService: ClientService,
+        private readonly vehicleService: VehicleService,
+        private readonly parkService: ParkService,
+        private readonly priceTableService: PriceTableService,
+        private readonly agreementService: AgreementService
+    ) {}
+
+    async getOpenServices(): Promise<ParkingService[]> {
+        try {
+            const services = await this.parkingServiceRepo
+                .find({
+                    order: {
+                        dateRegister: "DESC"
+                    },
+                    where: {
+                        isParking: true
+                    },
+                    relations: {
+                        clientEntry: true,
+                        vehicle: {
+                            model: {
+                                brand: true,
+                                vehicleType: true
+                            },
+                        }
+                    }
+                });
+            
+            return services;
+        } catch (err) {
+            throw new DatabaseError();
+        }
+    }
+
+    // I could create all the nested objects with the create itself in the parking service, but i dont known if that would be ideal
+    async createService(createParkingServiceDto: CreateParkingServiceDto): Promise<ParkingService> {
+        const [parkError, park] = await promiseCatchError(this.parkService.getDefaultPark());
+        if(parkError) throw parkError;
+
+        const clientDto = createParkingServiceDto.clientDto;
+        const vehicleDto = createParkingServiceDto.vehicleDto;
+        
+        let client: Client | undefined;
+        if(clientDto) {
+            let clientError;
+            [clientError, client] = await promiseCatchError(clientDto instanceof CreateClientDto
+                ? this.clientService.createClient(clientDto)
+                : this.clientService.editClient(clientDto)
+            );
+            if(clientError || typeof client === 'undefined') throw clientError;
+
+            vehicleDto.idClient = client.idClient;
+        }
+
+        const [vehicleError, vehicle] = await promiseCatchError(vehicleDto instanceof CreateVehicleDto
+            ? this.vehicleService.createVehicle(vehicleDto)
+            : this.vehicleService.editVehicle(vehicleDto)
+        );
+        if(vehicleError) throw vehicleError;
+
+        try {
+            const service = await this.parkingServiceRepo.create({
+                park: park,
+                clientEntry: client,
+                vehicle: vehicle
+            });
+
+            return service;
+        } catch (err) {
+            throw new DatabaseError();
+        }
+    }
+
+    async getServiceValues(idParkingService: number): Promise<ServiceValueDto[]> {
+        const [pServiceError, service] = await promiseCatchError(this.parkingServiceRepo
+            .createQueryBuilder('parkingService')
+                .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
+                .leftJoinAndSelect('clientEntry.agreements', 'agreement', 
+                    'agreement.isActive = :isActive', { isActive: true }
+                )
+                .innerJoinAndSelect('parkingService.vehicle', 'vehicle')
+                .innerJoinAndSelect('vehicle.model', 'model')
+                .innerJoinAndSelect('model.brand', 'brand')
+                .innerJoinAndSelect('model.vehicleType', 'vehicleType')
+            .where('parkingService.idParkingService = :idParkingService', { idParkingService })
+            .getOne()
+        );
+        if(pServiceError) throw new DatabaseError();
+        if(service == null) throw new ParkingServiceNotExists();
+
+        const serviceValues:ServiceValueDto[] = new Array();
+
+        const [pTableError, priceTableValue] = await promiseCatchError(
+            this.priceTableService.calculateServiceValue(service)
+        );
+        if(pTableError) throw pTableError;
+        serviceValues.push(priceTableValue);
+
+        const hasAgreement = service.clientEntry && service.clientEntry.agreements[0];
+        if(hasAgreement) {
+            const [agreementError, agreementDiscount] = await promiseCatchError(
+                this.agreementService.calculateServiceDiscount(service.clientEntry.agreements[0], priceTableValue.value)
+            );
+            if(agreementError) throw agreementError;
+
+            serviceValues.push(agreementDiscount);
+        }
+
+        return serviceValues;
+    }
+
+    async cancelService(idParkingService: number): Promise<void> {
+        const [pServiceError, service] = await promiseCatchError(this.parkingServiceRepo
+            .update(idParkingService, { isParking: false })
+        );
+        if(pServiceError) throw new DatabaseError();
+        if(service.affected === 0) throw new ParkingServiceNotExists();
+    }
+}
