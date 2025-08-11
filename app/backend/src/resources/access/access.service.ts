@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Access } from './entities/access.entity';
+import { Access } from './access.entity';
 import { LoginDto } from './dto/login-dto';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { AccessAuthDto } from './dto/access-auth-dto';
