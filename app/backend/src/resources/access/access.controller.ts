@@ -41,5 +41,5 @@ export class AccessController {
         if(httpError) throw httpError;
 
         return accessAuth;
-    }
+    } 
 }
