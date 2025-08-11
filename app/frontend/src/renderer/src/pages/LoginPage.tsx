@@ -2,16 +2,21 @@ import React, { useState, MouseEvent } from 'react'
 import { AuthLayout } from '../components/authlayout'
 import { Input } from '../components/input'
 import { Button } from '../components/button'
+import { useNavigate } from 'react-router-dom'
+import { CarProfileIcon } from '@phosphor-icons/react'
 import './LoginPage.css'
 import { requestPRSYS } from '@renderer/utils/http'
 
 export const LoginPage: React.FC = () => {
   const [login, setLogin] = useState('')
   const [senha, setSenha] = useState('')
+  const navigate = useNavigate()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    console.log({ login, senha })
+    localStorage.setItem('isAuth', '1')
+
+    navigate('/', { replace: true })
   }
 
   async function handleForgotPassword(evt: MouseEvent) {
@@ -26,6 +31,7 @@ export const LoginPage: React.FC = () => {
   return (
     <AuthLayout>
       <header className="login-header">
+        <CarProfileIcon size={48} weight="duotone" className="login-logo" />
         <h1 className="login-title">
             <span className="login-title--blue">PR</span>
             <span className="login-title--black">sys</span>

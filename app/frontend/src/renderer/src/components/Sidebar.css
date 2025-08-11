@@ -1,0 +1,69 @@
+/* cada item - centraliza texto e posiciona pseudo-elemento como linha embaixo */
+.nav-item {
+    display: block;
+    position: relative;
+    text-decoration: none;
+    color: #222;
+    padding: 18px 8px 12px; 
+    text-align: center;
+    background: transparent;
+}
+  
+/* linha embaixo — um único ::after cobrindo quase toda a largura do item */
+.nav-item::after {
+    content: "";
+    position: absolute;
+    left: 12px;         
+    right: 12px;
+    bottom: -8px;         
+    height: 1px;
+    background: #2c2c2c;
+    pointer-events: none;
+    z-index: 0;
+}
+  
+.nav-item span {
+    position: relative;
+    z-index: 1;             
+    background: #fff;       
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 1;
+}
+  
+/* exemplo: destaque ativo com borda azul à esquerda */
+.nav-item.active {
+    font-weight: 600;
+    box-shadow: inset 6px 0 0 #2672f0;
+}
+  
+@media (max-width: 600px) {
+    .nav-item::after { left: 10px; right: 10px; }
+}
+  
+.main-title {
+    margin-bottom: 8 px;
+    font-size: 32px;
+    color: #000000ba;  
+}
+  
+.main-title--blue {
+    font-size: 46px;
+    color: #4A87E8;    
+    padding-right: 5px;
+    font-weight: 400;
+    margin-left: 12px
+}
+
+.main-title::after{
+    content: "";
+    display: block;
+    position: absolute;
+    height: 1px;
+    background: #2c2c2c;
+    pointer-events: none;
+    z-index: 0;
+    margin-top: 8px;
+    width: 140px;
+    margin-left: 12px;
+}

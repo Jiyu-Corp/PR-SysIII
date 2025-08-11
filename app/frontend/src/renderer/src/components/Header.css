@@ -1,0 +1,61 @@
+.app-header {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr; 
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    height: 80px;
+    background: #4A87E8;; 
+    color: white;
+    box-sizing: border-box;
+  }
+  
+  /* esquerda: normalmente vazio ou logo alinhado à esquerda */
+  .header-left {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  
+  /* centro: o conteúdo fica exatamente no centro do header */
+  .header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* estilização do bloco de horário */
+  .header-time {
+    background: #fff;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 8px;
+    min-width: 120px;
+    text-align: center;
+    font-weight: 450;
+  }
+  
+  /* direita: botão alinhado à direita */
+  .header-right {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  }
+  
+  /* botão sair */
+  .logout-btn {
+    background: #C1292E;
+    color: rgba(255, 255, 255, 0.89);
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    gap: 5px;
+    font-size: medium;
+  }
+  
+  /* hover/focus */
+  .logout-btn:hover { filter: brightness(0.95); }
+  .logout-btn:focus { outline: 2px solid rgba(255,255,255,0.2); outline-offset: 2px; }
+  

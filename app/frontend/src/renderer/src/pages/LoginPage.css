@@ -2,22 +2,23 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 32px;
   }
   
-  .login-logo { width: 32px; }
+  .login-logo { 
+    color: #4A87E8;
+  }
 
   .login-title {
     margin: 0;
-    font-size: 32px;
+    font-size: 24px;
     color: #000000ba;    
   }
   
   .login-title--blue {
-    font-size: 48px;
+    font-size: 32px;
     color: #4A87E8;    
     padding-right: 5px;
-    font-weight: lighter;
+    font-weight: 400;
   }
   
   .login-form {
