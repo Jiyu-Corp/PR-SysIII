@@ -1,5 +1,6 @@
 import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
-import { ExpectedError } from "./app.errors";
+import { ExpectedError, UniqueFieldError } from "./app.errors";
+import { QueryFailedError } from 'typeorm';
 
 function promiseCatchError<T>(promise: Promise<T>): Promise<[undefined, T] | [Error]> {
     return promise
@@ -10,6 +11,7 @@ function promiseCatchError<T>(promise: Promise<T>): Promise<[undefined, T] | [Er
             [error]
         );
 }
+
 
 function promiseCatchErrorHTTPDefault<T>(promise: Promise<T>): Promise<[undefined, T] | [BadRequestException | InternalServerErrorException]> {
     return promise
@@ -25,7 +27,20 @@ function promiseCatchErrorHTTPDefault<T>(promise: Promise<T>): Promise<[undefine
         });
 }
 
+function checkAndGetUKError(error: QueryFailedError): UniqueFieldError | undefined {
+    const isUKError = error.message.includes('violates unique constraint');
+    if(!isUKError) return;
+
+    const match = error.message.match(/unique constraint "(.*?)"/);
+    const ukConstraint = match![1];
+    const uniqueFieldError = new UniqueFieldError(ukConstraint);
+
+    return uniqueFieldError;
+}
+
 export {
     promiseCatchError,
-    promiseCatchErrorHTTPDefault
+    promiseCatchErrorHTTPDefault,
+
+    checkAndGetUKError
 }

@@ -17,7 +17,7 @@ export class ParkingServiceController {
         return services;
     }
     
-    @Post('createService')
+    @Post('')
     async createService(@Body() createParkingServiceDto: CreateParkingServiceDto): Promise<ParkingService> {
         const [httpError, service] = await promiseCatchErrorHTTPDefault(this.parkingServiceService.createService(createParkingServiceDto));
         if(httpError) throw httpError;
@@ -37,7 +37,7 @@ export class ParkingServiceController {
 
     // finishService
 
-    @Delete('cancelService/:idParkingService')
+    @Delete(':idParkingService')
     async cancelService(@Param('idParkingService') idParkingService: number): Promise<void> {
         const [httpError] = await promiseCatchErrorHTTPDefault(this.parkingServiceService.cancelService(idParkingService));
         if(httpError) throw httpError;

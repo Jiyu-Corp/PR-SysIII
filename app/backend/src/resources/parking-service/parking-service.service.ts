@@ -82,11 +82,12 @@ export class ParkingServiceService {
         if(vehicleError) throw vehicleError;
 
         try {
-            const service = await this.parkingServiceRepo.create({
+            const serviceData = await this.parkingServiceRepo.create({
                 park: park,
                 clientEntry: client,
                 vehicle: vehicle
             });
+            const service = await this.parkingServiceRepo.save(serviceData);
 
             return service;
         } catch (err) {

@@ -7,6 +7,7 @@ import {
   OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import { Agreement } from "./modules/agreement/agreement.entity";
 import { ClientType } from "./modules/client-type/client-type.entity";
@@ -14,6 +15,9 @@ import { ParkingService } from "../parking-service/parking-service.entity";
 import { Vehicle } from "../vehicle/vehicle.entity";
 
 @Index("client_pkey", ["idClient"], { unique: true })
+
+@Unique('UK_Client_cpfCnpj', ['cpfCnpj'])
+
 @Entity("client", { schema: "public" })
 export class Client {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_client" })
@@ -46,11 +50,12 @@ export class Client {
   @ManyToOne(() => Client, (client) => client.enterpriseClients, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
+    nullable: true
   })
   @JoinColumn([
-    { name: "id_client_enterprise", referencedColumnName: "idClientEnterprise" },
+    { name: "id_client_enterprise", referencedColumnName: "idClient" },
   ])
-  clientEnterprise: Client;
+  clientEnterprise: Client | null;
 
   @OneToMany(() => Client, (client) => client.clientEnterprise)
   enterpriseClients: Client[];
