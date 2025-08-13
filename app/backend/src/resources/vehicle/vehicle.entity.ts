@@ -6,19 +6,22 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import { ParkingService } from "../parking-service/parking-service.entity";
 import { Client } from "../client/client.entity";
 import { Model } from "./modules/model/model.entity";
 
 @Index("vehicle_pkey", ["idVehicle"], { unique: true })
-@Index("vehicle_plate_key", ["plate"], { unique: true })
+
+@Unique('UK_Vehicle_plate', ['plate'])
+
 @Entity("vehicle", { schema: "public" })
 export class Vehicle {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_vehicle" })
   idVehicle: number;
 
-  @Column("character varying", { name: "plate", unique: true, length: 20 })
+  @Column("character varying", { name: "plate", length: 20 })
   plate: string;
 
   @Column("character varying", { name: "color", nullable: true, length: 50 })

@@ -16,6 +16,6 @@ export class Brand {
   @Column("character varying", { name: "name", length: 50 })
   name: string;
 
-  @OneToMany(() => Model, (model) => model.idBrand)
+  @OneToMany(() => Model, (model) => model.brand)
   models: Model[];
 }
