@@ -1,5 +1,5 @@
 import { BadRequestException, InternalServerErrorException } from "@nestjs/common";
-import { ExpectedError, UniqueFieldError } from "./app.errors";
+import { DatabaseError, ExpectedError, RedundancyInUniqueError } from "./app.errors";
 import { QueryFailedError } from 'typeorm';
 
 function promiseCatchError<T>(promise: Promise<T>): Promise<[undefined, T] | [Error]> {
@@ -27,20 +27,35 @@ function promiseCatchErrorHTTPDefault<T>(promise: Promise<T>): Promise<[undefine
         });
 }
 
-function checkAndGetUKError(error: QueryFailedError): UniqueFieldError | undefined {
+function checkAndGetUKError(error: QueryFailedError): RedundancyInUniqueError | undefined {
     const isUKError = error.message.includes('violates unique constraint');
     if(!isUKError) return;
 
     const match = error.message.match(/unique constraint "(.*?)"/);
     const ukConstraint = match![1];
-    const uniqueFieldError = new UniqueFieldError(ukConstraint);
+    const redundancyInUniqueError = new RedundancyInUniqueError(ukConstraint);
 
-    return uniqueFieldError;
+    return redundancyInUniqueError;
+}
+
+function buildDatabaseError(error: Error, params: {
+    UKErrors?: RedundancyInUniqueError[]
+}): DatabaseError {
+    if(error instanceof QueryFailedError && params.UKErrors) {
+        const ukError = checkAndGetUKError(error);
+        const ukConstraintAndError = params.UKErrors
+            .find(ce => ce.ukConstraint === ukError!.ukConstraint)!;
+        
+        return ukConstraintAndError;
+    }
+
+    return new DatabaseError();
 }
 
 export {
     promiseCatchError,
     promiseCatchErrorHTTPDefault,
 
-    checkAndGetUKError
+    checkAndGetUKError,
+    buildDatabaseError
 }

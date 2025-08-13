@@ -5,17 +5,14 @@ import { EditClientDto } from './dto/edit-client-dto';
 import { GetClientsDto } from './dto/get-clients-dto';
 import { DatabaseError } from 'src/utils/app.errors';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QueryFailedError, Repository } from 'typeorm';
-import { checkAndGetUKError, promiseCatchError } from 'src/utils/utils';
+import { Repository } from 'typeorm';
+import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { ClientCpfCnpjExists, ClientNotExists } from './client.errors';
 
 @Injectable()
 export class ClientService {
     private readonly ID_CLIENT_TYPE_CPF = 1;
     private readonly ID_CLIENT_TYPE_CNPJ = 2;
-
-    // UKs
-    private readonly CPF_CNPJ_UK = 'UK_Client_cpfCnpj';
 
     constructor(
         @InjectRepository(Client)
@@ -60,13 +57,11 @@ export class ClientService {
             
             return client;
         } catch (err) {
-            if(err instanceof QueryFailedError){
-                const ukError = checkAndGetUKError(err);
-                if(ukError && ukError.ukConstraint === this.CPF_CNPJ_UK)
-                    throw new ClientCpfCnpjExists();
-            }
-
-            throw new DatabaseError();
+            throw buildDatabaseError(err, {
+                UKErrors: [
+                    new ClientCpfCnpjExists()
+                ]
+            });
         }
     }
 
@@ -91,15 +86,13 @@ export class ClientService {
             }
         }));
         // Make a more generic way to handle that database error
-        if(loadError) {
-            if(loadError instanceof QueryFailedError) {
-                const ukError = checkAndGetUKError(loadError);
-                if(ukError && ukError.ukConstraint === this.CPF_CNPJ_UK)
-                    throw new ClientCpfCnpjExists();
-            }
-
-            throw new DatabaseError();   
-        }
+        if(loadError)
+            throw buildDatabaseError(loadError, {
+                UKErrors: [
+                    new ClientCpfCnpjExists()
+                ]
+            });
+        
         if(typeof clientData === 'undefined') throw new ClientNotExists();
 
         try {

@@ -1,4 +1,4 @@
-import { ExpectedError } from "src/utils/app.errors";
+import { ExpectedError, RedundancyInUniqueError } from "src/utils/app.errors";
 
-export class ClientCpfCnpjExists extends ExpectedError { constructor(){super("Este cpf/cnpj ja existe.")} }
+export class ClientCpfCnpjExists extends RedundancyInUniqueError { constructor(){super("UK_Client_cpfCnpj", "Este cpf/cnpj ja existe.")} }
 export class ClientNotExists extends ExpectedError { constructor(){super("Cliente não encontrado.")} }
