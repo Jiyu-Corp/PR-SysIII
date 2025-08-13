@@ -38,10 +38,10 @@ function checkAndGetUKError(error: QueryFailedError): RedundancyInUniqueError | 
     return redundancyInUniqueError;
 }
 
-function buildDatabaseError(error: Error, params: {
+function buildDatabaseError(error: Error, params?: {
     UKErrors?: RedundancyInUniqueError[]
 }): DatabaseError {
-    if(error instanceof QueryFailedError && params.UKErrors) {
+    if(error instanceof QueryFailedError && params && params.UKErrors) {
         const ukError = checkAndGetUKError(error);
         const ukConstraintAndError = params.UKErrors
             .find(ce => ce.ukConstraint === ukError!.ukConstraint)!;
