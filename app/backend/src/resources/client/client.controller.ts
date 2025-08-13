@@ -14,7 +14,7 @@ export class ClientController {
     async getClients(@Query() getClientsDto: GetClientsDto): Promise<Client[]> {
         const [httpError, clients] = await promiseCatchErrorHTTPDefault(this.clientService.getClients(getClientsDto));
         if(httpError) throw httpError;
-
+        
         return clients;
     }
 
