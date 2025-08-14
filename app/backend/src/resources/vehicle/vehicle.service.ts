@@ -5,7 +5,7 @@ import { Vehicle } from './vehicle.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
-import { GetVehiclesDto } from './dto/get-vehicles-dto';
+import { GetActiveVehiclesDto } from './dto/get-active-vehicles-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
 
@@ -16,7 +16,7 @@ export class VehicleService {
         private readonly vehicleRepo: Repository<Vehicle>
     ) {}
 
-    async getVehicles(getVehiclesDto: GetVehiclesDto): Promise<Vehicle[]> {
+    async getActiveVehicles(getActiveVehiclesDto: GetActiveVehiclesDto): Promise<Vehicle[]> {
         try {  
             // Maybe nested find dont work
             // .createQueryBuilder('vehicle')
@@ -31,18 +31,19 @@ export class VehicleService {
             // .andWhere('client.idClient = :idClient', { idClient: getVehiclesDto.idClient })
             // .getMany();
             const vehicles = this.vehicleRepo.find({ where: {
-                plate: getVehiclesDto.plate,
+                plate: getActiveVehiclesDto.plate,
+                isActive: true,
                 model: {
-                    idModel: getVehiclesDto.idModel,
+                    idModel: getActiveVehiclesDto.idModel,
                     brand: {
-                        idBrand: getVehiclesDto.idBrand
+                        idBrand: getActiveVehiclesDto.idBrand
                     },
                     vehicleType: {
-                        idVehicleType: getVehiclesDto.idVehicleType
+                        idVehicleType: getActiveVehiclesDto.idVehicleType
                     },
                 },
                 client: {
-                    idClient: getVehiclesDto.idClient
+                    idClient: getActiveVehiclesDto.idClient
                 }
             }, relations: {
                 client: true,

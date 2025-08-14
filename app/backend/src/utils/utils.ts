@@ -28,7 +28,7 @@ function promiseCatchErrorHTTPDefault<T>(promise: Promise<T>): Promise<[undefine
 }
 
 function checkAndGetUKError(error: QueryFailedError): RedundancyInUniqueError | undefined {
-    const isUKError = error.message.includes('violates unique constraint');
+    const isUKError = error.message.includes('duplicate key value');
     if(!isUKError) return;
 
     const match = error.message.match(/unique constraint "(.*?)"/);

@@ -14,7 +14,7 @@ import { Model } from "./modules/model/model.entity";
 
 @Index("vehicle_pkey", ["idVehicle"], { unique: true })
 
-@Unique('UK_Vehicle_plate', ['plate'])
+@Index('UK_Vehicle_plate', ['plate'], { unique: true, where: '"isActive" = TRUE' })
 
 @Entity("vehicle", { schema: "public" })
 export class Vehicle {

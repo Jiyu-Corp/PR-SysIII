@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { VehicleService } from './vehicle.service';
-import { GetVehiclesDto } from './dto/get-vehicles-dto';
+import { GetActiveVehiclesDto } from './dto/get-active-vehicles-dto';
 import { Vehicle } from './vehicle.entity';
 import { promiseCatchErrorHTTPDefault } from 'src/utils/utils';
 import { CreateVehicleDto } from './dto/create-vehicle-dto';
@@ -11,8 +11,8 @@ export class VehicleController {
     constructor(private readonly vehicleService: VehicleService) {}
 
     @Get('')
-    async getVehicles(@Query() getVehiclesDto: GetVehiclesDto): Promise<Vehicle[]> {
-        const [httpError, vehicles] = await promiseCatchErrorHTTPDefault(this.vehicleService.getVehicles(getVehiclesDto));
+    async getActiveVehicles(@Query() getActiveVehiclesDto: GetActiveVehiclesDto): Promise<Vehicle[]> {
+        const [httpError, vehicles] = await promiseCatchErrorHTTPDefault(this.vehicleService.getActiveVehicles(getActiveVehiclesDto));
         if(httpError) throw httpError;
         
         return vehicles;

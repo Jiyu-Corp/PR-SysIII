@@ -7,14 +7,14 @@ export class CreateModelDto {
 	@IsDefined()
 	@IsNumber()
 	@IsPositive()
-	readonly idBrand: number
+	readonly idBrand?: number
 
 	@ValidateIf((dto) => dto.idBrand === undefined)
 	@IsDefined()
 	@IsObject()
 	@ValidateNested()
 	@Type(() => CreateBrandDto)
-	readonly brand: CreateBrandDto
+	readonly brand?: CreateBrandDto
 
 	@IsDefined()
 	@IsNumber()

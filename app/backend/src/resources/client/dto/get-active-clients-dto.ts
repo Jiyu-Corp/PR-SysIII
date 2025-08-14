@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsPositive, IsString, Length } from 'class-validator'
 
-export class GetClientsDto {
+export class GetActiveClientsDto {
     @IsOptional()
     @IsString()
     @Length(11, 14)

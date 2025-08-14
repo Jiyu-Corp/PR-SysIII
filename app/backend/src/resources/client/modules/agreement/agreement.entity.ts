@@ -11,6 +11,9 @@ import { Client } from "../../client.entity";
 import { ParkingService } from "src/resources/parking-service/parking-service.entity";
 
 @Index("agreement_pkey", ["idAgreement"], { unique: true })
+
+@Index('UK_Agreement_idClient', ['id_client'], { unique: true, where: '"isActive" = TRUE' })
+
 @Entity("agreement", { schema: "public" })
 export class Agreement {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_agreement" })
@@ -47,11 +50,11 @@ export class Agreement {
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_client", referencedColumnName: "idClient" }])
-  idClient: Client;
+  client: Client;
 
   @OneToMany(
     () => ParkingService,
-    (parkingService) => parkingService.idAgreement
+    (parkingService) => parkingService.agreement
   )
   parkingServices: ParkingService[];
 }

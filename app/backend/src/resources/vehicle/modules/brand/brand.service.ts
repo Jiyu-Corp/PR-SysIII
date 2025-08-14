@@ -14,14 +14,18 @@ export class BrandService {
     ) {}
 
     async getActiveBrands(): Promise<Brand[]> {
-        const brands = this.brandRepo
-            .createQueryBuilder('brand')
-                .leftJoinAndSelect('brand.models', 'model', 'model.isActive = :modelActive', { modelActive: true })
-                .leftJoinAndSelect('model.vehicleType', 'vehicleType')
-            .where('brand.isActive = :brandActive', { brandActive: true })
-            .getMany();
-
-        return brands;
+        try {
+            const brands = this.brandRepo
+                .createQueryBuilder('brand')
+                    .leftJoinAndSelect('brand.models', 'model', 'model.isActive = :modelActive', { modelActive: true })
+                    .leftJoinAndSelect('model.vehicleType', 'vehicleType')
+                .where('brand.isActive = :brandActive', { brandActive: true })
+                .getMany();
+    
+            return brands;
+        } catch (err) {
+            throw new DatabaseError();
+        }
     }
 
     async deleteBrand(idBrand: number): Promise<void> {

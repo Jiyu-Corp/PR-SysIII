@@ -16,7 +16,7 @@ import { Vehicle } from "../vehicle/vehicle.entity";
 
 @Index("client_pkey", ["idClient"], { unique: true })
 
-@Unique('UK_Client_cpfCnpj', ['cpfCnpj'])
+@Index('UK_Client_cpfCnpj', ['cpfCnpj'], { unique: true, where: '"isActive" = TRUE' })
 
 @Entity("client", { schema: "public" })
 export class Client {
@@ -44,7 +44,7 @@ export class Client {
   @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
   dateUpdate: string;
 
-  @OneToMany(() => Agreement, (agreement) => agreement.idClient)
+  @OneToMany(() => Agreement, (agreement) => agreement.client)
   agreements: Agreement[];
 
   @ManyToOne(() => Client, (client) => client.enterpriseClients, {

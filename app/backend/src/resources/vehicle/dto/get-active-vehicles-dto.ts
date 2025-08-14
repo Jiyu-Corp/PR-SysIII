@@ -1,6 +1,6 @@
 import { IsNumber, IsOptional, IsPositive, IsString, IsUppercase, Length, MaxLength } from "class-validator";
 
-export class GetVehiclesDto {
+export class GetActiveVehiclesDto {
 	// placa
 	@IsOptional()
 	@IsString()

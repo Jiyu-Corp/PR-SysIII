@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client-dto';
 import { Client } from './client.entity';
 import { EditClientDto } from './dto/edit-client-dto';
-import { GetClientsDto } from './dto/get-clients-dto';
+import { GetActiveClientsDto } from './dto/get-active-clients-dto';
 import { DatabaseError } from 'src/utils/app.errors';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -19,13 +19,14 @@ export class ClientService {
         private readonly clientRepo: Repository<Client>
     ) {}
 
-    async getClients(getClientsDto: GetClientsDto): Promise<Client[]> {
+    async getActiveClients(getActiveClientsDto: GetActiveClientsDto): Promise<Client[]> {
         try {
             const clients = this.clientRepo.find({ where: {
-                cpfCnpj: getClientsDto.cpfCnpj,
-                name: getClientsDto.name,
+                cpfCnpj: getActiveClientsDto.cpfCnpj,
+                name: getActiveClientsDto.name,
+                isActive: true,
                 clientType: {
-                    idClientType: getClientsDto.idClientType
+                    idClientType: getActiveClientsDto.idClientType
                 }
             }, relations: {
                 clientEnterprise: true
@@ -80,7 +81,7 @@ export class ClientService {
                 },
                 email: editClientDto.email,
                 phone: editClientDto.phone,
-                clientEnterprise: typeof editClientDto.idClientEnterprise === 'undefined' 
+                clientEnterprise: typeof editClientDto.idClientEnterprise !== 'undefined' 
                     ?   { idClient: editClientDto.idClientEnterprise }
                     :   null
             }
