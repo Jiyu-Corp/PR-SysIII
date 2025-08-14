@@ -45,6 +45,9 @@ export class ParkingService {
   @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
   dateUpdate: string;
 
+  @Column("date", { name: "date_checkout", nullable: true })
+  dateCheckout: string;
+
   @ManyToOne(() => Agreement, (agreement) => agreement.parkingServices, {
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
