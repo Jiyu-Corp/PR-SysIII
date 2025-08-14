@@ -20,6 +20,9 @@ export class Model {
   @Column("character varying", { name: "name", length: 50 })
   name: string;
 
+  @Column("boolean", { name: "is_active", default: () => "true" })
+  isActive: boolean;
+
   @ManyToOne(() => Brand, (brand) => brand.models, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",

@@ -87,20 +87,20 @@ export class ClientService {
         }));
         
         if(loadError)
-            throw buildDatabaseError(loadError, {
-                UKErrors: [
-                    new ClientCpfCnpjExists()
-                ]
-            });
+            throw new DatabaseError();
         
         if(typeof clientData === 'undefined') throw new ClientNotExists();
-
+        
         try {
             const updatedClient = await this.clientRepo.save(clientData);
             
             return updatedClient;
         } catch (err) {
-            throw new DatabaseError();
+            throw buildDatabaseError(err, {
+                UKErrors: [
+                    new ClientCpfCnpjExists()
+                ]
+            });
         }
     }
 

@@ -17,7 +17,19 @@ export class VehicleService {
     ) {}
 
     async getVehicles(getVehiclesDto: GetVehiclesDto): Promise<Vehicle[]> {
-        try {
+        try {  
+            // Maybe nested find dont work
+            // .createQueryBuilder('vehicle')
+            // .innerJoinAndSelect('vehicle.model', 'model')
+            // .innerJoinAndSelect('model.brand', 'brand')
+            // .innerJoinAndSelect('model.vehicleType', 'vehicleType')
+            // .innerJoinAndSelect('vehicle.client', 'client')
+            // .where('vehicle.plate = :plate', { plate: getVehiclesDto.plate })
+            // .andWhere('model.idModel = :idModel', { idModel: getVehiclesDto.idModel })
+            // .andWhere('brand.idBrand = :idBrand', { idBrand: getVehiclesDto.idBrand })
+            // .andWhere('vehicleType.idVehicleType = :idVehicleType', { idVehicleType: getVehiclesDto.idVehicleType })
+            // .andWhere('client.idClient = :idClient', { idClient: getVehiclesDto.idClient })
+            // .getMany();
             const vehicles = this.vehicleRepo.find({ where: {
                 plate: getVehiclesDto.plate,
                 model: {
@@ -110,11 +122,8 @@ export class VehicleService {
         }));
         
         if(loadError)
-            throw buildDatabaseError(loadError, {
-                UKErrors: [
-                    new VehiclePlateExists()
-                ]
-            });
+            throw new DatabaseError();
+            
         
         if(typeof vehicleData === 'undefined') throw new VehicleNotExists();
 
@@ -123,7 +132,11 @@ export class VehicleService {
             
             return updatedVehicle;
         } catch (err) {
-            throw new DatabaseError();
+            throw buildDatabaseError(err, {
+                UKErrors: [
+                    new VehiclePlateExists()
+                ]
+            });
         }
     }
 

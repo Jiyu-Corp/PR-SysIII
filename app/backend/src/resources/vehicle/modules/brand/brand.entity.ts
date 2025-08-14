@@ -16,6 +16,9 @@ export class Brand {
   @Column("character varying", { name: "name", length: 50 })
   name: string;
 
+  @Column("boolean", { name: "is_active", default: () => "true" })
+  isActive: boolean;
+
   @OneToMany(() => Model, (model) => model.brand)
   models: Model[];
 }
