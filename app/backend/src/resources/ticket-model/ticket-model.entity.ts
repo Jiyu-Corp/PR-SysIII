@@ -1,6 +1,9 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
 
 @Index("ticket_model_pkey", ["idTicketModel"], { unique: true })
+
+@Index('UK_TicketModel_name', ['name'], { unique: true })
+
 @Entity("ticket_model", { schema: "public" })
 export class TicketModel {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_ticket_model" })

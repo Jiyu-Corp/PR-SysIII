@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { CreateAgreementDto } from './dto/create-agreement-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
-import { AgremeentClientExists, AgremeentNotExists } from './agreement.erros';
+import { AgremeentClientExists, AgremeentNotExists } from './agreement.errors';
 import { EditAgreementDto } from './dto/edit-agreement-dto';
 
 @Injectable()
