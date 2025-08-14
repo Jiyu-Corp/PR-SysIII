@@ -85,7 +85,7 @@ export class ClientService {
                     :   null
             }
         }));
-        // Make a more generic way to handle that database error
+        
         if(loadError)
             throw buildDatabaseError(loadError, {
                 UKErrors: [
