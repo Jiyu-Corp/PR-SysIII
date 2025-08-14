@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { CreateAgreementDto } from './dto/create-agreement-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
-import { AgremeentClientExists, AgremeentNotExists } from './agreement.errors';
+import { AgremeentClientExists, AgreementNotExists } from './agreement.errors';
 import { EditAgreementDto } from './dto/edit-agreement-dto';
 
 @Injectable()
@@ -86,7 +86,7 @@ export class AgreementService {
         if(loadError)
             throw new DatabaseError();
             
-        if(typeof agreementData === 'undefined') throw new AgremeentNotExists();
+        if(typeof agreementData === 'undefined') throw new AgreementNotExists();
 
         try {
             const updatedAgreement = await this.agreementRepo.save(agreementData);
@@ -106,6 +106,6 @@ export class AgreementService {
             .update(idAgreement, { isActive: false })
         );
         if(agreementError) throw new DatabaseError();
-        if(result.affected === 0) throw new AgremeentNotExists();
+        if(result.affected === 0) throw new AgreementNotExists();
     }
 }
