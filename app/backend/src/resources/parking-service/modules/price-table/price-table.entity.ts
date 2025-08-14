@@ -12,6 +12,9 @@ import { VehicleType } from "src/resources/vehicle/modules/vehicle-type/vehicle-
 import { PriceTableHour } from "./modules/price-table-hour/price-table-hour.entity";
 
 @Index("price_table_pkey", ["idPriceTable"], { unique: true })
+
+@Index('UK_PriceTable_idVehicleType', ['id_vehicle_type'], { unique: true, where: '"isActive" = TRUE' })
+
 @Entity("price_table", { schema: "public" })
 export class PriceTable {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_price_table" })
@@ -34,7 +37,7 @@ export class PriceTable {
 
   @OneToMany(
     () => ParkingService,
-    (parkingService) => parkingService.idPriceTable
+    (parkingService) => parkingService.priceTable
   )
   parkingServices: ParkingService[];
 
@@ -45,7 +48,7 @@ export class PriceTable {
   @JoinColumn([
     { name: "id_vehicle_type", referencedColumnName: "idVehicleType" },
   ])
-  idVehicleType: VehicleType;
+  vehicleType: VehicleType;
 
   @OneToMany(
     () => PriceTableHour,

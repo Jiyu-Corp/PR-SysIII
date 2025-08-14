@@ -20,9 +20,9 @@ export class VehicleType {
   @Column("boolean", { name: "is_active", default: () => "true" })
   isActive: boolean;
 
-  @OneToMany(() => Model, (model) => model.idVehicleType)
+  @OneToMany(() => Model, (model) => model.vehicleType)
   models: Model[];
 
-  @OneToMany(() => PriceTable, (priceTable) => priceTable.idVehicleType)
+  @OneToMany(() => PriceTable, (priceTable) => priceTable.vehicleType)
   priceTables: PriceTable[];
 }
