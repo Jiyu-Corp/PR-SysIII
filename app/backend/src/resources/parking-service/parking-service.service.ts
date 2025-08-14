@@ -68,7 +68,7 @@ export class ParkingServiceService {
             let clientError;
             [clientError, client] = await promiseCatchError(clientDto instanceof CreateClientDto
                 ? this.clientService.createClient(clientDto)
-                : this.clientService.editClient(clientDto)
+                : this.clientService.editClient(clientDto.idClient, clientDto)
             );
             if(clientError || typeof client === 'undefined') throw clientError;
 
@@ -77,7 +77,7 @@ export class ParkingServiceService {
 
         const [vehicleError, vehicle] = await promiseCatchError(vehicleDto instanceof CreateVehicleDto
             ? this.vehicleService.createVehicle(vehicleDto)
-            : this.vehicleService.editVehicle(vehicleDto)
+            : this.vehicleService.editVehicle(vehicleDto.idVehicle, vehicleDto)
         );
         if(vehicleError) throw vehicleError;
 
