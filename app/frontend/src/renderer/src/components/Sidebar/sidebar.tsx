@@ -10,7 +10,7 @@ const Sidebar: React.FC = () => {
         <span className="main-title--black">sys</span>
       </h1>
       <nav className="nav">
-        <NavLink to="/controle" end className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+        <NavLink to="/dashboard" end className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
           <span>Entradas/Saídas</span>
         </NavLink>
 

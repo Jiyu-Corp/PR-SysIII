@@ -1,0 +1,84 @@
+:root{
+    --blue-header: #3b82f6; /* header color */
+    --border: #e6eaf0;
+    --muted: #6b7280;
+    --row-hover: #fafbfd;
+  }
+  
+  /* outer card */
+  .generic-table {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 0 rgba(16,24,40,0.02);
+  }
+  
+  /* table layout */
+  .generic-table table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  
+  .generic-table thead tr {
+    background: var(--blue-header);
+    color: #fff;
+    text-align: left;
+  }
+
+  .generic-table tbody {
+    color: black;
+  }
+  
+  .generic-table th,
+  .generic-table td {
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  
+  .generic-table tbody tr:hover {
+    background: var(--row-hover);
+  }
+  
+  /* small muted text */
+  .generic-table td .muted {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+  
+  /* actions column */
+  .icon-btn {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius:6px;
+    border:1px solid rgba(0,0,0,0.06);
+    background:#fff;
+    cursor:pointer;
+    font-size: 14px;
+  }
+  
+  .icon-btn:hover { background:#f3f4f6; }
+  
+  /* footer with csv and pagination summary */
+  .generic-table-footer {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 0.9rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  
+  .generic-table .btn--small {
+    padding: 0.35rem 0.55rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: #fff;
+    cursor: pointer;
+    font-size: 0.8rem;
+  }
+  

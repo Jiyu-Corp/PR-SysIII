@@ -2,8 +2,9 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import {LoginPage} from './pages/LoginPage'
-import MainLayout from './components/mainlayout'
+import MainLayout from './components/MainLayout/mainlayout'
 import Dashboard from './pages/Dashboard' 
+import Clientes from './pages/Clientes' 
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const isAuth = !!localStorage.getItem('isAuth') // true/false
@@ -27,7 +28,8 @@ export default function App() {
         }
       >
         {/* rotas filhas renderizadas dentro do <Outlet /> do MainLayout */}
-        <Route index element={<Dashboard />} />
+        <Route path='/dashboard' index element={<Dashboard />} />
+        <Route path='/clientes' index element={<Clientes />} />
       </Route>
 
       {/* fallback — se usuário abrir só #/ ou rota desconhecida */}
