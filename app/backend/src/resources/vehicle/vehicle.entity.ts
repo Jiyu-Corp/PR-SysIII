@@ -43,15 +43,17 @@ export class Vehicle {
   parkingServices: ParkingService[];
 
   @ManyToOne(() => Client, (client) => client.vehicles, {
-    onDelete: "RESTRICT",
+    onDelete: "SET NULL",
     onUpdate: "CASCADE",
+    nullable: true
   })
   @JoinColumn([{ name: "id_client", referencedColumnName: "idClient" }])
   client: Client;
 
   @ManyToOne(() => Model, (model) => model.vehicles, {
-    onDelete: "RESTRICT",
+    onDelete: "SET NULL",
     onUpdate: "CASCADE",
+    nullable: true
   })
   @JoinColumn([{ name: "id_model", referencedColumnName: "idModel" }])
   model: Model;

@@ -4,7 +4,7 @@ import { promiseCatchError } from 'src/utils/utils';
 import { Model } from './model.entity';
 import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
-import { ModelNotExists } from './model.errors';
+import { ExistParkedVehicleWithinThatModel, ModelNotExists } from './model.errors';
 
 @Injectable()
 export class ModelService {
@@ -14,10 +14,24 @@ export class ModelService {
     ) {}
 
     async deleteModel(idModel: number): Promise<void> {
-        const [modelError, result] = await promiseCatchError(this.modelRepo
-            .update(idModel, { isActive: false })
+        // Check if exists car parked
+        const [pServiceError, existParkedVehicles] = await promiseCatchError(this.modelRepo
+            .exists({ where: {
+                vehicles: {
+                    parkingServices: {
+                        isParking: true
+                    }
+                }
+            }})
         );
-        if(modelError) throw new DatabaseError();
-        if(result.affected === 0) throw new ModelNotExists();
+        if(pServiceError) throw new DatabaseError();
+        if(existParkedVehicles)
+            throw new ExistParkedVehicleWithinThatModel();
+
+        try {
+            await promiseCatchError(this.modelRepo.delete(idModel))
+        } catch (err) {
+            throw new DatabaseError();
+        }
     }
 }

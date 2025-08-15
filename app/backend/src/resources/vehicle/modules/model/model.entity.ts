@@ -24,7 +24,7 @@ export class Model {
   isActive: boolean;
 
   @ManyToOne(() => Brand, (brand) => brand.models, {
-    onDelete: "RESTRICT",
+    onDelete: "CASCADE",
     onUpdate: "CASCADE",
   })
   @JoinColumn([{ name: "id_brand", referencedColumnName: "idBrand" }])

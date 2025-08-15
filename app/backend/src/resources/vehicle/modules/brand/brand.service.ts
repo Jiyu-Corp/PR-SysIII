@@ -4,7 +4,7 @@ import { Brand } from './brand.entity';
 import { Repository } from 'typeorm';
 import { promiseCatchError } from 'src/utils/utils';
 import { DatabaseError } from 'src/utils/app.errors';
-import { BrandNotExists } from './brand.errors';
+import { BrandNotExists, ExistParkedVehicleWithinThatBrand } from './brand.errors';
 
 @Injectable()
 export class BrandService {
@@ -29,17 +29,22 @@ export class BrandService {
     }
 
     async deleteBrand(idBrand: number): Promise<void> {
-        const [brandError, brandData] = await promiseCatchError(this.brandRepo.preload({
-            idBrand: idBrand,
-            isActive: false
-        }));
-        if(brandError) throw new DatabaseError();
-        if(typeof brandData === 'undefined') throw new BrandNotExists();
-        
-        brandData.models.forEach(m => m.isActive = false);
+        // Check if exists car parked
+        const [pServiceError, existParkedVehicles] = await promiseCatchError(this.brandRepo
+            .exists({ where: {
+                models: { vehicles: {
+                    parkingServices: {
+                        isParking: true
+                    }
+                }}
+            }})
+        );
+        if(pServiceError) throw new DatabaseError();
+        if(existParkedVehicles)
+            throw new ExistParkedVehicleWithinThatBrand();
 
         try {
-            await this.brandRepo.save(brandData);
+            await promiseCatchError(this.brandRepo.delete(idBrand))
         } catch (err) {
             throw new DatabaseError();
         }

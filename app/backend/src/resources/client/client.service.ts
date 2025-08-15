@@ -29,7 +29,8 @@ export class ClientService {
                     idClientType: getActiveClientsDto.idClientType
                 }
             }, relations: {
-                clientEnterprise: true
+                clientEnterprise: true,
+                parkingServices: true
             }});
             
             return clients;
