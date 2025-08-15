@@ -42,8 +42,9 @@ export class Vehicle {
   @OneToMany(() => ParkingService, (parkingService) => parkingService.vehicle)
   parkingServices: ParkingService[];
 
+  // Soft delete
   @ManyToOne(() => Client, (client) => client.vehicles, {
-    onDelete: "SET NULL",
+    onDelete: "RESTRICT",
     onUpdate: "CASCADE",
     nullable: true
   })

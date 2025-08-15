@@ -16,6 +16,6 @@ export class ClientType {
   @Column("character varying", { name: "description", length: 50 })
   description: string;
 
-  @OneToMany(() => Client, (client) => client.idClientType)
+  @OneToMany(() => Client, (client) => client.clientType)
   clients: Client[];
 }

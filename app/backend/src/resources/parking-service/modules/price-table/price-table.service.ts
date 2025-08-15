@@ -19,7 +19,7 @@ export class PriceTableService {
     ) {}
 
     async calculateServiceValue(parkingService: ParkingService): Promise<ServiceValueDto> {
-        
+        return new ServiceValueDto();
     }
 
     async getActivePriceTables(getActivePriceTablesDto: GetActivePriceTablesDto): Promise<PriceTable[]> {

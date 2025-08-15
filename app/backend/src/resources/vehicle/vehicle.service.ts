@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { GetActiveVehiclesDto } from './dto/get-active-vehicles-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
-import { VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
+import { VehicleIsParked, VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
 
 @Injectable()
 export class VehicleService {
@@ -18,41 +18,52 @@ export class VehicleService {
 
     async getActiveVehicles(getActiveVehiclesDto: GetActiveVehiclesDto): Promise<Vehicle[]> {
         try {  
-            // Maybe nested find dont work
-            // .createQueryBuilder('vehicle')
-            // .innerJoinAndSelect('vehicle.model', 'model')
-            // .innerJoinAndSelect('model.brand', 'brand')
-            // .innerJoinAndSelect('model.vehicleType', 'vehicleType')
-            // .innerJoinAndSelect('vehicle.client', 'client')
-            // .where('vehicle.plate = :plate', { plate: getVehiclesDto.plate })
-            // .andWhere('model.idModel = :idModel', { idModel: getVehiclesDto.idModel })
-            // .andWhere('brand.idBrand = :idBrand', { idBrand: getVehiclesDto.idBrand })
-            // .andWhere('vehicleType.idVehicleType = :idVehicleType', { idVehicleType: getVehiclesDto.idVehicleType })
-            // .andWhere('client.idClient = :idClient', { idClient: getVehiclesDto.idClient })
-            // .getMany();
-            const vehicles = this.vehicleRepo.find({ where: {
-                plate: getActiveVehiclesDto.plate,
-                isActive: true,
-                model: {
-                    idModel: getActiveVehiclesDto.idModel,
-                    brand: {
-                        idBrand: getActiveVehiclesDto.idBrand
-                    },
-                    vehicleType: {
-                        idVehicleType: getActiveVehiclesDto.idVehicleType
-                    },
-                },
-                client: {
-                    idClient: getActiveVehiclesDto.idClient
-                }
-            }, relations: {
-                client: true,
-                model: {
-                    brand: true,
-                    vehicleType: true
-                }
-            }});
+            // const vehicles = this.vehicleRepo.find({ where: {
+            //     plate: getActiveVehiclesDto.plate,
+            //     isActive: true,
+            //     model: {
+            //         idModel: getActiveVehiclesDto.idModel,
+            //         brand: {
+            //             idBrand: getActiveVehiclesDto.idBrand
+            //         },
+            //         vehicleType: {
+            //             idVehicleType: getActiveVehiclesDto.idVehicleType
+            //         },
+            //     },
+            //     client: {
+            //         idClient: getActiveVehiclesDto.idClient
+            //     }
+            // }, relations: {
+            //     client: true,
+            //     model: {
+            //         brand: true,
+            //         vehicleType: true
+            //     }
+            // }});
+            const query = this.vehicleRepo
+                .createQueryBuilder('vehicle')
+                    .leftJoinAndSelect('vehicle.model', 'model')
+                    .leftJoinAndSelect('model.brand', 'brand')
+                    .leftJoinAndSelect('model.vehicleType', 'vehicleType', 'vehicleType.isActive = true')
+                    .leftJoinAndSelect('vehicle.client', 'client', 'client.isActive = true')
+                .where('vehicle.isActive = true');
             
+            if(typeof getActiveVehiclesDto.plate !== 'undefined')
+                query.andWhere('vehicle.plate ILIKE :plate', { plate: `%${getActiveVehiclesDto.plate}%` });
+
+            if(typeof getActiveVehiclesDto.idModel !== 'undefined')
+                query.andWhere('model.idModel = :idModel', { idModel: getActiveVehiclesDto.idModel });
+
+            if(typeof getActiveVehiclesDto.idBrand !== 'undefined')
+                query.andWhere('brand.idBrand = :idBrand', { idBrand: getActiveVehiclesDto.idBrand });
+
+            if(typeof getActiveVehiclesDto.idVehicleType !== 'undefined')
+                query.andWhere('vehicleType.idVehicleType = :idVehicleType', { idVehicleType: getActiveVehiclesDto.idVehicleType });
+
+            if(typeof getActiveVehiclesDto.idClient !== 'undefined')
+                query.andWhere('client.idClient = :idClient', { idClient: getActiveVehiclesDto.idClient });
+
+            const vehicles = await query.getMany();
             return vehicles;
         } catch (err) {
             throw new DatabaseError();
@@ -142,6 +153,18 @@ export class VehicleService {
     }
 
     async deleteVehicle(idVehicle: number): Promise<void> {
+        // Check if exists car parked
+        const [pServiceError, existParkedVehicles] = await promiseCatchError(this.vehicleRepo
+            .exists({ where: {
+                parkingServices: {
+                    isParking: true
+                }
+            }})
+        );
+        if(pServiceError) throw new DatabaseError();
+        if(existParkedVehicles)
+            throw new VehicleIsParked();
+
         const [vehicleError, result] = await promiseCatchError(this.vehicleRepo
             .update(idVehicle, { isActive: false })
         );

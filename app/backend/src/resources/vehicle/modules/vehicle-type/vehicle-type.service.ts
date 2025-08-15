@@ -6,7 +6,7 @@ import { CreateVehicleTypeDto } from './dto/create-vehicle-type-dto';
 import { EditVehicleTypeDto } from './dto/edit-vehicle-type-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { DatabaseError } from 'src/utils/app.errors';
-import { ExistParkedVehicleWithinModelUsingThatVehicleType, VehicleTypeDescriptionExists, VehicleTypeNotExists } from './vehicle-type.errors';
+import { ExistModelsUsingThatVehicleType, ExistParkedVehicleWithinModelUsingThatVehicleType, VehicleTypeDescriptionExists, VehicleTypeNotExists } from './vehicle-type.errors';
 
 @Injectable()
 export class VehicleTypeService {
@@ -70,24 +70,37 @@ export class VehicleTypeService {
     }
 
     async deleteVehicleType(idVehicleType: number): Promise<void> {
-        // Check if exists car parked
-        const [pServiceError, existParkedVehiclesWithThatVehicleType] = await promiseCatchError(this.vehicleTypeRepo
-            .exists({ where: {
-                models: { vehicles: {
-                    parkingServices: {
-                        isParking: true
-                    }
-                }}
-            }})
-        );
-        if(pServiceError) throw new DatabaseError();
-        if(existParkedVehiclesWithThatVehicleType)
-            throw new ExistParkedVehicleWithinModelUsingThatVehicleType();
+        // Get vehicle type
+        const [vTypeError, vehicleType] = await promiseCatchError(this.vehicleTypeRepo.findOne({where:{
+            idVehicleType: idVehicleType
+        }, relations: {
+            models: true
+        }}));
+        if(vTypeError) throw new DatabaseError();
+        if(vehicleType === null) throw new VehicleTypeNotExists();
+        
+        const existsModels = vehicleType.models.length < 1;
+        if(existsModels) throw new ExistModelsUsingThatVehicleType();
 
-        const [vehicleTypeError, result] = await promiseCatchError(this.vehicleTypeRepo
+        // Check if exists car parked
+        if(existsModels) {
+            const [pServiceError, existParkedVehiclesWithThatVehicleType] = await promiseCatchError(this.vehicleTypeRepo
+                .exists({ where: {
+                    models: { vehicles: {
+                        parkingServices: {
+                            isParking: true
+                        }
+                    }}
+                }})
+            );
+            if(pServiceError) throw new DatabaseError();
+            if(existParkedVehiclesWithThatVehicleType)
+                throw new ExistParkedVehicleWithinModelUsingThatVehicleType();
+        }
+
+        const vehicleTypeError = await promiseCatchError(this.vehicleTypeRepo
             .update(idVehicleType, { isActive: false })
         );
         if(vehicleTypeError) throw new DatabaseError();
-        if(result.affected === 0) throw new VehicleTypeNotExists();
     }
 }

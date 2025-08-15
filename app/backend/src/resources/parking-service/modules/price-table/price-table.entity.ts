@@ -41,6 +41,7 @@ export class PriceTable {
   )
   parkingServices: ParkingService[];
 
+  // Soft delete
   @ManyToOne(() => VehicleType, (vehicleType) => vehicleType.priceTables, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",

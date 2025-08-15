@@ -21,18 +21,23 @@ export class ClientService {
 
     async getActiveClients(getActiveClientsDto: GetActiveClientsDto): Promise<Client[]> {
         try {
-            const clients = this.clientRepo.find({ where: {
-                cpfCnpj: getActiveClientsDto.cpfCnpj,
-                name: getActiveClientsDto.name,
-                isActive: true,
-                clientType: {
-                    idClientType: getActiveClientsDto.idClientType
-                }
-            }, relations: {
-                clientEnterprise: true,
-                parkingServices: true
-            }});
-            
+            const query = this.clientRepo
+                .createQueryBuilder('client')
+                    .innerJoinAndSelect('client.clientType', 'clientType')
+                    .leftJoinAndSelect('client.clientEnterprise', 'clientEnterprise', 'clientEnterprise.isActive = true')
+                    .leftJoinAndSelect('client.parkingServices', 'parkingServices')
+                .where('client.isActive = true');
+
+            if(typeof getActiveClientsDto.cpfCnpj !== 'undefined')
+                query.andWhere('client.cpfCnpj = :cpfCnpj', { cpfCnpj: getActiveClientsDto.cpfCnpj });
+
+            if(typeof getActiveClientsDto.name !== 'undefined')
+                query.andWhere('client.name ILIKE :name', { name: `%${getActiveClientsDto.name}%` });
+
+            if(typeof getActiveClientsDto.idClientType !== 'undefined')
+                query.andWhere('clientType.idClientType = :idClientType', { idClientType: getActiveClientsDto.idClientType });
+
+            const clients = await query.getMany();
             return clients;
         } catch (err) {
             throw new DatabaseError();
@@ -67,8 +72,6 @@ export class ClientService {
         }
     }
 
-    // Here i am not checking existance of clientEnterprise, just not
-    // What about unique CPF? we need to handle it here
     async editClient(idClient: number, editClientDto: EditClientDto): Promise<Client> {
         const [loadError, clientData] = await promiseCatchError(this.clientRepo.preload({
             idClient: idClient,
@@ -106,11 +109,25 @@ export class ClientService {
         }
     }
 
+    // Soft delete
     async deleteClient(idClient: number): Promise<void> {
-        const [clientError, result] = await promiseCatchError(this.clientRepo
-            .update(idClient, { isActive: false })
-        );
+        const [clientError, client] = await promiseCatchError(this.clientRepo.findOne({ where: {
+           idClient: idClient 
+        }, relations: {
+            agreements: true
+        }}));
         if(clientError) throw new DatabaseError();
-        if(result.affected === 0) throw new ClientNotExists();
+        if(client === null) throw new ClientNotExists();
+
+        const currentAgreement = client.agreements.filter(a => a.isActive)[0]
+        if(currentAgreement) currentAgreement.isActive = false;
+
+        client.isActive = false;
+
+        try {
+            await this.clientRepo.save(client);
+        } catch(err) {
+            throw new DatabaseError();
+        }
     }
 }

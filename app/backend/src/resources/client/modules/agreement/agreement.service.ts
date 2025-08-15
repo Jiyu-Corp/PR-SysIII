@@ -18,7 +18,7 @@ export class AgreementService {
     ) {}
 
     async calculateServiceDiscount(agreement: Agreement, serviceValue: number): Promise<ServiceValueDto> {
-        
+        return new ServiceValueDto();
     }
 
     async getActiveAgreements(getActiveAgreementsDto: GetActiveAgreementsDto): Promise<Agreement[]> {
@@ -26,7 +26,7 @@ export class AgreementService {
             const query = this.agreementRepo
                 .createQueryBuilder('agreement')
                     .innerJoinAndSelect('agreement.client', 'client')
-                .where('agreement.isActive = :active', { active: true });
+                .where('agreement.isActive = true');
             
             if(getActiveAgreementsDto.idClient) {
                 query.andWhere('agreement.idClient = :idClient', { 

@@ -48,16 +48,20 @@ export class ParkingService {
   @Column("date", { name: "date_checkout", nullable: true })
   dateCheckout: string;
 
+  // Soft delete
   @ManyToOne(() => Agreement, (agreement) => agreement.parkingServices, {
-    onDelete: "SET NULL",
+    onDelete: "RESTRICT",
     onUpdate: "CASCADE",
+    nullable: true
   })
   @JoinColumn([{ name: "id_agreement", referencedColumnName: "idAgreement" }])
   agreement: Agreement;
 
+  // Soft delete
   @ManyToOne(() => Client, (client) => client.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
+    nullable: true
   })
   @JoinColumn([{ name: "id_client_entry", referencedColumnName: "idClient" }])
   clientEntry: Client;
@@ -69,15 +73,18 @@ export class ParkingService {
   @JoinColumn([{ name: "id_park", referencedColumnName: "idPark" }])
   park: Park;
 
+  // Soft delete
   @ManyToOne(() => PriceTable, (priceTable) => priceTable.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
+    nullable: true
   })
   @JoinColumn([
     { name: "id_price_table", referencedColumnName: "idPriceTable" },
   ])
   priceTable: PriceTable;
 
+  // Soft delete
   @ManyToOne(() => Vehicle, (vehicle) => vehicle.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",

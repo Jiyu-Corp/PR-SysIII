@@ -48,7 +48,7 @@ export class Client {
   agreements: Agreement[];
 
   @ManyToOne(() => Client, (client) => client.enterpriseClients, {
-    onDelete: "RESTRICT",
+    onDelete: "SET NULL",
     onUpdate: "CASCADE",
     nullable: true
   })

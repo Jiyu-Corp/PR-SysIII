@@ -13,7 +13,7 @@ import { Client } from '../client/client.entity';
 import { ParkService } from './modules/park/park.service';
 import { ServiceValueDto } from './dto/service-value-dto';
 import { PriceTableService } from './modules/price-table/price-table.service';
-import { ParkingServiceNotExists } from './parking-service.errors';
+import { ParkingServiceNotExists, VehicleWithoutModel } from './parking-service.errors';
 import { AgreementService } from '../client/modules/agreement/agreement.service';
 
 @Injectable()
@@ -80,6 +80,8 @@ export class ParkingServiceService {
             : this.vehicleService.editVehicle(vehicleDto.idVehicle, vehicleDto)
         );
         if(vehicleError) throw vehicleError;
+        if(vehicle.model === null) 
+                throw new VehicleWithoutModel(); // Maybe that will never happen because the handlers of create/edit vehicle
 
         try {
             const serviceData = await this.parkingServiceRepo.create({

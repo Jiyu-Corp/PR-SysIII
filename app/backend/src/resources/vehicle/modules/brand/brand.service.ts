@@ -17,9 +17,9 @@ export class BrandService {
         try {
             const brands = this.brandRepo
                 .createQueryBuilder('brand')
-                    .leftJoinAndSelect('brand.models', 'model', 'model.isActive = :modelActive', { modelActive: true })
+                    .leftJoinAndSelect('brand.models', 'model', 'model.isActive = true')
                     .leftJoinAndSelect('model.vehicleType', 'vehicleType')
-                .where('brand.isActive = :brandActive', { brandActive: true })
+                .where('brand.isActive = true')
                 .getMany();
     
             return brands;

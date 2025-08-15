@@ -45,6 +45,7 @@ export class Agreement {
   @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
   dateUpdate: string;
 
+  // soft delete
   @ManyToOne(() => Client, (client) => client.agreements, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
