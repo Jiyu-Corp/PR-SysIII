@@ -16,7 +16,7 @@ import { Vehicle } from "../vehicle/vehicle.entity";
 
 @Index("client_pkey", ["idClient"], { unique: true })
 
-@Index('UK_Client_cpfCnpj', ['cpfCnpj'], { unique: true, where: '"isActive" = TRUE' })
+@Index('UK_Client_cpfCnpj', ['cpfCnpj'], { unique: true, where: '"is_active" = TRUE' })
 
 @Entity("client", { schema: "public" })
 export class Client {

@@ -10,7 +10,7 @@ import { PriceTable } from "src/resources/parking-service/modules/price-table/pr
 
 @Index("vehicle_type_pkey", ["idVehicleType"], { unique: true })
 
-@Index('UK_VehicleType_description', ['description'], { unique: true, where: '"isActive" = TRUE' })
+@Index('UK_VehicleType_description', ['description'], { unique: true, where: '"is_active" = TRUE' })
 
 @Entity("vehicle_type", { schema: "public" })
 export class VehicleType {

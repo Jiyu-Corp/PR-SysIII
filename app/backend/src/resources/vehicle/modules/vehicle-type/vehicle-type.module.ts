@@ -10,5 +10,6 @@ import { VehicleType } from './vehicle-type.entity';
     ],
     controllers: [VehicleTypeController],
     providers: [VehicleTypeService],
+    exports: [VehicleTypeService]
 })
 export class VehicleTypeModule {}

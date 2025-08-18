@@ -12,7 +12,7 @@ import { ParkingService } from "src/resources/parking-service/parking-service.en
 
 @Index("agreement_pkey", ["idAgreement"], { unique: true })
 
-@Index('UK_Agreement_idClient', ['id_client'], { unique: true, where: '"isActive" = TRUE' })
+@Index('UK_Agreement_idClient', ['client'], { unique: true, where: '"is_active" = TRUE' })
 
 @Entity("agreement", { schema: "public" })
 export class Agreement {
@@ -21,15 +21,13 @@ export class Agreement {
 
   @Column("double precision", {
     name: "fix_discount",
-    nullable: true,
-    precision: 53,
+    nullable: true
   })
   fixDiscount: number | null;
 
   @Column("double precision", {
     name: "percentage_discount",
-    nullable: true,
-    precision: 53,
+    nullable: true
   })
   percentageDiscount: number | null;
 

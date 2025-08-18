@@ -14,7 +14,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
         password: config.get<string>('DATABASE_PWRD'),
         database: config.get<string>('DATABASE_DB'),
         autoLoadEntities: true,
-        synchronize: false,
+        synchronize: true,
         ssl: {
             rejectUnauthorized: false
         }

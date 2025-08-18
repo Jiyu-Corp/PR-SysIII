@@ -5,14 +5,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ParkingService } from './parking-service.entity';
 import { ParkModule } from './modules/park/park.module';
 import { PriceTableModule } from './modules/price-table/price-table.module';
+import { AgreementModule } from '../client/modules/agreement/agreement.module';
+import { ClientModule } from '../client/client.module';
+import { VehicleModule } from '../vehicle/vehicle.module';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([ParkingService]),
+        ClientModule,
+        VehicleModule,
         ParkModule,
-        PriceTableModule
+        PriceTableModule,
+        AgreementModule
     ],
     controllers: [ParkingServiceController],
     providers: [ParkingServiceService],
+    exports: [ParkingServiceService]
 })
 export class ParkingServiceModule {}

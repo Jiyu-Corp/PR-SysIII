@@ -13,14 +13,14 @@ import { PriceTableHour } from "./modules/price-table-hour/price-table-hour.enti
 
 @Index("price_table_pkey", ["idPriceTable"], { unique: true })
 
-@Index('UK_PriceTable_idVehicleType', ['id_vehicle_type'], { unique: true, where: '"isActive" = TRUE' })
+@Index('UK_PriceTable_idVehicleType', ['vehicleType'], { unique: true, where: '"is_active" = TRUE' })
 
 @Entity("price_table", { schema: "public" })
 export class PriceTable {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_price_table" })
   idPriceTable: number;
 
-  @Column("double precision", { name: "price_per_hour", precision: 53 })
+  @Column("double precision", { name: "price_per_hour" })
   pricePerHour: number;
 
   @Column("integer", { name: "tolerance_minutes", nullable: true })
@@ -53,7 +53,7 @@ export class PriceTable {
 
   @OneToMany(
     () => PriceTableHour,
-    (priceTableHour) => priceTableHour.idPriceTable
+    (priceTableHour) => priceTableHour.priceTable
   )
   priceTableHours: PriceTableHour[];
 }

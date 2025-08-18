@@ -10,5 +10,6 @@ import { Model } from './model.entity';
     ],
     controllers: [ModelController],
     providers: [ModelService],
+    exports: [ModelService]
 })
 export class ModelModule {}

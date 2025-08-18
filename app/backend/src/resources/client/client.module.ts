@@ -14,5 +14,6 @@ import { AgreementModule } from './modules/agreement/agreement.module';
     ],
     controllers: [ClientController],
     providers: [ClientService],
+    exports: [ClientService]
 })
 export class ClientModule {}

@@ -16,5 +16,6 @@ import { BrandModule } from './modules/brand/brand.module';
     ],
     controllers: [VehicleController],
     providers: [VehicleService],
+    exports: [VehicleService]
 })
 export class VehicleModule {}

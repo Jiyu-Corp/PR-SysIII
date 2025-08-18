@@ -10,5 +10,6 @@ import { ParkingService } from '../parking-service/parking-service.entity';
     ],
     controllers: [ReportController],
     providers: [ReportService],
+    exports: [ReportService]
 })
 export class ReportModule {}

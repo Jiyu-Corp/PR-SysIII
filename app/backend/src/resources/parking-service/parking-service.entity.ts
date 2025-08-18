@@ -21,21 +21,19 @@ export class ParkingService {
   @Column("boolean", { name: "is_parking", default: () => "true" })
   isParking: boolean;
 
-  @Column("double precision", { name: "price", nullable: true, precision: 53 })
+  @Column("double precision", { name: "price", nullable: true })
   price: number | null;
 
   @Column("double precision", {
     name: "discount_additional",
     nullable: true,
-    precision: 53,
     default: () => "0",
   })
   discountAdditional: number | null;
 
   @Column("double precision", {
     name: "total_price",
-    nullable: true,
-    precision: 53,
+    nullable: true
   })
   totalPrice: number | null;
 

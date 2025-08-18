@@ -17,7 +17,7 @@ export class PriceTableHour {
   @Column("integer", { name: "hour" })
   hour: number;
 
-  @Column("double precision", { name: "price", precision: 53 })
+  @Column("double precision", { name: "price" })
   price: number;
 
   @ManyToOne(() => PriceTable, (priceTable) => priceTable.priceTableHours, {
@@ -27,5 +27,5 @@ export class PriceTableHour {
   @JoinColumn([
     { name: "id_price_table", referencedColumnName: "idPriceTable" },
   ])
-  idPriceTable: PriceTable;
+  priceTable: PriceTable;
 }

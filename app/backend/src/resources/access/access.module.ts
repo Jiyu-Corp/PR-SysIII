@@ -14,5 +14,6 @@ import { EncryptionModule } from 'src/encryption/encryption.module';
   ],
   controllers: [AccessController],
   providers: [AccessService],
+  exports: [AccessService]
 })
 export class AccessModule {}

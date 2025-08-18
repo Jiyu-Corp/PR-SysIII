@@ -12,5 +12,6 @@ import { PriceTableHourModule } from './modules/price-table-hour/price-table-hou
     ],
     controllers: [PriceTableController],
     providers: [PriceTableService],
+    exports: [PriceTableService]
 })
 export class PriceTableModule {}

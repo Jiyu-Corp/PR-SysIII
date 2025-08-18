@@ -10,5 +10,6 @@ import { Agreement } from './agreement.entity';
     ],
     controllers: [AgreementController],
     providers: [AgreementService],
+    exports: [AgreementService]
 })
 export class AgreementModule {}

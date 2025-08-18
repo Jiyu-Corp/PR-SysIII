@@ -10,5 +10,6 @@ import { TicketModel } from './ticket-model.entity';
     ],
     controllers: [TicketModelController],
     providers: [TicketModelService],
+    exports: [TicketModelService]
 })
 export class TicketModelModule {}

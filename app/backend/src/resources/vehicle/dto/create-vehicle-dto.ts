@@ -3,6 +3,13 @@ import { IsDefined, IsNumber, IsObject, IsOptional, IsPositive, IsString, IsUppe
 import { CreateModelDto } from "../modules/model/dto/create-model-dto";
 import { Type } from "class-transformer";
 
+class CreateVehicleModelDto extends PartialType(CreateModelDto) {
+	@IsOptional()
+	@IsNumber()
+	@IsPositive()
+	readonly idModel?: number
+}
+
 export class CreateVehicleDto {
 	//Placa
 	@IsDefined()
@@ -37,11 +44,4 @@ export class CreateVehicleDto {
 	@IsPositive()
 	idClient?: number
 
-}
-
-class CreateVehicleModelDto extends PartialType(CreateModelDto) {
-	@IsOptional()
-	@IsNumber()
-	@IsPositive()
-	readonly idModel?: number
 }
