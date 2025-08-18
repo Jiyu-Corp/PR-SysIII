@@ -2,7 +2,7 @@
     --card-bg:#ffffff;
     --border:#e6eaf0;
     --muted:#6b7280;
-    --accent:#2f80ed;
+    --accent:#4A87E8;
   }
   
   /* wrapper for the filter panel */
@@ -23,16 +23,15 @@
     margin-bottom:0.75rem;
   }
 
-  .generic-filters-header::after {
+  .generic-filter-line {    
     content: "";
-    position: absolute;
-    margin-top: 60px;
-    width: 84%;
+    position: relative;
+    width: 103%;
     height: 1px;
-    background: #2c2c2c;
+    background: #2c2c2c57;
     pointer-events: none;
     z-index: 0;
-    margin-left: -16px;
+    margin-left: -20px;
   }
   
   .generic-filters-badge {

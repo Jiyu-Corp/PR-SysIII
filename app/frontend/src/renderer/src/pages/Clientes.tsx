@@ -165,6 +165,7 @@ export default function ClientesPage() {
           <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
           <GenericFilters fields={filters} onSearch={handleSearch} />
           <GenericTable
+            title="Listagem de Clientes"
             columns={columns}
             rows={rowsToShow}
             actions={actions}

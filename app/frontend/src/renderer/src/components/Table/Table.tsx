@@ -1,10 +1,8 @@
 // GenericTable.tsx
 import React, { useMemo } from "react";
 import './Table.css'
+import {FileCsvIcon} from '@phosphor-icons/react'; 
 
-/**
- * Generic types you can also export from a central `types.ts` if you prefer
- */
 export type TableColumn<T> = {
   key: keyof T | string;
   label: string;
@@ -20,8 +18,9 @@ export type TableAction<T> = {
 };
 
 export interface GenericTableProps<T extends Record<string, any>> {
+  title?: string;
   columns: TableColumn<T>[];
-  rows: T[];                          // <-- here: 'rows' is the prop name your page uses
+  rows: T[];                        
   actions?: TableAction<T>[];
   perPage?: number;
   total?: number | null;
@@ -30,6 +29,7 @@ export interface GenericTableProps<T extends Record<string, any>> {
 }
 
 function Table<T extends Record<string, any>>({
+  title = "Título",
   columns,
   rows,
   actions = [],
@@ -45,11 +45,16 @@ function Table<T extends Record<string, any>>({
 
   return (
     <section className={`generic-table ${className}`}>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto">      
+        <div className="generic-table-header">
+          <h2 className="generic-top-title">{title}</h2>
           <button className="btn--small" onClick={onGenerateCSV}>
             Gerar CSV
+            <FileCsvIcon size={20} />
           </button>
-        <table className="min-w-full text-sm">
+        </div>  
+        <div className="generic-table-line"></div>
+        <table className="min-w-full text-sm" style={{ marginTop: "20px" }}>
           <thead>
             <tr className="bg-sky-600 text-white text-left">
               {columns.map((col) => (
