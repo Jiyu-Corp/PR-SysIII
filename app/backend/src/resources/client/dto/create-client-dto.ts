@@ -9,6 +9,7 @@ export class CreateClientDto {
     @IsDefined()
     @IsString()
     @Length(11, 14)
+    @IsNotEmpty()
     readonly cpfCnpj: string;
 
     @IsOptional()

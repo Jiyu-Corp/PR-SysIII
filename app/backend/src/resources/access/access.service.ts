@@ -88,7 +88,7 @@ export class AccessService {
 
         if(loginAccess === null) throw new LoginNotExists();
 
-        const isWrongPassword = this.encryptService.decrypt(loginAccess.password) == loginDto.password;
+        const isWrongPassword = this.encryptService.decrypt(loginAccess.password) != loginDto.password;
         if(isWrongPassword) throw new WrongPassword();
         
         const authToken = await this.authService.signPayload({ 

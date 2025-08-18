@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { AccessService } from './access.service';
 import { LoginDto } from './dto/login-dto';
 import { AccessAuthDto } from './dto/access-auth-dto';
@@ -36,7 +36,7 @@ export class AccessController {
         return accessAuth;
     }
 
-    @Post('changePassword')
+    @Put('changePassword')
     async changePassword(@Body() changePasswordDto: ChangePasswordDto): Promise<AccessAuthDto> {
         const [httpError, accessAuth] = await promiseCatchErrorHTTPDefault(this.accessService.changePassword(changePasswordDto));
         if(httpError) throw httpError;
