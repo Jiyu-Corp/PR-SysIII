@@ -10,12 +10,15 @@ import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { EditPriceTableDto } from './dto/edit-price-table-dto';
 import { DatabaseError } from 'src/utils/app.errors';
 import { ExistParkedVehicleWithinModelUsingThatPriceTable, PriceTableNotExists, PriceTableVehicleTypeExists } from './price-table.errors';
+import { PriceTableHour } from './modules/price-table-hour/price-table-hour.entity';
 
 @Injectable()
 export class PriceTableService {
     constructor(
         @InjectRepository(PriceTable)
-        private readonly priceTableRepo: Repository<PriceTable>
+        private readonly priceTableRepo: Repository<PriceTable>,
+        @InjectRepository(PriceTableHour)
+        private readonly priceTableHourRepo: Repository<PriceTableHour>
     ) {}
 
     async calculateServiceValue(parkingService: ParkingService): Promise<ServiceValueDto> {
@@ -27,6 +30,7 @@ export class PriceTableService {
             const query = this.priceTableRepo
                 .createQueryBuilder('priceTable')
                     .innerJoinAndSelect('priceTable.vehicleType', 'vehicleType')
+                    .leftJoinAndSelect('priceTable.priceTableHours', 'priceTableHours')
                 .where('priceTable.isActive = :active', { active: true });
             
             if(getActivePriceTablesDto.idVehicleType) {
@@ -58,7 +62,12 @@ export class PriceTableService {
                 vehicleType: {
                     idVehicleType: createPriceTableDto.idVehicleType
                 },
-                priceTableHours: createPriceTableDto.priceTableHours
+                priceTableHours: typeof createPriceTableDto.priceTableHours !== 'undefined' // for some reason, that is not being saved...
+                    ? createPriceTableDto.priceTableHours.map(pth => this.priceTableHourRepo.create({
+                        hour: pth.hour,
+                        price: pth.price
+                    }))
+                    : undefined
             });
             const priceTable = await this.priceTableRepo.save(priceTableData);
 
@@ -81,7 +90,13 @@ export class PriceTableService {
                 vehicleType: {
                     idVehicleType: editPriceTableDto.idVehicleType
                 },
-                priceTableHours: editPriceTableDto.priceTableHours
+                priceTableHours: typeof editPriceTableDto.priceTableHours !== 'undefined'
+                    ? editPriceTableDto.priceTableHours.map(pth => this.priceTableHourRepo.create({
+                        idPriceTableHour: pth.idPriceTableHour,
+                        hour: pth.hour,
+                        price: pth.price
+                    }))
+                    : undefined
             }
         }));
         

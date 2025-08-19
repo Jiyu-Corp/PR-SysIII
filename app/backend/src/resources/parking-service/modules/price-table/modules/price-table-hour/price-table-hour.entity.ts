@@ -23,6 +23,7 @@ export class PriceTableHour {
   @ManyToOne(() => PriceTable, (priceTable) => priceTable.priceTableHours, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
+    cascade: ["insert", "update"]
   })
   @JoinColumn([
     { name: "id_price_table", referencedColumnName: "idPriceTable" },

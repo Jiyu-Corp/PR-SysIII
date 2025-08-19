@@ -88,7 +88,7 @@ export class VehicleService {
                     ? { idClient: createVehicleDto.idClient }
                     : undefined,
                 model: {
-                    idModel: typeof model.idModel !== 'undefined'
+                    idModel: typeof model.idModel !== 'undefined' // can be simplified
                         ? model.idModel
                         : undefined,
                     name: model.nameModel,
