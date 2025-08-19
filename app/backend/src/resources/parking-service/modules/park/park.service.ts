@@ -21,7 +21,6 @@ export class ParkService {
 
             return park;
         } catch(err) {
-            console.log(err);
             if(err instanceof ExpectedError) throw err;
             
             throw new DatabaseError();

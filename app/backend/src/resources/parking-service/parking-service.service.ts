@@ -66,7 +66,7 @@ export class ParkingServiceService {
         let client: Client | undefined;
         if(clientDto) {
             let clientError;
-            console.log(clientDto instanceof CreateClientDto);
+            
             [clientError, client] = await promiseCatchError(clientDto instanceof CreateClientDto
                 ? this.clientService.createClient(clientDto)
                 : this.clientService.editClient(clientDto.idClient, clientDto)
@@ -76,7 +76,6 @@ export class ParkingServiceService {
             vehicleDto.idClient = client.idClient;
         }
         
-        console.log(vehicleDto instanceof CreateVehicleDto);
         const [vehicleError, vehicle] = await promiseCatchError(vehicleDto instanceof CreateVehicleDto
             ? this.vehicleService.createVehicle(vehicleDto)
             : this.vehicleService.editVehicle(vehicleDto.idVehicle, vehicleDto)
