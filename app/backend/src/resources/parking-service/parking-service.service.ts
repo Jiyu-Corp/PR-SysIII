@@ -66,22 +66,27 @@ export class ParkingServiceService {
         let client: Client | undefined;
         if(clientDto) {
             let clientError;
+            console.log(clientDto instanceof CreateClientDto);
             [clientError, client] = await promiseCatchError(clientDto instanceof CreateClientDto
                 ? this.clientService.createClient(clientDto)
                 : this.clientService.editClient(clientDto.idClient, clientDto)
             );
             if(clientError || typeof client === 'undefined') throw clientError;
-
+            
             vehicleDto.idClient = client.idClient;
         }
-
+        
+        console.log(vehicleDto instanceof CreateVehicleDto);
         const [vehicleError, vehicle] = await promiseCatchError(vehicleDto instanceof CreateVehicleDto
             ? this.vehicleService.createVehicle(vehicleDto)
             : this.vehicleService.editVehicle(vehicleDto.idVehicle, vehicleDto)
         );
+        if(client && (vehicleError || vehicle.model === null)) 
+            this.clientService.deleteClient(client.idClient); // Delete created client if vehicle creation didnt worked 
+
         if(vehicleError) throw vehicleError;
         if(vehicle.model === null) 
-                throw new VehicleWithoutModel(); // Maybe that will never happen because the handlers of create/edit vehicle
+            throw new VehicleWithoutModel(); // Maybe that will never happen because the handlers of create/edit vehicle
 
         try {
             const serviceData = await this.parkingServiceRepo.create({
@@ -93,6 +98,9 @@ export class ParkingServiceService {
 
             return service;
         } catch (err) {
+            if(client) this.clientService.deleteClient(client.idClient);
+            this.vehicleService.deleteVehicle(vehicle.idVehicle);
+
             throw new DatabaseError();
         }
     }

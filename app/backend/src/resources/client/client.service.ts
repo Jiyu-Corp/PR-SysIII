@@ -64,6 +64,7 @@ export class ClientService {
             
             return client;
         } catch (err) {
+            console.log(err);
             throw buildDatabaseError(err, {
                 UKErrors: [
                     new ClientCpfCnpjExists()

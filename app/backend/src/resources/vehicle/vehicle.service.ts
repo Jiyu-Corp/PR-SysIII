@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { GetActiveVehiclesDto } from './dto/get-active-vehicles-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
-import { VehicleIsParked, VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
+import { BrandNameExists, ModelNameExists, VehicleIsParked, VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
 import { Model } from './modules/model/model.entity';
 import { Brand } from './modules/brand/brand.entity';
 
@@ -109,7 +109,9 @@ export class VehicleService {
         } catch (err) {
             throw buildDatabaseError(err, {
                 UKErrors: [
-                    new VehiclePlateExists()
+                    new VehiclePlateExists(),
+                    new ModelNameExists(),
+                    new BrandNameExists()
                 ]
             })
         }
@@ -156,10 +158,11 @@ export class VehicleService {
             
             return updatedVehicle;
         } catch (err) {
-            console.log(err)
             throw buildDatabaseError(err, {
                 UKErrors: [
-                    new VehiclePlateExists()
+                    new VehiclePlateExists(),
+                    new ModelNameExists(),
+                    new BrandNameExists()
                 ]
             });
         }
