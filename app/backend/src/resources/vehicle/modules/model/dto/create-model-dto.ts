@@ -3,13 +3,12 @@ import { CreateBrandDto } from "../../brand/dto/create-brand-dto";
 import { Type } from "class-transformer";
 
 export class CreateModelDto {
-	@ValidateIf((dto) => dto.brand === undefined)
+	@ValidateIf((dto) => dto.brand == undefined)
 	@IsDefined()
 	@IsNumber()
 	@IsPositive()
 	readonly idBrand?: number
 
-	@ValidateIf((dto) => dto.idBrand === undefined)
 	@IsDefined()
 	@IsObject()
 	@ValidateNested()
