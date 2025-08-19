@@ -1,0 +1,15 @@
+import { Module } from '@nestjs/common';
+import { AgreementService } from './agreement.service';
+import { AgreementController } from './agreement.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Agreement } from './agreement.entity';
+
+@Module({
+    imports: [
+        TypeOrmModule.forFeature([Agreement])
+    ],
+    controllers: [AgreementController],
+    providers: [AgreementService],
+    exports: [AgreementService]
+})
+export class AgreementModule {}

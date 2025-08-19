@@ -1,0 +1,96 @@
+import { Injectable } from '@nestjs/common';
+import { Repository } from 'typeorm';
+import { TicketModel } from './ticket-model.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { DatabaseError } from 'src/utils/app.errors';
+import { GetTicketModelsDto } from './dto/get-ticket-models-dto';
+import { CreateTicketModelDto } from './dto/create-ticket-model-dto';
+import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
+import { TicketModelNameExists, TicketModelNotExists } from './ticket-model.errors';
+import { EditTicketModelDto } from './dto/edit-ticket-model-dto';
+
+@Injectable()
+export class TicketModelService {
+    constructor(
+        @InjectRepository(TicketModel)
+        private readonly ticketModelRepo: Repository<TicketModel>
+    ) {}
+
+    async getTicketModels(getTicketModelsDto: GetTicketModelsDto): Promise<TicketModel[]> {
+        try {  
+            const query = this.ticketModelRepo
+                .createQueryBuilder('ticketModel')
+                .where('1=1')
+            
+            if(getTicketModelsDto.name) {
+                query.andWhere("ticketModel.name ILIKE :name", { 
+                    name: `%${getTicketModelsDto.name}%` 
+                });
+            }
+
+            if(getTicketModelsDto.dateRegisterStart && getTicketModelsDto.dateRegisterEnd) {
+                query.andWhere('ticketModel.dateRegister BETWEEN :dateRegisterStart AND :dateRegisterEnd', { 
+                    dateRegisterStart: getTicketModelsDto.dateRegisterStart,
+                    dateRegisterEnd: getTicketModelsDto.dateRegisterEnd,
+                })
+            }
+                
+            const ticketModels = await query.getMany();
+            
+            return ticketModels;
+        } catch (err) {
+            throw new DatabaseError();
+        }
+    }
+
+    async createTicketModel(createTicketModelDto: CreateTicketModelDto): Promise<TicketModel> {
+        try {
+            const ticketModelData = this.ticketModelRepo.create(createTicketModelDto);
+            const ticketModel = await this.ticketModelRepo.save(ticketModelData);
+
+            return ticketModel;
+        } catch (err) {
+            throw buildDatabaseError(err, {
+                UKErrors: [
+                    new TicketModelNameExists()
+                ]
+            })
+        }
+    }
+    
+    async editTicketModel(idTicketModel: number, editTicketModelDto: EditTicketModelDto): Promise<TicketModel> {
+        const [loadError, ticketModelData] = await promiseCatchError(this.ticketModelRepo.preload({
+            idTicketModel: idTicketModel,
+            ... {
+                name: editTicketModelDto.name,
+                header: editTicketModelDto.header,
+                footer: editTicketModelDto.footer
+            }
+        }));
+        
+        if(loadError)
+            throw new DatabaseError();
+            
+        if(typeof ticketModelData === 'undefined') throw new TicketModelNotExists();
+
+        try {
+            const updatedTicketModel = await this.ticketModelRepo.save(ticketModelData);
+            
+            return updatedTicketModel;
+        } catch (err) {
+            throw buildDatabaseError(err, {
+                UKErrors: [
+                    new TicketModelNameExists()
+                ]
+            });
+        }
+    }
+
+    async deleteTicketModel(idTicketModel: number): Promise<void> {
+        const [ticketModelError, result] = await promiseCatchError(this.ticketModelRepo
+            .update(idTicketModel, { isActive: false })
+        );
+        if(ticketModelError) throw new DatabaseError();
+        if(result.affected === 0) throw new TicketModelNotExists();
+    }
+}

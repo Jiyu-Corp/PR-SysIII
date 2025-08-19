@@ -1,35 +1,46 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 import { AccessService } from './access.service';
-import { from, Observable } from 'rxjs';
 import { LoginDto } from './dto/login-dto';
-import { AuthTokenDto } from './dto/auth-token-dto';
+import { AccessAuthDto } from './dto/access-auth-dto';
 import { ChangePasswordDto } from './dto/change-password-dto';
 import { Public } from 'src/decorators/public.decorator';
+import { promiseCatchErrorHTTPDefault } from 'src/utils/utils';
 
+// Implement DTO validation 
 @Controller('access')
 export class AccessController {
     constructor(private readonly accessService: AccessService) {}
 
     @Public()
     @Get('getDefault')
-    getDefaultUsername(): Promise<string> {
-        return this.accessService.getDefault(true) as Promise<string>;
+    async getDefaultUsername(): Promise<string> {
+        const [httpError, defaultAccess] = await promiseCatchErrorHTTPDefault(this.accessService.getDefault(true));
+        if(httpError) throw httpError;
+
+        return defaultAccess.username;
     }
 
     @Public()
     @Post('forgotPassword')
-    forgotPassword(@Body() body: { idAccess: number }): Promise<boolean> {
-        return this.accessService.forgotPassword(body.idAccess);
+    async forgotPassword(@Body() body: { idAccess: number }): Promise<void> {
+        const [httpError] = await promiseCatchErrorHTTPDefault(this.accessService.forgotPassword(body.idAccess));
+        if(httpError) throw httpError;
     }
 
     @Public()
     @Post('login')
-    login(@Body() loginDto: LoginDto): Promise<AuthTokenDto | null> {
-        return this.accessService.login(loginDto);
+    async login(@Body() loginDto: LoginDto): Promise<AccessAuthDto> {
+        const [httpError, accessAuth] = await promiseCatchErrorHTTPDefault(this.accessService.login(loginDto));
+        if(httpError) throw httpError;
+
+        return accessAuth;
     }
 
-    @Post('changePassword')
-    changePassword(@Body() changePasswordDto: ChangePasswordDto): Promise<AuthTokenDto | null> {
-        return this.accessService.changePassword(changePasswordDto);
-    }
+    @Put('changePassword')
+    async changePassword(@Body() changePasswordDto: ChangePasswordDto): Promise<AccessAuthDto> {
+        const [httpError, accessAuth] = await promiseCatchErrorHTTPDefault(this.accessService.changePassword(changePasswordDto));
+        if(httpError) throw httpError;
+
+        return accessAuth;
+    } 
 }

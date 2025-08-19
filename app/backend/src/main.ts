@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const port = 3001;
@@ -12,6 +13,14 @@ async function bootstrap() {
     allowedHeaders: '*', // Allow specific headers
     credentials: true, // Allow credentials (cookies, authorization headers, etc.)
   });
+
+  // Check DTO 
+  app.useGlobalPipes(
+    new ValidationPipe({
+        whitelist: true,
+        transform: true
+    })
+  );
 
   await app.listen(process.env.PORT ?? port).then(() =>
     console.log(`Server started at port ${port}`)

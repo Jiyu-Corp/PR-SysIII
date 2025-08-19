@@ -1,37 +1,45 @@
 import { Injectable } from '@nestjs/common';
-import { Access } from './entities/access.entity';
+import { Access } from './access.entity';
 import { LoginDto } from './dto/login-dto';
 import { ChangePasswordDto } from './dto/change-password-dto';
-import { AuthTokenDto } from './dto/auth-token-dto';
+import { AccessAuthDto } from './dto/access-auth-dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, TypeORMError } from 'typeorm';
 import { MailService } from '../../mail/mail.service';
 import { randomBytes } from 'crypto';
 import { EncryptionService } from 'src/encryption/encryption.service';
 import { AuthService } from 'src/auth/auth.service';
+import { DatabaseError, UnexpectedError } from 'src/utils/app.errors';
+import { promiseCatchError } from 'src/utils/utils';
+import { DefaultAccessNotDefined, LoginNotExists, WrongPassword } from './access.errors';
 
 @Injectable()
 export class AccessService {
     constructor(
         @InjectRepository(Access)
-        private readonly acessRepo: Repository<Access>,
+        private readonly accessRepo: Repository<Access>,
         private readonly mailService: MailService,
         private readonly encryptService: EncryptionService,
         private readonly authService: AuthService
     ) {}
 
-    async getDefault(justUsername: boolean): Promise<Access|string> {
-        const firstCreatedAccess = await this.acessRepo
-            .findOne({
-                order: {
-                    idAccess: "ASC"
-                }
-            });
-        if(firstCreatedAccess == null)
-            return '';
+    async getDefault(seePassword: boolean): Promise<Access> {
+        const [dbError, firstCreatedAccess] = await promiseCatchError(seePassword
+            ? this.accessRepo
+                .createQueryBuilder('access')
+                .addSelect('access.password')
+                .orderBy('access.idAccess', 'ASC')
+                .getOne()
+            : this.accessRepo
+                .findOne({
+                    order: {
+                        idAccess: "ASC"
+                    }
+                })
+        );
+        if(dbError) throw new DatabaseError();
 
-        if(justUsername) 
-            return firstCreatedAccess.username;
+        if(firstCreatedAccess == null) throw new DefaultAccessNotDefined();
 
         return firstCreatedAccess;
     }
@@ -41,64 +49,73 @@ export class AccessService {
         return buf.toString('base64url').slice(0, size);
     }
 
-    async forgotPassword(idAccess: number): Promise<boolean> {
-        const access = await this.acessRepo
+    async forgotPassword(idAccess: number): Promise<void> {
+        const [dbError, access] = await promiseCatchError(this.accessRepo
             .findOne({
                 where: { idAccess: idAccess }
-            });
-        if(access == null) 
-                return false;
+            }));
+        if(dbError) throw new DatabaseError();
+        
+        if(access == null) return;
 
         const newPassword = this.generateSimplePassword();
         const newPasswordEncrypted = this.encryptService.encrypt(newPassword);
 
         try {
             access.password = newPasswordEncrypted;
-            await this.acessRepo.save(access);
+            await this.accessRepo.save(access);
 
             await this.mailService.sendResetPassword(
                 access.email,
                 access.username,
                 newPassword
             );
-
-            return true;
         } catch (err) {
-            return false;
+            if(err instanceof TypeORMError)
+                throw new DatabaseError();
+            
+            throw new UnexpectedError();
         }
     }
 
-    async login(loginDto: LoginDto): Promise<AuthTokenDto | null> {
-        const loginAccess = await this.acessRepo
-            .findOne({where: {
-                username: loginDto.username
-            }});
-        if(loginAccess === null) return null;
+    async login(loginDto: LoginDto): Promise<AccessAuthDto> {
+        const [loginError, loginAccess] = await promiseCatchError(this.accessRepo
+            .createQueryBuilder('access')
+            .addSelect('access.password')
+            .where('access.username = :username', { username: loginDto.username })
+            .getOne());
+        if(loginError) throw new DatabaseError();
 
-        const isWrongPassword = this.encryptService.decrypt(loginAccess.password) == loginDto.password;
-        if(isWrongPassword) return null;
+        if(loginAccess === null) throw new LoginNotExists();
+
+        const isWrongPassword = this.encryptService.decrypt(loginAccess.password) != loginDto.password;
+        if(isWrongPassword) throw new WrongPassword();
         
         const authToken = await this.authService.signPayload({ 
             idAccess: loginAccess.idAccess,
             username: loginAccess.username 
         });
 
-        return { authToken: authToken };
+        return { 
+            access: loginAccess,
+            authToken: authToken 
+        };
     }
 
-    async changePassword(changePasswordDto: ChangePasswordDto): Promise<AuthTokenDto | null> {
-        const loginAccess = await this.acessRepo
-            .findOne({where: {
-                username: changePasswordDto.username
-            }});
-        if(loginAccess === null) return null;
+    async changePassword(changePasswordDto: ChangePasswordDto): Promise<AccessAuthDto> {
+        const [accessError, loginAuth] = await promiseCatchError(this.login({
+            username: changePasswordDto.username,
+            password: changePasswordDto.password
+        }));
+        if(accessError) throw accessError;
 
-        const isWrongPassword = this.encryptService.decrypt(loginAccess.password) == changePasswordDto.password;
-        if(isWrongPassword) return null;
-        
+        const {access: loginAccess} = loginAuth;
+
         const newPasswordEncrypted = this.encryptService.encrypt(changePasswordDto.newPassword);
         loginAccess.password = newPasswordEncrypted;
-        await this.acessRepo.save(loginAccess);
+       
+        const [changePassDBError] = await promiseCatchError(this.accessRepo.save(loginAccess));
+        if(changePassDBError) throw new DatabaseError();
 
         return this.login({
             username: changePasswordDto.username,
