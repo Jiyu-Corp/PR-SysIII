@@ -1,24 +1,7 @@
-// GenericFilters.tsx
 import React, { useState } from "react";
 import './Filters.css'
 import {MagnifyingGlassIcon} from '@phosphor-icons/react';
-
-export type FilterOption = { value: string; label: string };
-export type FilterField = {
-  key: string;
-  label?: string;
-  type?: "text" | "number" | "date" | "select";
-  placeholder?: string;
-  default?: string;
-  options?: FilterOption[];
-};
-
-export interface GenericFiltersProps {
-  fields: FilterField[];                   
-  onSearch?: (values: Record<string, any>) => void;
-  initial?: Record<string, any>;
-  className?: string;
-}
+import type { FilterField, GenericFiltersProps } from "../../types/FilterTypes";
 
 const Filters: React.FC<GenericFiltersProps> = ({
   fields,
@@ -52,7 +35,6 @@ const Filters: React.FC<GenericFiltersProps> = ({
                 key={f.key}
                 value={state[f.key] ?? ""}
                 onChange={(e) => handleChange(f.key, e.target.value)}
-                className=""
               >
                 <option value="">{f.placeholder ?? f.label}</option>
                 {f.options?.map((opt) => (

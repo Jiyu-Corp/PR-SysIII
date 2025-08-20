@@ -1,32 +1,7 @@
-// GenericTable.tsx
 import React, { useMemo } from "react";
 import './Table.css'
 import {FileCsvIcon} from '@phosphor-icons/react'; 
-
-export type TableColumn<T> = {
-  key: keyof T | string;
-  label: string;
-  placeholder?: string;
-  render?: (row: T) => React.ReactNode;
-};
-
-export type TableAction<T> = {
-  key: string;
-  label?: string;
-  icon?: React.ReactNode;
-  onClick?: (row: T) => void;
-};
-
-export interface GenericTableProps<T extends Record<string, any>> {
-  title?: string;
-  columns: TableColumn<T>[];
-  rows: T[];                        
-  actions?: TableAction<T>[];
-  perPage?: number;
-  total?: number | null;
-  onGenerateCSV?: () => void;
-  className?: string;
-}
+import type { TableAction, GenericTableProps } from "../../types/TableTypes.ts";
 
 function Table<T extends Record<string, any>>({
   title = "Título",
@@ -45,7 +20,7 @@ function Table<T extends Record<string, any>>({
 
   return (
     <section className={`generic-table ${className}`}>
-      <div className="overflow-x-auto">      
+      <div>      
         <div className="generic-table-header">
           <h2 className="generic-top-title">{title}</h2>
           <button className="btn--small" onClick={onGenerateCSV}>
@@ -54,32 +29,32 @@ function Table<T extends Record<string, any>>({
           </button>
         </div>
         <div className="generic-table-content">
-          <table className="min-w-full text-sm" style={{ marginTop: "20px" }}>
+          <table style={{ marginTop: "20px" }}>
             <thead>
-              <tr className="bg-sky-600 text-white text-left">
+              <tr>
                 {columns.map((col) => (
-                  <th key={String(col.key)} className="px-4 py-2">
+                  <th key={String(col.key)}>
                     {col.label}
                   </th>
                 ))}
-                {actions.length > 0 && <th className="px-4 py-2">Ações</th>}
+                {actions.length > 0 && <th className="action-header">Ações</th>}
               </tr>
             </thead>
 
             <tbody>
               {rows.length === 0
                 ? Array.from({ length: perPage }).map((_, i) => (
-                    <tr key={i} className="border-b">
+                    <tr key={i}>
                       {columns.map((col) => (
-                        <td key={String(col.key)} className="px-4 py-3">
+                        <td key={String(col.key)}>
                           {col.placeholder ?? "-"}
                         </td>
                       ))}
                       {actions.length > 0 && (
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2">
+                        <td>
+                          <div>
                             {actions.map((a) => (
-                              <button key={a.key} className="p-1 border rounded" title={a.label}>
+                              <button key={a.key} title={a.label}>
                                 {a.icon ?? a.label}
                               </button>
                             ))}
@@ -89,20 +64,20 @@ function Table<T extends Record<string, any>>({
                     </tr>
                   ))
                 : rows.map((r, rowIndex) => (
-                    <tr key={(r as any).id ?? rowIndex} className="border-b">
+                    <tr key={(r as any).id ?? rowIndex}>
                       {columns.map((col) => (
-                        <td key={String(col.key)} className="px-4 py-3">
+                        <td key={String(col.key)}>
                           {col.render ? col.render(r) : (r as any)[col.key as keyof T]}
                         </td>
                       ))}
                       {actions.length > 0 && (
-                        <td className="px-4 py-3">
-                          <div className="flex gap-2">
+                        <td>
+                          <div className='generic-table-actions'>
                             {actions.map((a) => (
                               <button
                                 key={a.key}
                                 onClick={() => a.onClick && a.onClick(r)}
-                                className="icon-btn"
+                                className={`icon-btn ${a.className ?? ""}`}
                                 title={a.label}
                               >
                                 {a.icon ?? a.label}
@@ -119,7 +94,7 @@ function Table<T extends Record<string, any>>({
       </div>
 
       <div className="generic-table-footer">
-        <div className="flex items-center gap-3">
+        <div>
           <div>Registros por página: {perPage}</div>
         </div>
         <div>{summaryText}</div>

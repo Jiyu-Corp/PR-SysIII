@@ -1,15 +1,6 @@
-// GenericTop.tsx
 import React from "react";
 import './TopContainer.css'
-
-export interface GenericTopProps {
-  title?: string;
-  subtitle?: React.ReactNode | null;
-  actionLabel?: string | null;
-  onAction?: React.MouseEventHandler<HTMLButtonElement>;
-  actionIcon?: React.ReactNode;
-  className?: string;
-}
+import type { GenericTopProps } from "../../types/TopContainerTypes.ts";
 
 const TopContainer: React.FC<GenericTopProps> = ({
   title = "Título",
