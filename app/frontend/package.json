@@ -26,6 +26,7 @@
     "@phosphor-icons/react": "^2.1.10",
     "axios": "^1.11.0",
     "electron-updater": "^6.3.9",
+    "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^7.8.0"
   },
   "devDependencies": {
