@@ -3,46 +3,69 @@ import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import startNest from './nestConfig'
+import axios from 'axios'
 
 let nestProcess;
 
 async function createWindow(): Promise<void> {
-  nestProcess = startNest();
+    nestProcess = startNest();
 
-  // TODO: Await health check from backend
-  // Wait 10 seconds until backend starts
-  await new Promise(resolve => setTimeout(resolve, 10000));
+    console.log("Waiting for backend...");
+    await waitBackendHealthCheck();
+    console.log("Backend ready!");
 
-  // Create the browser window.
-  const mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
-    show: false,
-    autoHideMenuBar: true,
-    ...(process.platform === 'linux' ? { icon } : {}),
-    webPreferences: {
-      preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+    // Create the browser window.
+    const mainWindow = new BrowserWindow({
+        width: 900,
+        height: 670,
+        show: false,
+        autoHideMenuBar: true,
+        ...(process.platform === 'linux' ? { icon } : {}),
+        webPreferences: {
+        preload: join(__dirname, '../preload/index.js'),
+        sandbox: false
+        }
+    })
+
+    mainWindow.on('ready-to-show', () => {
+        mainWindow.show()
+    })
+
+    mainWindow.webContents.setWindowOpenHandler((details) => {
+        shell.openExternal(details.url)
+        return { action: 'deny' }
+    })
+
+    // HMR for renderer base on electron-vite cli.
+    // Load the remote URL for development or the local html file for production.
+    if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+        mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    } else {
+        mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
     }
-  })
 
-  mainWindow.on('ready-to-show', () => {
-    mainWindow.show()
-  })
+}
+ function waitCooldown(cooldownInSeconds: number) {
+    return new Promise(resolve => setTimeout(() => resolve(true), cooldownInSeconds * 1000));
+}
 
-  mainWindow.webContents.setWindowOpenHandler((details) => {
-    shell.openExternal(details.url)
-    return { action: 'deny' }
-  })
+async function waitBackendHealthCheck(): Promise<boolean> {
+    try {
+        await waitCooldown(0.5);
+        const healthCheckRes = await axios({
+            baseURL: "http://localhost:3001",
+            url: "health",
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        });
+        const healthCheck = healthCheckRes.data;
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
-    mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-  } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
-  }
-
+        return healthCheck;
+    } catch(err) {
+        return await waitBackendHealthCheck();
+    }
 }
 
 // This method will be called when Electron has finished
