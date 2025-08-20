@@ -23,11 +23,24 @@ export const LoginPage: React.FC = () => {
     setLogin(defaultLogin);
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    localStorage.setItem('isAuth', '1')
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    navigate('/', { replace: true })
+    const body = {
+      username: login,
+      password: senha
+    }
+    try {
+      const loginRes = await requestPRSYS('access', 'login', 'POST', body);
+      
+      const jwtToken = loginRes.authToken;
+      sessionStorage.setItem('jwt_token', jwtToken);
+  
+      navigate('/', { replace: true });
+    } catch(err) { // Senha incorreta tmb chega aqui mother fucker romes
+      console.log(err);
+    }
+    
   }
 
   async function handleForgotPassword(evt: MouseEvent) {
