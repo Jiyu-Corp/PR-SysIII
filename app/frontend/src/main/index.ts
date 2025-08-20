@@ -51,7 +51,7 @@ async function createWindow(): Promise<void> {
 
 async function waitBackendHealthCheck(): Promise<boolean> {
     try {
-        await waitCooldown(0.5);
+        await waitCooldown(1);
         const healthCheckRes = await axios({
             baseURL: "http://localhost:3001",
             url: "health",

@@ -5,6 +5,7 @@ import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
 import { UserIcon , PencilSimpleIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react"; // optional
+import ModalWrapper from "@renderer/modals/ModalWrapper/ModalWrapper";
 
 type ClientRow = {
   id: string;
@@ -59,6 +60,7 @@ export default function ClientesPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ClientRow[]>(SAMPLE_ROWS);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   // Filters config (pass to GenericFilters)
   const filters: FilterField[] = [  
@@ -130,7 +132,7 @@ export default function ClientesPage() {
   };
 
   const handleCreate = () => {
-    navigate("/clientes/new");
+    setIsOpen(true);
   };
 
   const handleGenerateCSV = () => {
@@ -158,7 +160,7 @@ export default function ClientesPage() {
 
   const rowsToShow = filtered ?? rows;
 
-  return (
+  return (<>
     <div className="min-h-screen bg-gray-100">
       <div className="flex">
         <main className="flex-1 p-6">
@@ -176,5 +178,8 @@ export default function ClientesPage() {
         </main>
       </div>
     </div>
-  );
+    <ModalWrapper isOpen={isOpen} closeModal={() => setIsOpen(false)}>
+
+    </ModalWrapper>
+  </>);
 }
