@@ -11,6 +11,7 @@ import { EditPriceTableDto } from './dto/edit-price-table-dto';
 import { DatabaseError } from 'src/utils/app.errors';
 import { ExistParkedVehicleWithinModelUsingThatPriceTable, PriceTableNotExists, PriceTableVehicleTypeExists } from './price-table.errors';
 import { PriceTableHour } from './modules/price-table-hour/price-table-hour.entity';
+import { EditPriceTableHourDto } from './modules/price-table-hour/dto/edit-price-table-hour-dto';
 
 @Injectable()
 export class PriceTableService {
@@ -92,7 +93,9 @@ export class PriceTableService {
                 },
                 priceTableHours: typeof editPriceTableDto.priceTableHours !== 'undefined'
                     ? editPriceTableDto.priceTableHours.map(pth => this.priceTableHourRepo.create({
-                        idPriceTableHour: pth.idPriceTableHour,
+                        idPriceTableHour: pth instanceof EditPriceTableHourDto
+                            ? pth.idPriceTableHour
+                            : undefined,
                         hour: pth.hour,
                         price: pth.price
                     }))
