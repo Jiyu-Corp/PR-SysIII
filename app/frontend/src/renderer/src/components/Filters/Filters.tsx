@@ -43,7 +43,6 @@ const Filters: React.FC<GenericFiltersProps> = ({
         </div>
         <div className="filter-title">Preencher filtros</div>
       </div>
-      <div className="generic-filter-line"></div>
 
       <div className="generic-filters-grid">
         {fields.map((f) => {
