@@ -10,8 +10,8 @@ async function createWindow(): Promise<void> {
   nestProcess = startNest();
 
   // TODO: Await health check from backend
-  // Wait 10 seconds until backend starts
-  await new Promise(resolve => setTimeout(resolve, 10000));
+  // Wait 15 seconds until backend starts
+  await new Promise(resolve => setTimeout(resolve, 15000));
 
   // Create the browser window.
   const mainWindow = new BrowserWindow({

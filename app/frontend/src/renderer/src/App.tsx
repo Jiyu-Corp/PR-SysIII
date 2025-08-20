@@ -7,7 +7,8 @@ import Dashboard from './pages/Dashboard'
 import Clientes from './pages/Clientes' 
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
-  const isAuth = !!localStorage.getItem('isAuth') // true/false
+  const isAuth = !!sessionStorage.getItem('jwt_token') // true/false
+  console.log(isAuth)
   if (!isAuth) return <Navigate to="/login" replace />
   return children
 }
