@@ -8,6 +8,9 @@ import {
 import { Model } from "../model/model.entity";
 
 @Index("brand_pkey", ["idBrand"], { unique: true })
+
+@Index('UK_Brand_name', ['name'], { unique: true })
+
 @Entity("brand", { schema: "public" })
 export class Brand {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_brand" })

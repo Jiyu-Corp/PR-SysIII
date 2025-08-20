@@ -6,14 +6,14 @@ export class CreateAgreementDto {
     @IsPositive()
     readonly idClient: number;
 
-    @ValidateIf((dto) => dto.fixDiscount === undefined)
+    @ValidateIf((dto) => dto.fixDiscount == undefined)
     @IsDefined()
     @IsNumber()
     @Min(0)
     @Max(100)
     readonly percentageDiscount?: number;
 
-    @ValidateIf((dto) => dto.percentageDiscount === undefined)
+    @ValidateIf((dto) => dto.percentageDiscount == undefined)
     @IsDefined()
     @IsNumber()
     @Min(0)

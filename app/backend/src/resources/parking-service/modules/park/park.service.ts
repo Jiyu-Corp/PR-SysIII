@@ -14,9 +14,9 @@ export class ParkService {
 
     async getDefaultPark(): Promise<Park> {
         try {
-            const park = await this.parkRepo.findOne({order: {
+            const [park] = await this.parkRepo.find({order: {
                 idPark: 'ASC'
-            }});
+            }, take: 1});
             if(park == null) throw new DefaultParkNotExists();
 
             return park;

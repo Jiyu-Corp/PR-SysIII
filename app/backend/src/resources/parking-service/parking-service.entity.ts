@@ -59,14 +59,15 @@ export class ParkingService {
   @ManyToOne(() => Client, (client) => client.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
-    nullable: true
+    nullable: true,
+    cascade: ['insert', 'update']
   })
   @JoinColumn([{ name: "id_client_entry", referencedColumnName: "idClient" }])
   clientEntry: Client;
 
   @ManyToOne(() => Park, (park) => park.parkingServices, {
     onDelete: "RESTRICT",
-    onUpdate: "CASCADE",
+    onUpdate: "CASCADE"
   })
   @JoinColumn([{ name: "id_park", referencedColumnName: "idPark" }])
   park: Park;
@@ -86,6 +87,7 @@ export class ParkingService {
   @ManyToOne(() => Vehicle, (vehicle) => vehicle.parkingServices, {
     onDelete: "RESTRICT",
     onUpdate: "CASCADE",
+    cascade: ['insert','update']
   })
   @JoinColumn([{ name: "id_vehicle", referencedColumnName: "idVehicle" }])
   vehicle: Vehicle;

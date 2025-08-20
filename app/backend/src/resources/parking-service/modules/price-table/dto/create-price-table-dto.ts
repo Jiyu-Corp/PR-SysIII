@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsNumber, IsObject, IsOptional, IsPositive, Min, ValidateNested } from "class-validator";
+import { IsArray, IsDefined, IsNumber, IsObject, IsOptional, IsPositive, Min, ValidateNested } from "class-validator";
 import { CreatePriceTableHourDto } from "../modules/price-table-hour/dto/create-price-table-hour-dto";
 
 export class CreatePriceTableDto {
@@ -19,7 +19,7 @@ export class CreatePriceTableDto {
     readonly toleranceMinutes: number;
 
     @IsOptional()
-    @IsObject()
+    @IsArray()
     @ValidateNested({ each: true })
     @Type(() => CreatePriceTableHourDto)
     readonly priceTableHours?: Array<CreatePriceTableHourDto>

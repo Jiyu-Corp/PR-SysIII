@@ -53,7 +53,8 @@ export class PriceTable {
 
   @OneToMany(
     () => PriceTableHour,
-    (priceTableHour) => priceTableHour.priceTable
+    (priceTableHour) => priceTableHour.priceTable,
+    { cascade: ['insert', 'update'] }
   )
   priceTableHours: PriceTableHour[];
 }
