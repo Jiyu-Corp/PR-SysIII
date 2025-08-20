@@ -1,9 +1,5 @@
 import './ModalWrapper.css'
-
-type ModalWrapperProps = React.PropsWithChildren<{
-  isOpen: boolean;
-  closeModal?: () => void;
-}>;
+import { ModalWrapperProps } from './ModalWrapper.type'
 
 export default function ModalWrapper({ isOpen, closeModal, children }: ModalWrapperProps) {
   if(!isOpen) return <></>
