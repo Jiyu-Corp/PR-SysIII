@@ -49,12 +49,13 @@ export class Vehicle {
     nullable: true
   })
   @JoinColumn([{ name: "id_client", referencedColumnName: "idClient" }])
-  client: Client;
+  client: Client | null;
 
   @ManyToOne(() => Model, (model) => model.vehicles, {
     onDelete: "SET NULL",
     onUpdate: "CASCADE",
-    nullable: true
+    nullable: true,
+    cascade: ['insert', 'update']
   })
   @JoinColumn([{ name: "id_model", referencedColumnName: "idModel" }])
   model: Model;

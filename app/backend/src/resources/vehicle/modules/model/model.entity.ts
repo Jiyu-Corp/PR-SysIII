@@ -12,6 +12,9 @@ import { VehicleType } from "../vehicle-type/vehicle-type.entity";
 import { Vehicle } from "../../vehicle.entity";
 
 @Index("model_pkey", ["idModel"], { unique: true })
+
+@Index('UK_Model_name_brand', ['brand', 'name'], { unique: true })
+
 @Entity("model", { schema: "public" })
 export class Model {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_model" })
@@ -23,6 +26,7 @@ export class Model {
   @ManyToOne(() => Brand, (brand) => brand.models, {
     onDelete: "CASCADE",
     onUpdate: "CASCADE",
+    cascade: ['insert', 'update']
   })
   @JoinColumn([{ name: "id_brand", referencedColumnName: "idBrand" }])
   brand: Brand;

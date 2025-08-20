@@ -7,13 +7,19 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { GetActiveVehiclesDto } from './dto/get-active-vehicles-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
-import { VehicleIsParked, VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
+import { BrandNameExists, ModelNameExists, VehicleIsParked, VehicleNotExists, VehiclePlateExists } from './vehicle.errors';
+import { Model } from './modules/model/model.entity';
+import { Brand } from './modules/brand/brand.entity';
 
 @Injectable()
 export class VehicleService {
     constructor(
         @InjectRepository(Vehicle)
-        private readonly vehicleRepo: Repository<Vehicle>
+        private readonly vehicleRepo: Repository<Vehicle>,
+        // @InjectRepository(Model)
+        // private readonly modelRepo: Repository<Model>,
+        // @InjectRepository(Brand)
+        // private readonly brandRepo: Repository<Brand>,
     ) {}
 
     async getActiveVehicles(getActiveVehiclesDto: GetActiveVehiclesDto): Promise<Vehicle[]> {
@@ -73,26 +79,29 @@ export class VehicleService {
     async createVehicle(createVehicleDto: CreateVehicleDto): Promise<Vehicle> {
         try {
             const model = createVehicleDto.model;
+
             const vehicleData = this.vehicleRepo.create({
                 plate: createVehicleDto.plate,
                 year: createVehicleDto.year,
                 color: createVehicleDto.color,
-                client: {
-                    idClient: createVehicleDto.idClient
-                },
-                model: typeof model.idModel !== 'undefined' 
-                    ? { idModel: model.idModel }
-                    : {
-                        name: model.nameModel,
-                        brand: typeof model.idBrand !== 'undefined'
-                            ? { idBrand: model.idBrand }
-                            : {
-                                name: model.brand!.nameBrand,        
-                            },
-                        vehicleType: {
-                            idVehicleType: model.idVehicleType
-                        }
+                client: typeof createVehicleDto.idClient !== 'undefined'
+                    ? { idClient: createVehicleDto.idClient }
+                    : undefined,
+                model: {
+                    idModel: typeof model.idModel !== 'undefined' // can be simplified
+                        ? model.idModel
+                        : undefined,
+                    name: model.nameModel,
+                    brand: {
+                        idBrand: typeof model.idBrand !== 'undefined'
+                            ? model.idBrand
+                            : undefined,
+                        name: model.brand!.nameBrand,        
+                    },
+                    vehicleType: {
+                        idVehicleType: model.idVehicleType
                     }
+                }
             });
             const vehicle = await this.vehicleRepo.save(vehicleData);
 
@@ -100,7 +109,9 @@ export class VehicleService {
         } catch (err) {
             throw buildDatabaseError(err, {
                 UKErrors: [
-                    new VehiclePlateExists()
+                    new VehiclePlateExists(),
+                    new ModelNameExists(),
+                    new BrandNameExists()
                 ]
             })
         }
@@ -114,29 +125,32 @@ export class VehicleService {
                 plate: editVehicleDto.plate,
                 year: editVehicleDto.year,
                 color: editVehicleDto.color,
-                client: {
-                    idClient: editVehicleDto.idClient
-                },
-                model: typeof model.idModel !== 'undefined' 
-                    ? { idModel: model.idModel }
-                    : {
-                        name: model.nameModel,
-                        brand: typeof model.idBrand !== 'undefined'
-                            ? { idBrand: model.idBrand }
-                            : {
-                                name: model.brand!.nameBrand,        
-                            },
-                        vehicleType: {
-                            idVehicleType: model.idVehicleType
-                        }
+                client: typeof editVehicleDto.idClient !== 'undefined'
+                    ? {
+                        idClient: editVehicleDto.idClient
                     }
+                    : null,
+                model: {
+                    idModel: typeof model.idModel !== 'undefined'
+                        ? model.idModel
+                        : undefined,
+                    name: model.nameModel,
+                    brand: {
+                        idBrand: typeof model.idBrand !== 'undefined'
+                            ? model.idBrand
+                            : undefined,
+                        name: model.brand!.nameBrand,        
+                    },
+                    vehicleType: {
+                        idVehicleType: model.idVehicleType
+                    }
+                }
             }
         }));
         
         if(loadError)
             throw new DatabaseError();
             
-        
         if(typeof vehicleData === 'undefined') throw new VehicleNotExists();
 
         try {
@@ -146,7 +160,9 @@ export class VehicleService {
         } catch (err) {
             throw buildDatabaseError(err, {
                 UKErrors: [
-                    new VehiclePlateExists()
+                    new VehiclePlateExists(),
+                    new ModelNameExists(),
+                    new BrandNameExists()
                 ]
             });
         }
