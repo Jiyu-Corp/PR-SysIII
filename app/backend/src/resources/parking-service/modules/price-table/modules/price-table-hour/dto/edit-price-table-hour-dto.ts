@@ -1,9 +1,9 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreatePriceTableHourDto } from "./create-price-table-hour-dto";
-import { IsDefined, IsNumber, IsPositive } from "class-validator";
+import { IsDefined, IsNumber, IsOptional, IsPositive } from "class-validator";
 
 export class EditPriceTableHourDto extends PartialType(CreatePriceTableHourDto) {
-    @IsDefined()
+    @IsOptional()
     @IsNumber()
     @IsPositive()
     readonly idPriceTableHour: number;

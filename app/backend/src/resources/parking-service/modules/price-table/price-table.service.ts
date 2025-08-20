@@ -9,7 +9,7 @@ import { CreatePriceTableDto } from './dto/create-price-table-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { EditPriceTableDto } from './dto/edit-price-table-dto';
 import { DatabaseError } from 'src/utils/app.errors';
-import { ExistParkedVehicleWithinModelUsingThatPriceTable, PriceTableNotExists, PriceTableVehicleTypeExists } from './price-table.errors';
+import { ExistParkedVehicleWithinModelUsingThatPriceTable, PriceTableHourExists, PriceTableNotExists, PriceTableVehicleTypeExists } from './price-table.errors';
 import { PriceTableHour } from './modules/price-table-hour/price-table-hour.entity';
 import { EditPriceTableHourDto } from './modules/price-table-hour/dto/edit-price-table-hour-dto';
 
@@ -76,6 +76,7 @@ export class PriceTableService {
         } catch (err) {
             throw buildDatabaseError(err, {
                 UKErrors: [
+                    new PriceTableHourExists(),
                     new PriceTableVehicleTypeExists()
                 ]
             })
@@ -93,9 +94,7 @@ export class PriceTableService {
                 },
                 priceTableHours: typeof editPriceTableDto.priceTableHours !== 'undefined'
                     ? editPriceTableDto.priceTableHours.map(pth => this.priceTableHourRepo.create({
-                        idPriceTableHour: pth instanceof EditPriceTableHourDto
-                            ? pth.idPriceTableHour
-                            : undefined,
+                        idPriceTableHour: pth.idPriceTableHour,
                         hour: pth.hour,
                         price: pth.price
                     }))
@@ -113,8 +112,10 @@ export class PriceTableService {
             
             return updatedPriceTable;
         } catch (err) {
+            console.log(err)
             throw buildDatabaseError(err, {
                 UKErrors: [
+                    new PriceTableHourExists(),
                     new PriceTableVehicleTypeExists()
                 ]
             });

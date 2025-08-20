@@ -9,6 +9,9 @@ import {
 import { PriceTable } from "../../price-table.entity";
 
 @Index("price_table_hour_pkey", ["idPriceTableHour"], { unique: true })
+
+@Index('UK_PriceTableHour_priceTable_hour', ['priceTable', 'price'], { unique: true })
+
 @Entity("price_table_hour", { schema: "public" })
 export class PriceTableHour {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_price_table_hour" })
