@@ -7,6 +7,8 @@ import { CarProfileIcon } from '@phosphor-icons/react'
 import './LoginPage.css'
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from 'react-loader-spinner'
+import { Toaster, toast } from 'react-hot-toast';
+import Swal from 'sweetalert2';
 
 export const LoginPage: React.FC = () => {
   const [login, setLogin] = useState('')
@@ -35,26 +37,76 @@ export const LoginPage: React.FC = () => {
       
       const jwtToken = loginRes.authToken;
       sessionStorage.setItem('jwt_token', jwtToken);
-  
+      
       navigate('/', { replace: true });
-    } catch(err) { // Senha incorreta tmb chega aqui mother fucker romes
+    } catch(err) { 
+      toast.error('Senha incorreta.', {
+        style: {
+          padding: '16px',
+          color: '#C1292E',
+        },
+        iconTheme: {
+          primary: '#C1292E',
+          secondary: '#FFFAEE',
+        },
+      });
       console.log(err);
     }
     
   }
 
   async function handleForgotPassword(evt: MouseEvent) {
-    evt.preventDefault()
-    evt.stopPropagation()
-    const result = await requestPRSYS('access', 'forgotPassword', 'POST', {
-      idAccess: 1
-    })
-    console.log('Forgot password:', result)
+    evt.preventDefault();
+    evt.stopPropagation();
+  
+    const result = await Swal.fire({
+      title: 'Confirmação',
+      text: 'Tem certeza que deseja resetar a senha?',
+      icon: 'warning',
+      showCancelButton: true,
+      cancelButtonText: 'Cancelar',
+      confirmButtonText: 'Sim, resetar',
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33'
+    });
+  
+    if (result.isConfirmed) {
+      try {
+        const res = requestPRSYS('access', 'forgotPassword', 'POST', {
+          idAccess: 1
+        });
+
+        toast.promise(res, 
+          {
+            loading: 'Resetando...',
+            success: `Senha resetada`,
+            error: `Erro ao resetar senha`,
+          },
+          {
+            style: {
+              padding: '16px',
+              color: '#4A87E8',
+            },
+            iconTheme: {
+              primary: '#4A87E8',
+              secondary: '#FFFAEE',
+            },
+          }
+        );
+      } catch (err) {
+        console.error(err);
+      }
+    }
   }
+  
 
   const isLoginEmpty = login === '';
   return (
     <AuthLayout>
+      <Toaster
+        position="top-right"
+        reverseOrder={true}
+      />
       {isLoginEmpty
         ? <Grid
             visible={true}
