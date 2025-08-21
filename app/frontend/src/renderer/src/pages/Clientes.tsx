@@ -6,7 +6,6 @@ import GenericTable from "../components/Table/Table";
 import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
-import ModalWrapper from "@renderer/modals/ModalWrapper/ModalWrapper";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 
 type ClientRow = {
