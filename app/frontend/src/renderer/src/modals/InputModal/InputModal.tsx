@@ -1,12 +1,13 @@
-import { InputMask, Replacement } from "@react-input/mask";
+import { format, InputMask, Replacement, useMask } from "@react-input/mask";
 import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import "./InputModal.css"
+import { useEffect } from "react";
 
 type InputModalProps = {
   width?: number | string;
   label: string;
-  value: string | number | undefined;
+  value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   onChange?: (string) => void;
   mask?: string;
@@ -19,11 +20,22 @@ export default function InputModal({ width, label, value, setValue, onChange, ma
     if(typeof onChange !== 'undefined')
       onChange(e.currentTarget.value);
   };
-  
-  return <InputWrapperModal label={label} width={width}>
-    {typeof mask === 'undefined'
-      ? <input className="input-modal" value={value} onChange={handleChange}/>
-      : <InputMask className="input-modal" value={value} onChange={handleChange} mask={mask} replacement={replacement}/>
+
+  const isMaskedInput = typeof mask !== 'undefined' && typeof replacement !== 'undefined';
+  if(isMaskedInput) {
+    const maskOptions = {
+      mask: mask,
+      replacement: replacement
     }
-  </InputWrapperModal>
+    // const inputRef = useMask(maskOptions);
+    setValue(format(value, maskOptions));
+
+    return <InputWrapperModal label={label} width={width}>
+      <input className="input-modal" value={value} onChange={handleChange}/>
+    </InputWrapperModal>
+
+  } else return <InputWrapperModal label={label} width={width}>
+      <input className="input-modal" value={value} onChange={handleChange}/>
+    </InputWrapperModal>
+  
 }

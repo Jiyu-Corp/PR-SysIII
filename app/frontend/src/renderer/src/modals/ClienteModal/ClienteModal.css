@@ -13,3 +13,12 @@
   row-gap: 16px;
   justify-content: space-between;
 }
+
+.cliente-modal .btns-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
@@ -7,6 +7,8 @@ import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@ph
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
+import { Toaster } from "react-hot-toast";
+import { clientType } from "@renderer/types/resources/clientType";
 
 type ClientRow = {
   id: string;
@@ -44,6 +46,7 @@ export default function ClientesPage() {
   const [rows, setRows] = useState<ClientRow[]>(SAMPLE_ROWS);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState<boolean>(false);
+  const [clientDetail, setClientDetail] = useState<clientType | undefined>(undefined);
 
   // Filters config (pass to GenericFilters)
   const filters: FilterField[] = [  
@@ -119,6 +122,21 @@ export default function ClientesPage() {
   const handleCreate = () => {
     setIsClientModalOpen(true);
   };
+  const handleEdit = () => {
+    setClientDetail({
+      idClient: 12,
+      name: "Zan",
+      cpfCnpj: "13125125123",
+      email: "zan@gmail.com",
+      phone: "42132314232"
+    });
+    setIsClientModalOpen(true);
+  };
+
+  useEffect(() => {
+    if(!isClientModalOpen) setClientDetail(undefined);
+  }, [isClientModalOpen])
+
 
   const handleGenerateCSV = () => {
     const data = (filtered ?? rows).map((r) => ({
@@ -148,7 +166,11 @@ export default function ClientesPage() {
 
   return (<>
     <main>
-      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
+      <Toaster
+        position="top-right"
+        reverseOrder={true}
+      />
+      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
       <GenericTable
         title="Listagem de Clientes"
@@ -160,6 +182,6 @@ export default function ClientesPage() {
         onGenerateCSV={handleGenerateCSV}
       />
     </main>
-    <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={undefined}/>
+    {isClientModalOpen && <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={clientDetail}/>}
   </>);
 }

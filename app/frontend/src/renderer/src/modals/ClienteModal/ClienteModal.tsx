@@ -10,19 +10,11 @@ import DeleteBtnModal from "../DeleteBtnModal";
 import SelectModal from "../SelectModal/SelectModal";
 import { requestPRSYS } from "@renderer/utils/http";
 import toast from "react-hot-toast";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
+import { clientType } from "@renderer/types/resources/clientType";
 
 type ClienteModalProps = { 
-  client: {
-    idClient: number;
-    cpfCnpj: string;
-    name: string;
-    phone: string;
-    email: string;
-    enterprise: {
-      idClient: number;
-      name: string
-    } 
-  } | undefined;
+  client: clientType | undefined;
   isOpen: boolean;
   closeModal: () => void; 
 };
@@ -38,7 +30,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	const [name, setName] = useState<string>(client?.name || '');
 	const [phone, setPhone] = useState<string>(client?.phone || '');
 	const [email, setEmail] = useState<string>(client?.email || '');
-	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(client?.enterprise.idClient || null);
+	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(client?.enterprise?.idClient || null);
 
   // Options
   const [clientEnterprises, setClientEnterprises] = useState<SelectOption[]>([]);
@@ -46,7 +38,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
   // Options Fetch
   useEffect(() => {
     setIsLoading(true);
-    
+
     const fetches: Promise<void>[] = [
       fetchClientEnterprises()
     ];
@@ -75,7 +67,6 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
           secondary: '#FFFAEE',
         },
       });
-      console.log(err);
     }
   }
 
@@ -84,23 +75,79 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
     ? "Editar Cliente"
     : "Cadastrar Cliente";
 
+  // Actions
+  async function saveClient() {
+    const params = {
+      name: name,
+      cpfCnpj: cpfCnpj.replace(/\D/g, ""),
+      email: email,
+      phone: phone.replace(/\D/g, "").slice(2),
+      idClientEnterprise: idClientEnterprise
+    }
+    try {
+      await requestPRSYS('client', '', 'POST', params);
+
+      closeModal();
+
+      toast.success('Cliente criado.', successToastStyle);
+    } catch(err) {
+      toast.error((err as Error).message, errorToastStyle);
+    }
+  }
+
+  async function editClient() {
+    if(typeof idClient === 'undefined') return;
+
+    const params = {
+      idClient: idClient,
+      name: name,
+      cpfCnpj: cpfCnpj.replace(/\D/g, ""),
+      email: email,
+      phone: phone.replace(/\D/g, "").slice(2),
+      idClientEnterprise: idClientEnterprise
+    }
+    try {
+      await requestPRSYS('client', idClient.toString(), 'PUT', params);
+
+      closeModal();
+
+      toast.success('Cliente editado.', successToastStyle);
+    } catch(err) {
+      toast.error((err as Error).message, errorToastStyle);
+    }
+  }
+
+  async function deleteClient() {
+    if(typeof idClient === 'undefined') return;
+
+    try {
+      await requestPRSYS('client', idClient.toString(), 'DELETE');
+
+      closeModal();
+
+      toast.success('Cliente deletado.', successToastStyle);
+    } catch(err) {
+      toast.error((err as Error).message, errorToastStyle);
+    }
+  }
+
 	return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
     <div className="cliente-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
+        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 15 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
         <InputModal width="210px" label="Nome" value={name} setValue={setName}/>
-        <InputModal width="145px" label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
-        <InputModal width="220px" label="Email" value={email} setValue={setEmail}/>
+        <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
+        <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
         <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} />
       </div>
       <div className="btns-wrapper">
         {isEdicaoCliente
           ? <>
-            <EditBtnModal action={() => {}}/>
-            <DeleteBtnModal action={() => {}}/>
+            <EditBtnModal action={editClient}/>
+            <DeleteBtnModal action={deleteClient}/>
           </>
           : <>
-            <SaveBtnModal action={() => {}}/>
+            <SaveBtnModal action={saveClient}/>
           </>
         }
       </div>
