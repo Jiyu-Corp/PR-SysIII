@@ -1,6 +1,8 @@
 import { useState } from "react";
 import Modal1 from "../Modal1/Modal1";
 import { User, UserIcon } from "@phosphor-icons/react";
+import { InputMask } from '@react-input/mask';
+import InputModal from "../InputModal/InputModal";
 
 type ClienteModalProps = { 
   client: {
@@ -31,7 +33,12 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
     : "Cadastrar Cliente";
 
 	return <Modal1 title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
-    <div className="inputs-wrapper"></div>
+    <div className="inputs-wrapper">
+      <InputModal label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
+      <InputModal label="Nome" value={name} setValue={setName}/>
+      <InputModal label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
+      <InputModal label="Email" value={email} setValue={setEmail}/>
+    </div>
     <div className="btns-wrapper"></div>
   </Modal1>
 }
