@@ -7,12 +7,13 @@ import "./Modal1.css"
 export default function Modal1({
 	title,
 	entityIcon: EntityIcon,
+  maxWidth,
 	isOpen,
 	closeModal,
 	children
 }: Modal1Props) {
 	return <ModalWrapper isOpen={isOpen} closeModal={closeModal}>
-		<div className="modal-1">
+		<div className="modal-1" style={{maxWidth: maxWidth}}>
 			<div className="entity-icon-wrapper">
 				<EntityIcon size={64} color="#4A87E8"/>
 			</div>

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import Modal1 from "../Modal1/Modal1";
 import { User, UserIcon } from "@phosphor-icons/react";
-import { InputMask } from '@react-input/mask';
 import InputModal from "../InputModal/InputModal";
+
+import "./ClienteModal.css"
+import SaveBtnModal from "../SaveBtnModal";
+import EditBtnModal from "../EditBtnModal";
+import DeleteBtnModal from "../DeleteBtnModal";
 
 type ClienteModalProps = { 
   client: {
@@ -28,17 +32,31 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	const [email, setEmail] = useState<string>(client?.email || '');
 	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(client?.enterprise.idClient || null);
 
-  const title = typeof client !== 'undefined'
+  const isEdicaoCliente = typeof client !== 'undefined';
+
+  const title = isEdicaoCliente
     ? "Editar Cliente"
     : "Cadastrar Cliente";
 
-	return <Modal1 title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
-    <div className="inputs-wrapper">
-      <InputModal label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
-      <InputModal label="Nome" value={name} setValue={setName}/>
-      <InputModal label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
-      <InputModal label="Email" value={email} setValue={setEmail}/>
+	return <Modal1 maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
+    <div className="cliente-modal">
+      <div className="inputs-wrapper">
+        <InputModal width="140px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
+        <InputModal width="220px" label="Nome" value={name} setValue={setName}/>
+        <InputModal width="145px" label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
+        <InputModal width="220px" label="Email" value={email} setValue={setEmail}/>
+      </div>
+      <div className="btns-wrapper">
+        {isEdicaoCliente
+          ? <>
+            <EditBtnModal action={() => {}}/>
+            <DeleteBtnModal action={() => {}}/>
+          </>
+          : <>
+            <SaveBtnModal action={() => {}}/>
+          </>
+        }
+      </div>
     </div>
-    <div className="btns-wrapper"></div>
   </Modal1>
 }
