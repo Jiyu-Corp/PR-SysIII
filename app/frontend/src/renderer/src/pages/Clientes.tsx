@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
@@ -7,47 +7,73 @@ import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@ph
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
+import { requestPRSYS } from '@renderer/utils/http'
 
 type ClientRow = {
   id: string;
   name: string;
-  cpf: string;
+  cpf_cnpj: string;
   phone?: string;
   email?: string;
   company?: string;
   type?: "cnpj" | "cpf";
 };
 
-const SAMPLE_ROWS: ClientRow[] = [
-  {
-    id: "1",
-    name: "João Silva",
-    cpf: "131.200.739-64",
-    phone: "(42) 9 9981-3748",
-    email: "joao@ex.com",
-    company: "Orsted Corp",
-    type: "cnpj",
-  },
-  {
-    id: "2",
-    name: "Maria Souza",
-    cpf: "987.654.321-00",
-    phone: "(41) 9 9123-4567",
-    email: "maria@ex.com",
-    company: "Acme Ltd",
-    type: "cpf",
-  },
-];
 
 export default function ClientesPage() {
   const navigate = useNavigate();
-  const [rows, setRows] = useState<ClientRow[]>(SAMPLE_ROWS);
+  const [rows, setRows] = useState<ClientRow[]>([]);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchClient();
+  }, []);
+
+  const fetchClient = async () => {
+      setLoading(true);
+      try {
+        const response = await requestPRSYS('client', '', 'GET');
+        // your response is an array at the root according to the example
+        const arr = Array.isArray(response) ? response : response?.data ?? [];
+        
+        
+        const mapped: ClientRow[] = (arr as any[]).map((item: any) => {
+        
+          //falta company nesse caralho ainda, vou ver dps, to indo embora
+        return {
+            id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
+            name: item.name ?? item.nome ?? "",
+            cpf_cnpj: item.cpfCnpj,
+            phone: item.phone ?? item.telefone ?? "",
+            email: item.email ?? "",
+            company: "",
+            type: item.clientType.idClientType == 1 ? 'cpf' : 'cnpj'
+          };
+        });
+        
+        
+        if (mapped.length) {
+          setRows(mapped);
+          setFiltered(null);
+        } else {
+          console.warn("fetchClient: no clients mapped, response:", response);
+        }
+        
+        
+        console.log("fetchClient response:", response);
+      } catch (err) {
+        console.error("fetchClient error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
 
   // Filters config (pass to GenericFilters)
   const filters: FilterField[] = [  
-    { key: "cpf", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
+    { key: "cpf_cnpj", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
     { key: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
     {
       key: "types",
@@ -63,7 +89,7 @@ export default function ClientesPage() {
   // Table columns (pass to GenericTable)
   const columns: TableColumn<ClientRow>[] = [
     { key: "name", label: "Nome" },
-    { key: "cpf", label: "CPF/CNPJ" },
+    { key: "cpf_cnpj", label: "CPF/CNPJ" },
     { key: "phone", label: "Telefone" },
     { key: "email", label: "Email" },
     { key: "company", label: "Empresa" },
@@ -105,16 +131,21 @@ export default function ClientesPage() {
   ];
 
   const handleSearch = (values: Record<string, any>) => {
-
-    const filteredRows = rows.filter((r) => {
-      if (values.cpf && !r.cpf.includes(values.cpf)) return false;
-      if (values.name && !r.name.toLowerCase().includes(String(values.name).toLowerCase())) return false;
-      if (values.type && r.type !== values.type) return false;
-      return true;
-    });
-
-    setFiltered(filteredRows);
-  };
+      const cpfFilter = values.cpf_cnpj ? String(values.cpf_cnpj).replace(/\D/g, "") : "";
+      const nameFilter = values.name ? String(values.name).toLowerCase() : "";
+      const typeFilter = values.type ? String(values.type) : "";
+      
+      
+      const filteredRows = rows.filter((r) => {
+        if (cpfFilter && !String(r.cpf_cnpj).replace(/\D/g, "").includes(cpfFilter)) return false;
+        if (nameFilter && !r.name.toLowerCase().includes(nameFilter)) return false;
+        if (typeFilter && r.type !== typeFilter) return false;
+        return true;
+      });
+      
+      
+      setFiltered(filteredRows);
+    };
 
   const handleCreate = () => {
     setIsOpen(true);
@@ -123,7 +154,7 @@ export default function ClientesPage() {
   const handleGenerateCSV = () => {
     const data = (filtered ?? rows).map((r) => ({
       Nome: r.name,
-      CPF: r.cpf,
+      CPF: r.cpf_cnpj,
       Telefone: r.phone,
       Email: r.email,
       Empresa: r.company,

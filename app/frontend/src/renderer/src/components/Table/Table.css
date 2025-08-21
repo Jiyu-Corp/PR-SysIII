@@ -42,18 +42,6 @@
     border-bottom: 1px solid #2c2c2c57;
   }
 
-  .generic-table-line {
-    content: "";
-    position: relative;
-    width: 105%;
-    height: 1px;
-    background: #2c2c2c57;
-    pointer-events: none;
-    z-index: 0;
-    margin-left: -20px;
-    margin-top: 10px;
-  }
-
   .generic-table-content {
     display: flex;
   }
@@ -61,7 +49,6 @@
   .generic-table th,
   .generic-table td {
     padding: 0.7rem 0.9rem;
-    border-bottom: 1px solid #f1f5f9;
   }
   
   .generic-table tbody tr:hover {
@@ -91,8 +78,7 @@
   .icon-btn:hover { background:rgba(151, 151, 151, 0.63); }
   
   .action-header{
-    display: flex;
-    justify-content: center;
+    text-align: center;
   }
   
   .generic-table-actions {
