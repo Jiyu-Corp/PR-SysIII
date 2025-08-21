@@ -170,3 +170,7 @@ code {
     display: none;
   }
 }
+
+.css-1xc3v61-indicatorContainer {
+  padding: 4px !important;
+}

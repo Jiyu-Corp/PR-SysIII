@@ -7,6 +7,7 @@ import "./ClienteModal.css"
 import SaveBtnModal from "../SaveBtnModal";
 import EditBtnModal from "../EditBtnModal";
 import DeleteBtnModal from "../DeleteBtnModal";
+import SelectModal from "../SelectModal/SelectModal";
 
 type ClienteModalProps = { 
   client: {
@@ -41,10 +42,11 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	return <Modal1 maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
     <div className="cliente-modal">
       <div className="inputs-wrapper">
-        <InputModal width="140px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
-        <InputModal width="220px" label="Nome" value={name} setValue={setName}/>
+        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
+        <InputModal width="210px" label="Nome" value={name} setValue={setName}/>
         <InputModal width="145px" label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
         <InputModal width="220px" label="Email" value={email} setValue={setEmail}/>
+        <SelectModal label="Empresa" disabled={cpfCnpj.length > 14} options={[{id: 1, label: "test"}]} value={idClientEnterprise} setValue={setIdClientEnterprise} />
       </div>
       <div className="btns-wrapper">
         {isEdicaoCliente

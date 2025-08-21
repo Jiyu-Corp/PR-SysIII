@@ -8,13 +8,16 @@ type InputModalProps = {
   label: string;
   value: string | number | undefined;
   setValue: React.Dispatch<React.SetStateAction<string>>;
+  onChange?: (string) => void;
   mask?: string;
   replacement?: string | Replacement;
 };
 
-export default function InputModal({ width, label, value, setValue, mask, replacement }: InputModalProps) {
+export default function InputModal({ width, label, value, setValue, onChange, mask, replacement }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
+    if(typeof onChange !== 'undefined')
+      onChange(e.currentTarget.value);
   };
   
   return <InputWrapperModal label={label} width={width}>
