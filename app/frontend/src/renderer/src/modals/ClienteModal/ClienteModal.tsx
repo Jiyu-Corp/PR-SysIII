@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal1 from "../Modal1/Modal1";
 import { User, UserIcon } from "@phosphor-icons/react";
 import InputModal from "../InputModal/InputModal";
@@ -8,6 +8,8 @@ import SaveBtnModal from "../SaveBtnModal";
 import EditBtnModal from "../EditBtnModal";
 import DeleteBtnModal from "../DeleteBtnModal";
 import SelectModal from "../SelectModal/SelectModal";
+import { requestPRSYS } from "@renderer/utils/http";
+import toast from "react-hot-toast";
 
 type ClienteModalProps = { 
   client: {
@@ -26,6 +28,11 @@ type ClienteModalProps = {
 };
 
 export default function ClienteModal({client, isOpen, closeModal}: ClienteModalProps) {
+  // Control Params
+  const [isLoading, setIsLoading] = useState(false);
+  const isEdicaoCliente = typeof client !== 'undefined';
+
+  // Inputs
   const idClient = client?.idClient;
 	const [cpfCnpj, setCpfCnpj] = useState<string>(client?.cpfCnpj || '');
 	const [name, setName] = useState<string>(client?.name || '');
@@ -33,20 +40,58 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	const [email, setEmail] = useState<string>(client?.email || '');
 	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(client?.enterprise.idClient || null);
 
-  const isEdicaoCliente = typeof client !== 'undefined';
+  // Options
+  const [clientEnterprises, setClientEnterprises] = useState<SelectOption[]>([]);
+  
+  // Options Fetch
+  useEffect(() => {
+    setIsLoading(true);
+    
+    const fetches: Promise<void>[] = [
+      fetchClientEnterprises()
+    ];
 
+    Promise.all(fetches).then(() => setIsLoading(false));
+  }, []);
+  async function fetchClientEnterprises() {
+    const enterpriseParams = {
+      idClientType: 2
+    }
+    try {
+      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+
+      setClientEnterprises(activeEnterprisesRes.map(c => ({
+        id: c.idClient,
+        label: c.name 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar empresas', {
+        style: {
+          padding: '16px',
+          color: '#C1292E',
+        },
+        iconTheme: {
+          primary: '#C1292E',
+          secondary: '#FFFAEE',
+        },
+      });
+      console.log(err);
+    }
+  }
+
+  // Behaviour
   const title = isEdicaoCliente
     ? "Editar Cliente"
     : "Cadastrar Cliente";
 
-	return <Modal1 maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
+	return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
     <div className="cliente-modal">
       <div className="inputs-wrapper">
         <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCnpj.length < 14 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }}/>
         <InputModal width="210px" label="Nome" value={name} setValue={setName}/>
         <InputModal width="145px" label="Telefone" value={phone} setValue={setPhone}  mask={phone.length < 18 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }}/>
         <InputModal width="220px" label="Email" value={email} setValue={setEmail}/>
-        <SelectModal label="Empresa" disabled={cpfCnpj.length > 14} options={[{id: 1, label: "test"}]} value={idClientEnterprise} setValue={setIdClientEnterprise} />
+        <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} />
       </div>
       <div className="btns-wrapper">
         {isEdicaoCliente

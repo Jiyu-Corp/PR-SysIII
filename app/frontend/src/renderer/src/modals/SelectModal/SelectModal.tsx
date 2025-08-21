@@ -1,13 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import "./SelectModal.css"
 import Select, { SingleValue } from 'react-select';
-
-type SelectOption = {
-  id: number,
-  label: string
-}
 
 type InputModalProps = {
   width?: number | string;

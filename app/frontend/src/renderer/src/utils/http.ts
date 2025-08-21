@@ -7,7 +7,7 @@ const PRSYS_API_URL = `${API_PROTOCOL}://localhost:${PRSYS_API_PORT}`
 // Need a better place
 type PRSYSResources = 'access' | 'client';
 
-function requestPRSYS(resource: PRSYSResources, endpoint: string, method: Method, body?: object): Promise<any> {
+function requestPRSYS(resource: PRSYSResources, endpoint: string, method: Method, body?: object, params?: object): Promise<any> {
     endpoint = `${resource}/${endpoint}`;
 
     const jwtToken = sessionStorage.getItem('jwt_token');
@@ -17,16 +17,17 @@ function requestPRSYS(resource: PRSYSResources, endpoint: string, method: Method
         headers.set('Authorization', `Bearer ${jwtToken}`)
     }
 
-    return request(PRSYS_API_URL, endpoint, method, body, headers);
+    return request(PRSYS_API_URL, endpoint, method, body, params, headers);
 }
 
-async function request(url: string, endpoint: string, method: Method, body?: object, headers?: AxiosHeaders): Promise<any> {
+async function request(url: string, endpoint: string, method: Method, body?: object, params?: object, headers?: AxiosHeaders): Promise<any> {
     try {
         const response = await axios({
             baseURL: url,
             url: endpoint,
             method,
             data: body,
+            params: params,
             headers: {
                 'Content-Type': 'application/json',
                 ... headers

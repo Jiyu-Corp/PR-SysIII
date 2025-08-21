@@ -43,7 +43,7 @@ export default function ClientesPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ClientRow[]>(SAMPLE_ROWS);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isClientModalOpen, setIsClientModalOpen] = useState<boolean>(false);
 
   // Filters config (pass to GenericFilters)
   const filters: FilterField[] = [  
@@ -117,7 +117,7 @@ export default function ClientesPage() {
   };
 
   const handleCreate = () => {
-    setIsOpen(true);
+    setIsClientModalOpen(true);
   };
 
   const handleGenerateCSV = () => {
@@ -160,6 +160,6 @@ export default function ClientesPage() {
         onGenerateCSV={handleGenerateCSV}
       />
     </main>
-    <ClienteModal isOpen={isOpen} closeModal={() => setIsOpen(false)} client={undefined}/>
+    <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={undefined}/>
   </>);
 }
