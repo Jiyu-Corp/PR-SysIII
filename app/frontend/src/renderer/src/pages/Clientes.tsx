@@ -6,6 +6,7 @@ import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
 import { UserIcon , PencilSimpleIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react"; // optional
 import ModalWrapper from "@renderer/modals/ModalWrapper/ModalWrapper";
+import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 
 type ClientRow = {
   id: string;
@@ -178,8 +179,6 @@ export default function ClientesPage() {
         </main>
       </div>
     </div>
-    <ModalWrapper isOpen={isOpen} closeModal={() => setIsOpen(false)}>
-
-    </ModalWrapper>
+    <ClienteModal isOpen={isOpen} closeModal={() => setIsOpen(false)} client={undefined}/>
   </>);
 }

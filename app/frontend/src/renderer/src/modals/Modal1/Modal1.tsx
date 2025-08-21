@@ -1,11 +1,8 @@
-import { ModalWrapperProps } from "../ModalWrapper/ModalWrapper.type";
 import ModalWrapper from "../ModalWrapper/ModalWrapper";
-import { IconProps, X } from "@phosphor-icons/react";
+import { X } from "@phosphor-icons/react";
+import { Modal1Props } from "./Modal1.type";
 
-type Modal1Props = ModalWrapperProps & {
-  title: string;
-  entityIcon: React.ComponentType<IconProps>;
-};
+import "./Modal1.css"
 
 export default function Modal1({
 	title,
@@ -17,9 +14,9 @@ export default function Modal1({
 	return <ModalWrapper isOpen={isOpen} closeModal={closeModal}>
 		<div className="modal-1">
 			<div className="entity-icon-wrapper">
-				<EntityIcon/>
+				<EntityIcon size={64} color="#4A87E8"/>
 			</div>
-			<div className="modal-1-close-wrapper">
+			<div className="modal-1-close-wrapper" onClick={() => closeModal()}>
 				<X></X>
 			</div>
 			<div className="modal-1-header">
