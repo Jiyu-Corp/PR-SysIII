@@ -1,10 +1,11 @@
-// ClientesPage.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon , PencilSimpleIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react"; // optional
+import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react";
+import { FilterField } from "@renderer/types/FilterTypes";
+import { TableColumn } from "@renderer/types/TableTypes";
 import ModalWrapper from "@renderer/modals/ModalWrapper/ModalWrapper";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 
@@ -15,26 +16,9 @@ type ClientRow = {
   phone?: string;
   email?: string;
   company?: string;
-  status?: "active" | "inactive";
+  type?: "cnpj" | "cpf";
 };
 
-type FilterField = {
-  key: string;
-  label?: string;
-  type?: "text" | "select" | "date" | "number";
-  placeholder?: string;
-  default?: string;
-  options?: { value: string; label: string }[];
-};
-
-type TableColumn<T> = {
-  key: string;
-  label: string;
-  placeholder?: string;
-  render?: (row: T) => React.ReactNode;
-};
-
-// --- Dummy rows (replace with API data) ---
 const SAMPLE_ROWS: ClientRow[] = [
   {
     id: "1",
@@ -43,7 +27,7 @@ const SAMPLE_ROWS: ClientRow[] = [
     phone: "(42) 9 9981-3748",
     email: "joao@ex.com",
     company: "Orsted Corp",
-    status: "active",
+    type: "cnpj",
   },
   {
     id: "2",
@@ -52,11 +36,10 @@ const SAMPLE_ROWS: ClientRow[] = [
     phone: "(41) 9 9123-4567",
     email: "maria@ex.com",
     company: "Acme Ltd",
-    status: "inactive",
+    type: "cpf",
   },
 ];
 
-// --- Page component ---
 export default function ClientesPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ClientRow[]>(SAMPLE_ROWS);
@@ -68,12 +51,12 @@ export default function ClientesPage() {
     { key: "cpf", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
     { key: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
     {
-      key: "status",
-      label: "Status",
+      key: "types",
+      label: "Tipo de cliente",
       type: "select",
       options: [
-        { value: "active", label: "Ativo" },
-        { value: "inactive", label: "Inativo" },
+        { value: "cnpj", label: "CNPJ" },
+        { value: "cpf", label: "CPF" },
       ],
     },
   ];
@@ -86,9 +69,9 @@ export default function ClientesPage() {
     { key: "email", label: "Email" },
     { key: "company", label: "Empresa" },
     {
-      key: "status",
-      label: "Status",
-      render: (r) => <span className={`px-2 py-0.5 rounded text-xs ${r.status === "active" ? "bg-emerald-100" : "bg-gray-200"}`}>{r.status}</span>,
+      key: "type",
+      label: "Tipo de cliente",
+      render: (r) => <span>{r.type}</span>,
     },
   ];
 
@@ -98,37 +81,39 @@ export default function ClientesPage() {
       key: "view",
       label: "Visualizar",
       icon: <MagnifyingGlassIcon size={14} />,
+      className: 'icon-btn-view',
       onClick: (row: ClientRow) => {
         navigate(`/clientes/${row.id}`);
       },
     },
     {
-      key: "edit",
-      label: "Editar",
-      icon: <PencilSimpleIcon size={14} />,
+      key: "car",
+      label: "Carro",
+      icon: <CarIcon size={14} />,
       onClick: (row: ClientRow) => {
-        navigate(`/clientes/${row.id}/edit`);
+        navigate(`/clientes/${row.id}/car`);
       },
     },
     {
         key: 'money',
         label: 'Dinheiro',
         icon: <CurrencyDollarIcon size={14} />,
+        className: "icon-btn-money",
         onClick: (row: ClientRow) => {
             navigate(`/clientes/${row.id}/money`);
         }
     }
   ];
 
-  // Called by GenericFilters -> onSearch (the GenericFilters should call this with the filter object)
   const handleSearch = (values: Record<string, any>) => {
-    // simple client-side filter example:
+
     const filteredRows = rows.filter((r) => {
       if (values.cpf && !r.cpf.includes(values.cpf)) return false;
       if (values.name && !r.name.toLowerCase().includes(String(values.name).toLowerCase())) return false;
-      if (values.status && r.status !== values.status) return false;
+      if (values.type && r.type !== values.type) return false;
       return true;
     });
+
     setFiltered(filteredRows);
   };
 
@@ -143,8 +128,9 @@ export default function ClientesPage() {
       Telefone: r.phone,
       Email: r.email,
       Empresa: r.company,
-      Status: r.status,
+      type: r.type,
     }));
+
     const csv = [
       Object.keys(data[0]).join(","),
       ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(",")),
@@ -162,23 +148,19 @@ export default function ClientesPage() {
   const rowsToShow = filtered ?? rows;
 
   return (<>
-    <div className="min-h-screen bg-gray-100">
-      <div className="flex">
-        <main className="flex-1 p-6">
-          <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
-          <GenericFilters fields={filters} onSearch={handleSearch} />
-          <GenericTable
-            title="Listagem de Clientes"
-            columns={columns}
-            rows={rowsToShow}
-            actions={actions}
-            perPage={5}
-            total={rows.length}
-            onGenerateCSV={handleGenerateCSV}
-          />
-        </main>
-      </div>
-    </div>
+    <main>
+      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
+      <GenericFilters fields={filters} onSearch={handleSearch} />
+      <GenericTable
+        title="Listagem de Clientes"
+        columns={columns}
+        rows={rowsToShow}
+        actions={actions}
+        perPage={5}
+        total={rows.length}
+        onGenerateCSV={handleGenerateCSV}
+      />
+    </main>
     <ClienteModal isOpen={isOpen} closeModal={() => setIsOpen(false)} client={undefined}/>
   </>);
 }

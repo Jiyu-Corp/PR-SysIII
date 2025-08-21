@@ -88,9 +88,29 @@
     font-size: 14px;
   }
   
-  .icon-btn:hover { background:#f3f4f6; }
+  .icon-btn:hover { background:rgba(151, 151, 151, 0.63); }
   
-  /* footer with csv and pagination summary */
+  .action-header{
+    display: flex;
+    justify-content: center;
+  }
+  
+  .generic-table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .icon-btn-view {
+    color: white;
+    background-color: #4A87E8;
+  }
+
+  .icon-btn-money {
+    color: #f59e0b;
+  }
+
   .generic-table-footer {
     display:flex;
     align-items:center;
