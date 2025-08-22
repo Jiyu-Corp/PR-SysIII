@@ -12,6 +12,8 @@ import { requestPRSYS } from "@renderer/utils/http";
 import toast from "react-hot-toast";
 import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { clientType } from "@renderer/types/resources/clientType";
+import { PrsysError } from "@renderer/types/prsysErrorType";
+import { getErrorMessage } from "@renderer/utils/utils";
 
 type ClienteModalProps = { 
   client: clientType | undefined;
@@ -80,8 +82,8 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
     const params = {
       name: name,
       cpfCnpj: cpfCnpj.replace(/\D/g, ""),
-      email: email,
-      phone: phone.replace(/\D/g, "").slice(2),
+      email: email || undefined,
+      phone: phone.replace(/\D/g, "").slice(2) || undefined,
       idClientEnterprise: idClientEnterprise
     }
     try {
@@ -91,7 +93,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 
       toast.success('Cliente criado.', successToastStyle);
     } catch(err) {
-      toast.error((err as Error).message, errorToastStyle);
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
     }
   }
 
@@ -102,8 +104,8 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
       idClient: idClient,
       name: name,
       cpfCnpj: cpfCnpj.replace(/\D/g, ""),
-      email: email,
-      phone: phone.replace(/\D/g, "").slice(2),
+      email: email || undefined,
+      phone: phone.replace(/\D/g, "").slice(2) || undefined,
       idClientEnterprise: idClientEnterprise
     }
     try {
@@ -113,7 +115,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 
       toast.success('Cliente editado.', successToastStyle);
     } catch(err) {
-      toast.error((err as Error).message, errorToastStyle);
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
     }
   }
 
@@ -127,7 +129,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 
       toast.success('Cliente deletado.', successToastStyle);
     } catch(err) {
-      toast.error((err as Error).message, errorToastStyle);
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
     }
   }
 
