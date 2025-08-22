@@ -4,7 +4,6 @@ import { IsNumber, IsOptional, IsPositive, IsString, Length } from 'class-valida
 export class GetActiveClientsDto {
     @IsOptional()
     @IsString()
-    @Length(11, 14)
     readonly cpfCnpj?: string;
 
     @IsOptional()

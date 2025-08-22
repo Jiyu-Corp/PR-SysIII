@@ -10,6 +10,7 @@ import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 import { Toaster } from "react-hot-toast";
 import { clientType } from "@renderer/types/resources/clientType";
 import { requestPRSYS } from '@renderer/utils/http'
+import { Grid } from "react-loader-spinner";
 
 type ClientRow = {
   id: string;
@@ -17,7 +18,7 @@ type ClientRow = {
   cpf_cnpj: string;
   phone?: string;
   email?: string;
-  company?: string;
+  enterprise?: string;
   type?: "cnpj" | "cpf";
 };
 
@@ -38,34 +39,29 @@ export default function ClientesPage() {
       setLoading(true);
       try {
         const response = await requestPRSYS('client', '', 'GET');
-        // your response is an array at the root according to the example
-        const arr = Array.isArray(response) ? response : response?.data ?? [];
         
+        const arr = Array.isArray(response) ? response : response?.data ?? [];
         
         const mapped: ClientRow[] = (arr as any[]).map((item: any) => {
         
-          //falta company nesse caralho ainda, vou ver dps, to indo embora
         return {
             id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
             name: item.name ?? item.nome ?? "",
             cpf_cnpj: item.cpfCnpj,
             phone: item.phone ?? item.telefone ?? "",
             email: item.email ?? "",
-            company: "",
+            enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
             type: item.clientType.idClientType == 1 ? 'cpf' : 'cnpj'
           };
-        });
-        
+        });        
         
         if (mapped.length) {
           setRows(mapped);
           setFiltered(null);
         } else {
-          console.warn("fetchClient: no clients mapped, response:", response);
+          console.warn("fetchClient: response:", response);
         }
         
-        
-        console.log("fetchClient response:", response);
       } catch (err) {
         console.error("fetchClient error:", err);
       } finally {
@@ -79,12 +75,12 @@ export default function ClientesPage() {
     { key: "cpf_cnpj", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
     { key: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
     {
-      key: "types",
+      key: "type",
       label: "Tipo de cliente",
       type: "select",
       options: [
-        { value: "cnpj", label: "CNPJ" },
-        { value: "cpf", label: "CPF" },
+        { value: "2", label: "CNPJ" },
+        { value: "1", label: "CPF" },
       ],
     },
   ];
@@ -95,7 +91,7 @@ export default function ClientesPage() {
     { key: "cpf_cnpj", label: "CPF/CNPJ" },
     { key: "phone", label: "Telefone" },
     { key: "email", label: "Email" },
-    { key: "company", label: "Empresa" },
+    { key: "enterprise", label: "Empresa" },
     {
       key: "type",
       label: "Tipo de cliente",
@@ -133,26 +129,57 @@ export default function ClientesPage() {
     }
   ];
 
-  const handleSearch = (values: Record<string, any>) => {
-      const cpfFilter = values.cpf_cnpj ? String(values.cpf_cnpj).replace(/\D/g, "") : "";
-      const nameFilter = values.name ? String(values.name).toLowerCase() : "";
-      const typeFilter = values.type ? String(values.type) : "";
-      
-      
-      const filteredRows = rows.filter((r) => {
-        if (cpfFilter && !String(r.cpf_cnpj).replace(/\D/g, "").includes(cpfFilter)) return false;
-        if (nameFilter && !r.name.toLowerCase().includes(nameFilter)) return false;
-        if (typeFilter && r.type !== typeFilter) return false;
-        return true;
-      });
-      
-      
-      setFiltered(filteredRows);
-    };
+  const handleSearch = async (values: Record<string, any>) => {
+    const cpfFilter = values.cpf_cnpj ? String(values.cpf_cnpj).replace(/\D/g, "") : "";
+    const nameFilter = values.name ? String(values.name).trim() : "";
+    const typeFilter = values.type ? String(values.type) : '';
+  
+    if (!cpfFilter && !nameFilter && !typeFilter) {
+      setFiltered(null);
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      console.log(cpfFilter)
+      const params = {
+        cpfCnpj: cpfFilter || undefined,
+        name: nameFilter || undefined,
+        idClientType: typeFilter || undefined,
+      }
+        
+      const response = await requestPRSYS("client", '', "GET", undefined, params);
+      console.log(response)
+      const arr = Array.isArray(response) ? response : response?.data ?? [];
+  
+      const mapped: ClientRow[] = (arr as any[]).map((item: any) => ({
+        id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
+        name: item.name ?? item.nome ?? "",
+        cpf_cnpj: item.cpfCnpj ?? item.cpfCnpj ?? item.cpf_cnpj ?? "",
+        phone: item.phone ?? item.telefone ?? "",
+        email: item.email ?? "",
+        enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
+        type:
+          item.clientType && (item.clientType.idClientType ?? item.clientType.id ?? item.clientType)
+            ? ( (item.clientType.idClientType ?? item.clientType.id ?? item.clientType) == 1 ? "cpf" : "cnpj")
+            : (item.type === "cpf" || item.type === "cnpj" ? item.type : "")
+      }));
+  
+      setFiltered(mapped);
+
+    } catch (err) {
+
+      console.error("handleSearch backend error, falling back to client-side filter:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
 
   const handleCreate = () => {
     setIsClientModalOpen(true);
   };
+
   const handleEdit = () => {
     setClientDetail({
       idClient: 12,
@@ -175,13 +202,13 @@ export default function ClientesPage() {
       CPF: r.cpf_cnpj,
       Telefone: r.phone,
       Email: r.email,
-      Empresa: r.company,
-      type: r.type,
+      Empresa: r.enterprise,
+      Tipo: r.type,
     }));
 
     const csv = [
-      Object.keys(data[0]).join(","),
-      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(",")),
+      Object.keys(data[0]).join(";"),
+      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(";")),
     ].join("\n");
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -203,15 +230,30 @@ export default function ClientesPage() {
       />
       <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
-      <GenericTable
-        title="Listagem de Clientes"
-        columns={columns}
-        rows={rowsToShow}
-        actions={actions}
-        perPage={5}
-        total={rows.length}
-        onGenerateCSV={handleGenerateCSV}
-      />
+      {loading ? 
+          <div style={{ margin: "24px 64px" }}>
+          <Grid
+            visible={true}
+            height="80"
+            width="80"
+            color="#4A87E8"
+            ariaLabel="grid-loading"
+            radius="12.5"
+            wrapperStyle={{justifyContent: "center"}}
+            wrapperClass="grid-wrapper"
+          />
+        </div>
+        : 
+          <GenericTable
+            title="Listagem de Clientes"
+            columns={columns}
+            rows={rowsToShow}
+            actions={actions}
+            perPage={5}
+            total={rows.length}
+            onGenerateCSV={handleGenerateCSV}
+          />
+    }
     </main>
     {isClientModalOpen && <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={clientDetail}/>}
   </>);
