@@ -95,7 +95,7 @@ function Table<T extends Record<string, any>>({
 
       <div className="generic-table-footer">
         <div>
-          <div>Registros por página: {perPage}</div>
+          <div>Registros por página: {total}</div>
         </div>
         <div>{summaryText}</div>
       </div>

@@ -3,62 +3,87 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react";
+import { UserIcon , TrashIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { clientType } from "@renderer/types/resources/clientType";
+import { requestPRSYS } from '@renderer/utils/http'
+import { Grid } from "react-loader-spinner";
+import Swal from 'sweetalert2';
+import { formatCpfCnpj, formatPhone } from "@renderer/utils/utils";
 
 type ClientRow = {
   id: string;
   name: string;
-  cpf: string;
+  cpf_cnpj: string;
   phone?: string;
   email?: string;
-  company?: string;
+  enterprise?: string;
   type?: "cnpj" | "cpf";
 };
 
-const SAMPLE_ROWS: ClientRow[] = [
-  {
-    id: "1",
-    name: "João Silva",
-    cpf: "131.200.739-64",
-    phone: "(42) 9 9981-3748",
-    email: "joao@ex.com",
-    company: "Orsted Corp",
-    type: "cnpj",
-  },
-  {
-    id: "2",
-    name: "Maria Souza",
-    cpf: "987.654.321-00",
-    phone: "(41) 9 9123-4567",
-    email: "maria@ex.com",
-    company: "Acme Ltd",
-    type: "cpf",
-  },
-];
 
 export default function ClientesPage() {
   const navigate = useNavigate();
-  const [rows, setRows] = useState<ClientRow[]>(SAMPLE_ROWS);
+  const [rows, setRows] = useState<ClientRow[]>([]);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState<boolean>(false);
   const [clientDetail, setClientDetail] = useState<clientType | undefined>(undefined);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    fetchClient();
+  }, []);
+
+  const fetchClient = async () => {
+      setLoading(true);
+      try {
+        const response = await requestPRSYS('client', '', 'GET');
+        
+        const arr = Array.isArray(response) ? response : response?.data ?? [];
+        
+        const mapped: ClientRow[] = (arr as any[]).map((item: any) => {
+
+        return {
+            id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
+            name: item.name ?? item.nome ?? "",
+            cpf_cnpj: formatCpfCnpj(item.cpfCnpj),
+            phone: formatPhone(item.phone),
+            email: item.email ?? "",
+            enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
+            type: item.clientType.idClientType == 1 ? 'cpf' : 'cnpj',
+            idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
+          };
+        });        
+        
+        if (mapped.length) {
+          setRows(mapped);
+          setFiltered(null);
+        } else {
+          console.warn("fetchClient: response:", response);
+        }
+        
+      } catch (err) {
+        console.error("fetchClient error:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
 
   // Filters config (pass to GenericFilters)
   const filters: FilterField[] = [  
-    { key: "cpf", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
+    { key: "cpf_cnpj", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
     { key: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
     {
-      key: "types",
+      key: "type",
       label: "Tipo de cliente",
       type: "select",
       options: [
-        { value: "cnpj", label: "CNPJ" },
-        { value: "cpf", label: "CPF" },
+        { value: "2", label: "CNPJ" },
+        { value: "1", label: "CPF" },
       ],
     },
   ];
@@ -66,10 +91,10 @@ export default function ClientesPage() {
   // Table columns (pass to GenericTable)
   const columns: TableColumn<ClientRow>[] = [
     { key: "name", label: "Nome" },
-    { key: "cpf", label: "CPF/CNPJ" },
+    { key: "cpf_cnpj", label: "CPF/CNPJ" },
     { key: "phone", label: "Telefone" },
     { key: "email", label: "Email" },
-    { key: "company", label: "Empresa" },
+    { key: "enterprise", label: "Empresa" },
     {
       key: "type",
       label: "Tipo de cliente",
@@ -85,72 +110,133 @@ export default function ClientesPage() {
       icon: <MagnifyingGlassIcon size={14} />,
       className: 'icon-btn-view',
       onClick: (row: ClientRow) => {
-        navigate(`/clientes/${row.id}`);
+        handleEdit(row);
       },
     },
     {
-      key: "car",
-      label: "Carro",
-      icon: <CarIcon size={14} />,
+      key: "delete",
+      label: "Deletar",
+      icon: <TrashIcon size={14} />,
+      className: 'icon-btn-delete',
       onClick: (row: ClientRow) => {
-        navigate(`/clientes/${row.id}/car`);
+        handleDelete(row.id);
       },
-    },
-    {
-        key: 'money',
-        label: 'Dinheiro',
-        icon: <CurrencyDollarIcon size={14} />,
-        className: "icon-btn-money",
-        onClick: (row: ClientRow) => {
-            navigate(`/clientes/${row.id}/money`);
-        }
     }
   ];
 
-  const handleSearch = (values: Record<string, any>) => {
+  const handleSearch = async (values: Record<string, any>) => {
+    const cpfFilter = values.cpf_cnpj ? String(values.cpf_cnpj).replace(/\D/g, "") : "";
+    const nameFilter = values.name ? String(values.name).trim() : "";
+    const typeFilter = values.type ? String(values.type) : '';
+  
+    if (!cpfFilter && !nameFilter && !typeFilter) {
+      setFiltered(null);
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      console.log(cpfFilter)
+      const params = {
+        cpfCnpj: cpfFilter || undefined,
+        name: nameFilter || undefined,
+        idClientType: typeFilter || undefined,
+      }
+        
+      const response = await requestPRSYS("client", '', "GET", undefined, params);
+      console.log(response)
+      const arr = Array.isArray(response) ? response : response?.data ?? [];
+  
+      const mapped: ClientRow[] = (arr as any[]).map((item: any) => ({
+        id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
+        name: item.name ?? item.nome ?? "",
+        cpf_cnpj: item.cpfCnpj ?? item.cpfCnpj ?? item.cpf_cnpj ?? "",
+        phone: item.phone ?? item.telefone ?? "",
+        email: item.email ?? "",
+        enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
+        type:
+          item.clientType && (item.clientType.idClientType ?? item.clientType.id ?? item.clientType)
+            ? ( (item.clientType.idClientType ?? item.clientType.id ?? item.clientType) == 1 ? "cpf" : "cnpj")
+            : (item.type === "cpf" || item.type === "cnpj" ? item.type : ""),
+        idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
+      }));
+  
+      setFiltered(mapped);
 
-    const filteredRows = rows.filter((r) => {
-      if (values.cpf && !r.cpf.includes(values.cpf)) return false;
-      if (values.name && !r.name.toLowerCase().includes(String(values.name).toLowerCase())) return false;
-      if (values.type && r.type !== values.type) return false;
-      return true;
-    });
+    } catch (err) {
 
-    setFiltered(filteredRows);
+      console.error("handleSearch backend error, falling back to client-side filter:", err);
+    } finally {
+      setLoading(false);
+    }
   };
-
+  
   const handleCreate = () => {
     setIsClientModalOpen(true);
   };
-  const handleEdit = () => {
+
+  const handleEdit = async (row: any) => {
     setClientDetail({
-      idClient: 12,
-      name: "Zan",
-      cpfCnpj: "13 12512 5123",
-      email: "zan@gmail.com",
-      phone: "42132314232"
+      idClient: Number(row.id),
+      name: row.name,
+      cpfCnpj: row.cpf_cnpj,
+      email: row.email,
+      phone: row.phone,
+      enterprise: row.idClientEnterprise
+        ? {
+            idClient: Number(row.idClientEnterprise),
+            name: row.enterprise ?? row.enterprise ?? "" 
+          }
+        : undefined
     });
     setIsClientModalOpen(true);
   };
+  
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este cliente?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS("client", `${id}`, "DELETE");
+        toast.success("Cliente excluído com sucesso!");
+        fetchClient();
+      }
+    } catch (error) {
+      console.error("Erro ao excluir cliente:", error);
+      toast.error("Erro ao excluir cliente.");
+    }
+  };
 
   useEffect(() => {
-    if(!isClientModalOpen) setClientDetail(undefined);
+    if(!isClientModalOpen) {
+      setClientDetail(undefined);
+      fetchClient();
+    }
   }, [isClientModalOpen])
 
 
   const handleGenerateCSV = () => {
     const data = (filtered ?? rows).map((r) => ({
       Nome: r.name,
-      CPF: r.cpf,
+      CPF: r.cpf_cnpj,
       Telefone: r.phone,
       Email: r.email,
-      Empresa: r.company,
-      type: r.type,
+      Empresa: r.enterprise,
+      Tipo: r.type,
     }));
 
     const csv = [
-      Object.keys(data[0]).join(","),
-      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(",")),
+      Object.keys(data[0]).join(";"),
+      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(";")),
     ].join("\n");
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -172,15 +258,30 @@ export default function ClientesPage() {
       />
       <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
-      <GenericTable
-        title="Listagem de Clientes"
-        columns={columns}
-        rows={rowsToShow}
-        actions={actions}
-        perPage={5}
-        total={rows.length}
-        onGenerateCSV={handleGenerateCSV}
-      />
+      {loading ? 
+          <div style={{ margin: "24px 64px" }}>
+          <Grid
+            visible={true}
+            height="80"
+            width="80"
+            color="#4A87E8"
+            ariaLabel="grid-loading"
+            radius="12.5"
+            wrapperStyle={{justifyContent: "center"}}
+            wrapperClass="grid-wrapper"
+          />
+        </div>
+        : 
+          <GenericTable
+            title="Listagem de Clientes"
+            columns={columns}
+            rows={rowsToShow}
+            actions={actions}
+            perPage={5}
+            total={rows.length}
+            onGenerateCSV={handleGenerateCSV}
+          />
+    }
     </main>
     {isClientModalOpen && <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={clientDetail}/>}
   </>);

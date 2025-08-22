@@ -29,7 +29,7 @@ export class ClientService {
                 .where('client.isActive = true');
 
             if(typeof getActiveClientsDto.cpfCnpj !== 'undefined')
-                query.andWhere('client.cpfCnpj = :cpfCnpj', { cpfCnpj: getActiveClientsDto.cpfCnpj });
+                query.andWhere('client.cpfCnpj ILIKE :cpfCnpj', { cpfCnpj: `%${getActiveClientsDto.cpfCnpj}%` });
 
             if(typeof getActiveClientsDto.name !== 'undefined')
                 query.andWhere('client.name ILIKE :name', { name: `%${getActiveClientsDto.name}%` });
