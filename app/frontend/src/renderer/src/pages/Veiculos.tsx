@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import { UserIcon  } from "@phosphor-icons/react";
-import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 import { Toaster } from "react-hot-toast";
+import VehicleModal from "@renderer/modals/VehicleModal/VehicleModal";
 
 export default function VeiculosPage() {
   const navigate = useNavigate();
@@ -44,8 +44,8 @@ export default function VeiculosPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
+      <GenericTop title="Veiculos" actionLabel="Cadastrar Veiculo" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
     </main>
-    {isVehicleModalOpen && <ClienteModal isOpen={isVehicleModalOpen} closeModal={() => setVehicleDetail(false)} client={vehicleDetail}/>}
+    {isVehicleModalOpen && <VehicleModal isOpen={isVehicleModalOpen} closeModal={() => setVehicleDetail(false)} vehicle={vehicleDetail}/>}
   </>);
 }

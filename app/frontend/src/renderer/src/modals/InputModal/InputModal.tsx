@@ -37,7 +37,9 @@ export default function InputModal({ width, label, value, setValue, onChange, ma
         const unformatedValue = typeof unformat !== 'undefined' 
           ? unformat(value)
           : value;
+        console.log(unformatedValue)
         setValue(format(unformatedValue, maskOptions));
+        console.log(format(unformatedValue, maskOptions))
       }
     }
 

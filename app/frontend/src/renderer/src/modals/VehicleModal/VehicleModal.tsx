@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
 import Modal1 from "../Modal1/Modal1";
-import { CarIcon, User, UserIcon } from "@phosphor-icons/react";
+import { CarIcon } from "@phosphor-icons/react";
 import InputModal from "../InputModal/InputModal";
 
-import "./ClienteModal.css"
+import "./VehicleModal.css"
 import SaveBtnModal from "../SaveBtnModal";
 import EditBtnModal from "../EditBtnModal";
 import DeleteBtnModal from "../DeleteBtnModal";
 import SelectModal from "../SelectModal/SelectModal";
 import { requestPRSYS } from "@renderer/utils/http";
 import toast from "react-hot-toast";
-import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
-import { clientType } from "@renderer/types/resources/clientType";
-import { PrsysError } from "@renderer/types/prsysErrorType";
-import { getErrorMessage } from "@renderer/utils/utils";
-import Swal from 'sweetalert2';
+import { errorToastStyle } from "@renderer/types/ToastTypes";
 import { vehicleType } from "@renderer/types/resources/vehicleType";
 
 type VehicleModalProps = { 
@@ -39,7 +35,11 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   const [idClient, setIdClient] = useState<number | null>(vehicle?.idClient || null);
 
   // Options
-  const [brands, setBrands] = useState<SelectOption[]>([]);
+  const [brands, setBrands] = useState<{
+    idBrand: number;
+    brand: string;
+    models: SelectOption[];
+  }[]>([]);
   const [models, setModels] = useState<SelectOption[]>([]);
   const [vehicleTypes, setVehicleTypes] = useState<SelectOption[]>([]);
   const [clients, setClients] = useState<SelectOption[]>([]);
@@ -50,7 +50,6 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
 
     const fetches: Promise<void>[] = [
       fetchBrands(),
-      fetchModels(),
       fetchVehicleTypes(),
       fetchClients()
     ];
@@ -59,63 +58,47 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   }, []);
 
   async function fetchBrands() {
-    const enterpriseParams = {
-      idClientType: 2
-    }
     try {
-      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+      const brands = await requestPRSYS('brand', 'getActiveBrands', 'GET');
 
-      setClientEnterprises(activeEnterprisesRes.map(c => ({
-        id: c.idClient,
-        label: c.name 
-      } as SelectOption))); 
+      setBrands(brands.map(b => ({
+        idBrand: b.idBrand,
+        brand: b.name,
+        models: b.models.map(m => ({
+          id: m.idModel,
+          label: m.name
+        } as SelectOption))
+      } as {
+        idBrand: number;
+        brand: string;
+        models: SelectOption[];
+      })));
     } catch(err) {
-      toast.error('Erro ao consultar empresas', errorToastStyle);
-    }
-  }
-  async function fetchModels() {
-    const enterpriseParams = {
-      idClientType: 2
-    }
-    try {
-      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
-
-      setClientEnterprises(activeEnterprisesRes.map(c => ({
-        id: c.idClient,
-        label: c.name 
-      } as SelectOption))); 
-    } catch(err) {
-      toast.error('Erro ao consultar empresas', errorToastStyle);
+      toast.error('Erro ao consultar marcas', errorToastStyle);
     }
   }
   async function fetchVehicleTypes() {
-    const enterpriseParams = {
-      idClientType: 2
-    }
     try {
-      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+      const vehicleTypes = await requestPRSYS('vehicle-type', '', 'GET');
 
-      setClientEnterprises(activeEnterprisesRes.map(c => ({
-        id: c.idClient,
-        label: c.name 
+      setVehicleTypes(vehicleTypes.map(c => ({
+        id: c.idVehicleType,
+        label: c.description 
       } as SelectOption))); 
     } catch(err) {
-      toast.error('Erro ao consultar empresas', errorToastStyle);
+      toast.error('Erro ao consultar tipos de veiculos', errorToastStyle);
     }
   }
   async function fetchClients() {
-    const enterpriseParams = {
-      idClientType: 2
-    }
     try {
-      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+      const clients = await requestPRSYS('client', '', 'GET');
 
-      setClientEnterprises(activeEnterprisesRes.map(c => ({
+      setClients(clients.map(c => ({
         id: c.idClient,
         label: c.name 
       } as SelectOption))); 
     } catch(err) {
-      toast.error('Erro ao consultar empresas', errorToastStyle);
+      toast.error('Erro ao consultar clientes', errorToastStyle);
     }
   }
 
@@ -137,13 +120,13 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
     <div className="vehicle-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="Placa" value={plate} setValue={setPlate}  mask={'DDDNANN'} replacement={{ D: /[A-Z]/, N: /\d/, A: /[A-Za-z0-9]/}}/>
-        <SelectModal width="210px" label="Marca" options={brands} value={idBrand} setValue={setIdBrand} />
-        <SelectModal width="210px" label="Modelo" options={models} value={idModel} setValue={setIdModel} />
-        <SelectModal width="210px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
-        <InputModal width="210px" label="Ano" value={year} setValue={setYear}/>
-        <InputModal width="155px" label="Cor" value={color} setValue={setColor} />
-        <SelectModal width="210px" label="Cliente" options={clients} value={idClient} setValue={setIdClient} />
+        <InputModal width="120px" label="Placa" value={plate} setValue={setPlate} mask={'_______'} replacement={{ _: /[A-Z0-9]/}} onChange={(value:string) => setPlate(value.toUpperCase())}/>
+        <InputModal width="170px" label="Cor" value={color} setValue={setColor} />
+        <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
+        <SelectModal width="180px" label="Marca" options={brands} value={idBrand} setValue={setIdBrand} />
+        <SelectModal width="180px" label="Modelo" options={models} value={idModel} setValue={setIdModel} /> 
+        <SelectModal width="180px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
+        <SelectModal width="180px" label="Cliente" options={clients} value={idClient} setValue={setIdClient} />
       </div>
       <div className="btns-wrapper">
         {isEdicaoVehicle
