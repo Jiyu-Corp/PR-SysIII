@@ -1,8 +1,8 @@
-import { format,  generatePattern,  InputMask, Replacement, unformat, useMask } from "@react-input/mask";
+import { format, generatePattern, InputMask, Replacement, useMask } from "@react-input/mask";
 import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import "./InputModal.css"
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 type InputModalProps = {
   width?: number | string;
@@ -10,40 +10,42 @@ type InputModalProps = {
   value: string;
   setValue: React.Dispatch<React.SetStateAction<string>>;
   onChange?: (string) => void;
-  masks?: {
-    maxLength: number
-    mask: string
-  }[];
+  mask?: string;
   replacement?: string | Replacement;
+  unformat?: (value: string) => string;
 };
 
-export default function InputModal({ width, label, value, setValue, onChange, masks, replacement }: InputModalProps) {
+export default function InputModal({ width, label, value, setValue, onChange, mask, replacement, unformat }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.currentTarget.value);
     if(typeof onChange !== 'undefined')
       onChange(e.currentTarget.value);
   };
 
-  const isMaskedInput = typeof masks !== 'undefined' && typeof replacement !== 'undefined';
+  const isMaskedInput = typeof mask !== 'undefined' && typeof replacement !== 'undefined' && typeof unformat !== 'undefined';
   if(isMaskedInput) {
-    const getMask = (value: string) => (masks.find(m => m.maxLength > value.length) || masks[masks.length-1]).mask;
     const maskOptions = {
-      mask: getMask(value),
+      mask: mask,
       replacement: replacement
     }
-    const inputRef = useMask(maskOptions);
-    const defaultValue = format(value, maskOptions);
 
-    const handleChangeMask = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = e.currentTarget.value;
-      setValue(newValue);
-      maskOptions.mask = getMask(newValue);
-      if(typeof onChange !== 'undefined')
-        onChange(e.currentTarget.value);
-    };
+    const maskValue = () => {
+      const maskPattern = RegExp(generatePattern('partial', maskOptions));
+
+      const isValueMasked = maskPattern.test(value);
+      if(!isValueMasked){
+        const unformatedValue = unformat(value);
+        setValue(format(unformatedValue, maskOptions));
+      }
+    }
+
+    // Take the updated value and format it
+    useEffect(() => {
+      maskValue();
+    }, [value]);
 
     return <InputWrapperModal label={label} width={width}>
-      <input className="input-modal" ref={inputRef} defaultValue={defaultValue} onInput={handleInput} onChange={handleChangeMask}/>
+      <input className="input-modal" value={value} onChange={handleChange}/>
     </InputWrapperModal>
 
   } else return <InputWrapperModal label={label} width={width}>

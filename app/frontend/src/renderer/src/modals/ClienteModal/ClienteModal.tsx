@@ -29,8 +29,10 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
   // Inputs
   const idClient = client?.idClient;
 	const [cpfCnpj, setCpfCnpj] = useState<string>(client?.cpfCnpj || '');
+  const cpfCpnjUnformater = (value: string) => value.replace(/\D/g, "");
 	const [name, setName] = useState<string>(client?.name || '');
 	const [phone, setPhone] = useState<string>(client?.phone || '');
+  const phoneUnformater = (value: string) => value.replace(/\+55/g, '').replace(/\D/g, "");
 	const [email, setEmail] = useState<string>(client?.email || '');
 	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(client?.enterprise?.idClient || null);
 
@@ -136,15 +138,9 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
     <div className="cliente-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  masks={[
-          { maxLength: 14, mask: '___.___.___-__' },
-          { maxLength: 18, mask: '__.___.___/____-__' }
-        ]} replacement={{ _: /\d/ }}/>
+        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater}/>
         <InputModal width="210px" label="Nome" value={name} setValue={setName}/>
-        <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone} masks={[
-          { maxLength: 18, mask: '+55 (__) ____-____' },
-          { maxLength: 19, mask: '+55 (__) _____-____' }
-        ]} replacement={{ _: /\d/ }}/>
+        <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
         <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
         <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} />
       </div>

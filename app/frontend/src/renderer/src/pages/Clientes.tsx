@@ -126,7 +126,7 @@ export default function ClientesPage() {
     setClientDetail({
       idClient: 12,
       name: "Zan",
-      cpfCnpj: "13125125123",
+      cpfCnpj: "13 12512 5123",
       email: "zan@gmail.com",
       phone: "42132314232"
     });
