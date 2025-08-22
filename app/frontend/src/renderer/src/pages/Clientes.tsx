@@ -3,14 +3,16 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@phosphor-icons/react";
+import { UserIcon , TrashIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { clientType } from "@renderer/types/resources/clientType";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
+import Swal from 'sweetalert2';
+import { formatCpfCnpj, formatPhone } from "@renderer/utils/utils";
 
 type ClientRow = {
   id: string;
@@ -43,15 +45,16 @@ export default function ClientesPage() {
         const arr = Array.isArray(response) ? response : response?.data ?? [];
         
         const mapped: ClientRow[] = (arr as any[]).map((item: any) => {
-        
+
         return {
             id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
             name: item.name ?? item.nome ?? "",
-            cpf_cnpj: item.cpfCnpj,
-            phone: item.phone ?? item.telefone ?? "",
+            cpf_cnpj: formatCpfCnpj(item.cpfCnpj),
+            phone: formatPhone(item.phone),
             email: item.email ?? "",
             enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
-            type: item.clientType.idClientType == 1 ? 'cpf' : 'cnpj'
+            type: item.clientType.idClientType == 1 ? 'cpf' : 'cnpj',
+            idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
           };
         });        
         
@@ -107,25 +110,17 @@ export default function ClientesPage() {
       icon: <MagnifyingGlassIcon size={14} />,
       className: 'icon-btn-view',
       onClick: (row: ClientRow) => {
-        navigate(`/clientes/${row.id}`);
+        handleEdit(row);
       },
     },
     {
-      key: "car",
-      label: "Carro",
-      icon: <CarIcon size={14} />,
+      key: "delete",
+      label: "Deletar",
+      icon: <TrashIcon size={14} />,
+      className: 'icon-btn-delete',
       onClick: (row: ClientRow) => {
-        navigate(`/clientes/${row.id}/car`);
+        handleDelete(row.id);
       },
-    },
-    {
-        key: 'money',
-        label: 'Dinheiro',
-        icon: <CurrencyDollarIcon size={14} />,
-        className: "icon-btn-money",
-        onClick: (row: ClientRow) => {
-            navigate(`/clientes/${row.id}/money`);
-        }
     }
   ];
 
@@ -162,7 +157,8 @@ export default function ClientesPage() {
         type:
           item.clientType && (item.clientType.idClientType ?? item.clientType.id ?? item.clientType)
             ? ( (item.clientType.idClientType ?? item.clientType.id ?? item.clientType) == 1 ? "cpf" : "cnpj")
-            : (item.type === "cpf" || item.type === "cnpj" ? item.type : "")
+            : (item.type === "cpf" || item.type === "cnpj" ? item.type : ""),
+        idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
       }));
   
       setFiltered(mapped);
@@ -175,24 +171,56 @@ export default function ClientesPage() {
     }
   };
   
-
   const handleCreate = () => {
     setIsClientModalOpen(true);
   };
 
-  const handleEdit = () => {
+  const handleEdit = async (row: any) => {
     setClientDetail({
-      idClient: 12,
-      name: "Zan",
-      cpfCnpj: "13125125123",
-      email: "zan@gmail.com",
-      phone: "42132314232"
+      idClient: Number(row.id),
+      name: row.name,
+      cpfCnpj: row.cpf_cnpj,
+      email: row.email,
+      phone: row.phone,
+      enterprise: row.idClientEnterprise
+        ? {
+            idClient: Number(row.idClientEnterprise),
+            name: row.enterprise ?? row.enterprise ?? "" 
+          }
+        : undefined
     });
     setIsClientModalOpen(true);
   };
+  
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este cliente?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS("client", `${id}`, "DELETE");
+        toast.success("Cliente excluído com sucesso!");
+        fetchClient();
+      }
+    } catch (error) {
+      console.error("Erro ao excluir cliente:", error);
+      toast.error("Erro ao excluir cliente.");
+    }
+  };
 
   useEffect(() => {
-    if(!isClientModalOpen) setClientDetail(undefined);
+    if(!isClientModalOpen) {
+      setClientDetail(undefined);
+      fetchClient();
+    }
   }, [isClientModalOpen])
 
 

@@ -14,6 +14,7 @@ import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { clientType } from "@renderer/types/resources/clientType";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import { getErrorMessage } from "@renderer/utils/utils";
+import Swal from 'sweetalert2';
 
 type ClienteModalProps = { 
   client: clientType | undefined;
@@ -123,11 +124,25 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
     if(typeof idClient === 'undefined') return;
 
     try {
-      await requestPRSYS('client', idClient.toString(), 'DELETE');
 
-      closeModal();
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este cliente?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
 
-      toast.success('Cliente deletado.', successToastStyle);
+      if (result.isConfirmed) {
+        await requestPRSYS('client', idClient.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('Cliente deletado.', successToastStyle);
+      }
     } catch(err) {
       toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
     }

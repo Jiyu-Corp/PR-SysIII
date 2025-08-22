@@ -93,8 +93,9 @@
     background-color: #4A87E8;
   }
 
-  .icon-btn-money {
-    color: #f59e0b;
+  .icon-btn-delete {
+    color: white;
+    background-color: #C1292E;
   }
 
   .generic-table-footer {
