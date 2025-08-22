@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
@@ -7,6 +7,8 @@ import { UserIcon , CarIcon, MagnifyingGlassIcon, CurrencyDollarIcon } from "@ph
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
+import { Toaster } from "react-hot-toast";
+import { clientType } from "@renderer/types/resources/clientType";
 import { requestPRSYS } from '@renderer/utils/http'
 
 type ClientRow = {
@@ -24,7 +26,8 @@ export default function ClientesPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ClientRow[]>([]);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isClientModalOpen, setIsClientModalOpen] = useState<boolean>(false);
+  const [clientDetail, setClientDetail] = useState<clientType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -148,8 +151,23 @@ export default function ClientesPage() {
     };
 
   const handleCreate = () => {
-    setIsOpen(true);
+    setIsClientModalOpen(true);
   };
+  const handleEdit = () => {
+    setClientDetail({
+      idClient: 12,
+      name: "Zan",
+      cpfCnpj: "13125125123",
+      email: "zan@gmail.com",
+      phone: "42132314232"
+    });
+    setIsClientModalOpen(true);
+  };
+
+  useEffect(() => {
+    if(!isClientModalOpen) setClientDetail(undefined);
+  }, [isClientModalOpen])
+
 
   const handleGenerateCSV = () => {
     const data = (filtered ?? rows).map((r) => ({
@@ -179,7 +197,11 @@ export default function ClientesPage() {
 
   return (<>
     <main>
-      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
+      <Toaster
+        position="top-right"
+        reverseOrder={true}
+      />
+      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
       <GenericTable
         title="Listagem de Clientes"
@@ -191,6 +213,6 @@ export default function ClientesPage() {
         onGenerateCSV={handleGenerateCSV}
       />
     </main>
-    <ClienteModal isOpen={isOpen} closeModal={() => setIsOpen(false)} client={undefined}/>
+    {isClientModalOpen && <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={clientDetail}/>}
   </>);
 }

@@ -1,0 +1,13 @@
+.button-modal {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  border: 0px;
+  border-radius: 4px;
+  padding: 10px 12px;
+
+  font-size: 16px;
+
+  cursor: pointer;
+}
