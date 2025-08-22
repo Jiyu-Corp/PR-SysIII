@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal1 from "../Modal1/Modal1";
-import { User, UserIcon } from "@phosphor-icons/react";
+import { CarIcon, User, UserIcon } from "@phosphor-icons/react";
 import InputModal from "../InputModal/InputModal";
 
 import "./ClienteModal.css"
@@ -15,6 +15,7 @@ import { clientType } from "@renderer/types/resources/clientType";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import { getErrorMessage } from "@renderer/utils/utils";
 import Swal from 'sweetalert2';
+import { vehicleType } from "@renderer/types/resources/vehicleType";
 
 type VehicleModalProps = { 
   vehicle: vehicleType | undefined;
@@ -30,27 +31,34 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   // Inputs
   const idVehicle = vehicle?.idVehicle;
   const [plate, setPlate] = useState<string>(vehicle?.plate || '');
-  const [idBrand, setIdBrand] = useState<number | null>(vehicle?.idBrand || null);
-  const [idModel, setIdModel] = useState<number | null>(vehicle?.idModel || null);
-  const [idVehicleType, setIdVehicleType] = useState<number | null>(vehicle?.idVehicleType || null);
+  const [idBrand, setIdBrand] = useState<number | null>(vehicle?.model.idBrand || null);
+  const [idModel, setIdModel] = useState<number | null>(vehicle?.model.idModel || null);
+  const [idVehicleType, setIdVehicleType] = useState<number | null>(vehicle?.model.idVehicleType || null);
   const [year, setYear] = useState<string>(vehicle?.year || '');
   const [color, setColor] = useState<string>(vehicle?.color || '');
-  const [idClient, setIdClient] = useState<number | null>(vehicle?.client?.idClient || null);
+  const [idClient, setIdClient] = useState<number | null>(vehicle?.idClient || null);
 
   // Options
-  const [clientEnterprises, setClientEnterprises] = useState<SelectOption[]>([]);
+  const [brands, setBrands] = useState<SelectOption[]>([]);
+  const [models, setModels] = useState<SelectOption[]>([]);
+  const [vehicleTypes, setVehicleTypes] = useState<SelectOption[]>([]);
+  const [clients, setClients] = useState<SelectOption[]>([]);
   
   // Options Fetch
   useEffect(() => {
     setIsLoading(true);
 
     const fetches: Promise<void>[] = [
-      fetchClientEnterprises()
+      fetchBrands(),
+      fetchModels(),
+      fetchVehicleTypes(),
+      fetchClients()
     ];
 
     Promise.all(fetches).then(() => setIsLoading(false));
   }, []);
-  async function fetchClientEnterprises() {
+
+  async function fetchBrands() {
     const enterpriseParams = {
       idClientType: 2
     }
@@ -62,111 +70,89 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
         label: c.name 
       } as SelectOption))); 
     } catch(err) {
-      toast.error('Erro ao consultar empresas', {
-        style: {
-          padding: '16px',
-          color: '#C1292E',
-        },
-        iconTheme: {
-          primary: '#C1292E',
-          secondary: '#FFFAEE',
-        },
-      });
+      toast.error('Erro ao consultar empresas', errorToastStyle);
+    }
+  }
+  async function fetchModels() {
+    const enterpriseParams = {
+      idClientType: 2
+    }
+    try {
+      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+
+      setClientEnterprises(activeEnterprisesRes.map(c => ({
+        id: c.idClient,
+        label: c.name 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar empresas', errorToastStyle);
+    }
+  }
+  async function fetchVehicleTypes() {
+    const enterpriseParams = {
+      idClientType: 2
+    }
+    try {
+      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+
+      setClientEnterprises(activeEnterprisesRes.map(c => ({
+        id: c.idClient,
+        label: c.name 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar empresas', errorToastStyle);
+    }
+  }
+  async function fetchClients() {
+    const enterpriseParams = {
+      idClientType: 2
+    }
+    try {
+      const activeEnterprisesRes = await requestPRSYS('client', '', 'GET', undefined, enterpriseParams);
+
+      setClientEnterprises(activeEnterprisesRes.map(c => ({
+        id: c.idClient,
+        label: c.name 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar empresas', errorToastStyle);
     }
   }
 
   // Behaviour
-  const title = isEdicaoCliente
-    ? "Editar Cliente"
-    : "Cadastrar Cliente";
+  const title = isEdicaoVehicle
+    ? "Editar Veiculo"
+    : "Cadastrar Veiculo";
 
   // Actions
-  async function saveClient() {
-    const params = {
-      name: name,
-      cpfCnpj: cpfCnpj.replace(/\D/g, ""),
-      email: email || undefined,
-      phone: phone.replace(/\D/g, "").slice(2) || undefined,
-      idClientEnterprise: idClientEnterprise
-    }
-    try {
-      await requestPRSYS('client', '', 'POST', params);
-
-      closeModal();
-
-      toast.success('Cliente criado.', successToastStyle);
-    } catch(err) {
-      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
-    }
+  async function saveVehicle() {
   }
 
-  async function editClient() {
-    if(typeof idClient === 'undefined') return;
-
-    const params = {
-      idClient: idClient,
-      name: name,
-      cpfCnpj: cpfCnpj.replace(/\D/g, ""),
-      email: email || undefined,
-      phone: phone.replace(/\D/g, "").slice(2) || undefined,
-      idClientEnterprise: idClientEnterprise
-    }
-    try {
-      await requestPRSYS('client', idClient.toString(), 'PUT', params);
-
-      closeModal();
-
-      toast.success('Cliente editado.', successToastStyle);
-    } catch(err) {
-      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
-    }
+  async function editVehicle() {
   }
 
-  async function deleteClient() {
-    if(typeof idClient === 'undefined') return;
-
-    try {
-
-      const result = await Swal.fire({
-        title: "Confirmação",
-        text: "Tem certeza que deseja excluir este cliente?",
-        icon: "warning",
-        showCancelButton: true,
-        cancelButtonText: "Cancelar",
-        confirmButtonText: "Sim, excluir",
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-      });
-
-      if (result.isConfirmed) {
-        await requestPRSYS('client', idClient.toString(), 'DELETE');
-  
-        closeModal();
-  
-        toast.success('Cliente deletado.', successToastStyle);
-      }
-    } catch(err) {
-      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
-    }
+  async function deleteVehicle() {
   }
 
-  return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
-    <div className="cliente-modal">
+  return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
+    <div className="vehicle-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater}/>
-        <InputModal width="210px" label="Nome" value={name} setValue={setName}/>
-        <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
-        <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
-        <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} />
+        <InputModal width="150px" label="Placa" value={plate} setValue={setPlate}  mask={'DDDNANN'} replacement={{ D: /[A-Z]/, N: /\d/, A: /[A-Za-z0-9]/}}/>
+        <SelectModal width="210px" label="Marca" options={brands} value={idBrand} setValue={setIdBrand} />
+        <SelectModal width="210px" label="Modelo" options={models} value={idModel} setValue={setIdModel} />
+        <SelectModal width="210px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
+        <InputModal width="210px" label="Ano" value={year} setValue={setYear}/>
+        <InputModal width="155px" label="Cor" value={color} setValue={setColor} />
+        <SelectModal width="210px" label="Cliente" options={clients} value={idClient} setValue={setIdClient} />
       </div>
       <div className="btns-wrapper">
-        {isEdicaoCliente
+        {isEdicaoVehicle
           ? <>
-            <EditBtnModal action={editClient}/>
-            <DeleteBtnModal action={deleteClient}/>
+            <EditBtnModal action={editVehicle}/>
+            <DeleteBtnModal action={deleteVehicle}/>
           </>
           : <>
-            <SaveBtnModal action={saveClient}/>
+            <SaveBtnModal action={saveVehicle}/>
           </>
         }
       </div>

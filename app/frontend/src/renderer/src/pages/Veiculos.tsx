@@ -1,18 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
-import GenericFilters from "../components/Filters/Filters";
-import GenericTable from "../components/Table/Table";
-import { UserIcon , TrashIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
-import { FilterField } from "@renderer/types/FilterTypes";
-import { TableColumn } from "@renderer/types/TableTypes";
+import { UserIcon  } from "@phosphor-icons/react";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
-import { toast, Toaster } from "react-hot-toast";
-import { clientType } from "@renderer/types/resources/clientType";
-import { requestPRSYS } from '@renderer/utils/http'
-import { Grid } from "react-loader-spinner";
-import Swal from 'sweetalert2';
-import { formatCpfCnpj, formatPhone } from "@renderer/utils/utils";
+import { Toaster } from "react-hot-toast";
 
 export default function VeiculosPage() {
   const navigate = useNavigate();
