@@ -59,13 +59,14 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   async function fetchBrandsAndModels() {
     try {
       const brands = await requestPRSYS('brand', 'getActiveBrands', 'GET');
+
       const brandsOptions = brands.map(b => ({
         id: b.idBrand,
         label: b.name,
         models: b.models.map(m => ({
           id: m.idModel,
           label: m.name,
-          idVehicleType: m.idVehicleType
+          idVehicleType: m.vehicleType.idVehicleType
         } as { idVehicleType: number } & SelectOption))
       } as SelectOption & {
         models: SelectOption[];
@@ -80,6 +81,42 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
     }
   }
 
+  
+  async function fetchVehicleTypes() {
+    try {
+      const vehicleTypes = await requestPRSYS('vehicle-type', '', 'GET');
+      
+      setVehicleTypes(vehicleTypes.map(c => ({
+        id: c.idVehicleType,
+        label: c.description 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar tipos de veiculos', errorToastStyle);
+    }
+  }
+  async function fetchClients() {
+    try {
+      const clients = await requestPRSYS('client', '', 'GET');
+      
+      setClients(clients.map(c => ({
+        id: c.idClient,
+        label: c.name 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar clientes', errorToastStyle);
+    }
+  }
+  
+  // Behaviour
+  const title = isEdicaoVehicle
+  ? "Editar Veiculo"
+  : "Cadastrar Veiculo";
+  
+  useEffect(() => {
+    populateModelOptionsWithSelectedBrand();
+    setIdModel(null);
+  }, [idBrand])
+
   function populateModelOptionsWithSelectedBrand(brandsOptions?: (SelectOption & {
     models: SelectOption[];
   })[]) {
@@ -93,55 +130,38 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
         label: selectedBrand.label,
         options: selectedBrand.models
       } as SelectOptionGroup]
-      : brandsOptions.map(b => ({
-        label: b.label,
-        options: b.models
-      } as SelectOptionGroup));
+      : idBrand !== null
+        ? brandsOptions.map(b => ({
+          label: b.label,
+          options: b.models
+        } as SelectOptionGroup))
+        : [];
 
     setModels(modelOptions);
   }
-
-  async function fetchVehicleTypes() {
-    try {
-      const vehicleTypes = await requestPRSYS('vehicle-type', '', 'GET');
-
-      setVehicleTypes(vehicleTypes.map(c => ({
-        id: c.idVehicleType,
-        label: c.description 
-      } as SelectOption))); 
-    } catch(err) {
-      toast.error('Erro ao consultar tipos de veiculos', errorToastStyle);
-    }
-  }
-  async function fetchClients() {
-    try {
-      const clients = await requestPRSYS('client', '', 'GET');
-
-      setClients(clients.map(c => ({
-        id: c.idClient,
-        label: c.name 
-      } as SelectOption))); 
-    } catch(err) {
-      toast.error('Erro ao consultar clientes', errorToastStyle);
-    }
-  }
-
-  // Behaviour
-  const title = isEdicaoVehicle
-    ? "Editar Veiculo"
-    : "Cadastrar Veiculo";
-
+  
   useEffect(() => {
-    if(brands.length > 0) {
-      populateModelOptionsWithSelectedBrand();
-      setIdModel(null);
-    }
-  }, [idBrand])
+    selectVehicleTypeWithSelectedModel();
+  }, [idModel])
 
+  function selectVehicleTypeWithSelectedModel() {
+   if(idModel === null) {
+    setIdVehicleType(null);
+    return;
+   }  
+
+   const idVehicleTypeOfModel = brands
+    .flatMap(b => b.models)
+    .find(m => m.id === idModel)
+    ?.idVehicleType
+
+    setIdVehicleType(idVehicleTypeOfModel || null);
+  }
+  
   // Actions
   async function saveVehicle() {
   }
-
+  
   async function editVehicle() {
   }
 
