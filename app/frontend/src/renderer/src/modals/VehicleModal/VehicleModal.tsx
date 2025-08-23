@@ -12,6 +12,7 @@ import { requestPRSYS } from "@renderer/utils/http";
 import toast from "react-hot-toast";
 import { errorToastStyle } from "@renderer/types/ToastTypes";
 import { vehicleType } from "@renderer/types/resources/vehicleType";
+import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 
 type VehicleModalProps = { 
   vehicle: vehicleType | undefined;
@@ -27,20 +28,18 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   // Inputs
   const idVehicle = vehicle?.idVehicle;
   const [plate, setPlate] = useState<string>(vehicle?.plate || '');
-  const [idBrand, setIdBrand] = useState<number | null>(vehicle?.model.idBrand || null);
-  const [idModel, setIdModel] = useState<number | null>(vehicle?.model.idModel || null);
-  const [idVehicleType, setIdVehicleType] = useState<number | null>(vehicle?.model.idVehicleType || null);
+  const [idBrand, setIdBrand] = useState<number | null>(vehicle?.model?.idBrand || null);
+  const [idModel, setIdModel] = useState<number | null>(vehicle?.model?.idModel || null);
+  const [idVehicleType, setIdVehicleType] = useState<number | null>(vehicle?.model?.idVehicleType || null);
   const [year, setYear] = useState<string>(vehicle?.year || '');
   const [color, setColor] = useState<string>(vehicle?.color || '');
   const [idClient, setIdClient] = useState<number | null>(vehicle?.idClient || null);
 
   // Options
-  const [brands, setBrands] = useState<{
-    idBrand: number;
-    brand: string;
-    models: SelectOption[];
-  }[]>([]);
-  const [models, setModels] = useState<SelectOption[]>([]);
+  const [brands, setBrands] = useState<(SelectOption & {
+    models: ({ idVehicleType: number } & SelectOption)[];
+  })[]>([]);
+  const [models, setModels] = useState<SelectOptionGroup[]>([]);
   const [vehicleTypes, setVehicleTypes] = useState<SelectOption[]>([]);
   const [clients, setClients] = useState<SelectOption[]>([]);
   
@@ -49,7 +48,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
     setIsLoading(true);
 
     const fetches: Promise<void>[] = [
-      fetchBrands(),
+      fetchBrandsAndModels(),
       fetchVehicleTypes(),
       fetchClients()
     ];
@@ -57,26 +56,51 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
     Promise.all(fetches).then(() => setIsLoading(false));
   }, []);
 
-  async function fetchBrands() {
+  async function fetchBrandsAndModels() {
     try {
       const brands = await requestPRSYS('brand', 'getActiveBrands', 'GET');
-
-      setBrands(brands.map(b => ({
-        idBrand: b.idBrand,
-        brand: b.name,
+      const brandsOptions = brands.map(b => ({
+        id: b.idBrand,
+        label: b.name,
         models: b.models.map(m => ({
           id: m.idModel,
-          label: m.name
-        } as SelectOption))
-      } as {
-        idBrand: number;
-        brand: string;
+          label: m.name,
+          idVehicleType: m.idVehicleType
+        } as { idVehicleType: number } & SelectOption))
+      } as SelectOption & {
         models: SelectOption[];
-      })));
+      }));
+
+      setBrands(brandsOptions);
+
+      populateModelOptionsWithSelectedBrand(brandsOptions);
+
     } catch(err) {
       toast.error('Erro ao consultar marcas', errorToastStyle);
     }
   }
+
+  function populateModelOptionsWithSelectedBrand(brandsOptions?: (SelectOption & {
+    models: SelectOption[];
+  })[]) {
+    if(typeof brandsOptions === 'undefined')
+      brandsOptions = brands;
+
+    const selectedBrand = brandsOptions.find(b => b.id == idBrand);
+
+    const modelOptions = typeof selectedBrand !== 'undefined'
+      ? [{
+        label: selectedBrand.label,
+        options: selectedBrand.models
+      } as SelectOptionGroup]
+      : brandsOptions.map(b => ({
+        label: b.label,
+        options: b.models
+      } as SelectOptionGroup));
+
+    setModels(modelOptions);
+  }
+
   async function fetchVehicleTypes() {
     try {
       const vehicleTypes = await requestPRSYS('vehicle-type', '', 'GET');
@@ -106,6 +130,13 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   const title = isEdicaoVehicle
     ? "Editar Veiculo"
     : "Cadastrar Veiculo";
+
+  useEffect(() => {
+    if(brands.length > 0) {
+      populateModelOptionsWithSelectedBrand();
+      setIdModel(null);
+    }
+  }, [idBrand])
 
   // Actions
   async function saveVehicle() {

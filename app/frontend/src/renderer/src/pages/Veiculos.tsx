@@ -4,6 +4,7 @@ import GenericTop from "../components/TopContainer/TopContainer";
 import { UserIcon  } from "@phosphor-icons/react";
 import { Toaster } from "react-hot-toast";
 import VehicleModal from "@renderer/modals/VehicleModal/VehicleModal";
+import { vehicleType } from "@renderer/types/resources/vehicleType";
 
 export default function VeiculosPage() {
   const navigate = useNavigate();
@@ -46,6 +47,6 @@ export default function VeiculosPage() {
       />
       <GenericTop title="Veiculos" actionLabel="Cadastrar Veiculo" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
     </main>
-    {isVehicleModalOpen && <VehicleModal isOpen={isVehicleModalOpen} closeModal={() => setVehicleDetail(false)} vehicle={vehicleDetail}/>}
+    {isVehicleModalOpen && <VehicleModal isOpen={isVehicleModalOpen} closeModal={() => setIsVehicleModalOpen(false)} vehicle={vehicleDetail}/>}
   </>);
 }

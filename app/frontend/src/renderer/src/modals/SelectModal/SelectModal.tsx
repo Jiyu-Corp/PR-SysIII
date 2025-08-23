@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import "./SelectModal.css"
-import Select, { SingleValue } from 'react-select';
+import Select, { SelectInstance, SingleValue } from 'react-select';
+import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 
 type InputModalProps = {
   width?: number | string;
@@ -11,26 +12,44 @@ type InputModalProps = {
   disabled?: boolean
   value: number | null;
   setValue: React.Dispatch<React.SetStateAction<number | null>>;
-  options: SelectOption[]
+  options: SelectOption[] | SelectOptionGroup[]
 };
 
 export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options }: InputModalProps) {
-  const [inputValue, setInputValue] = useState('');
+  // const [inputValue, setInputValue] = useState('');
+  const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
-  const handleOnChange = (newValue: SingleValue<SelectOption>) => {
-    setValue(newValue?.id || null);
+  const handleOnChange = (newValue: SingleValue<SelectOption | SelectOptionGroup>) => {
+    setValue((newValue as SelectOption)?.id );
+    // setInputValue('');
   };
 
-  const handleOnInputChange = (newValue: string) => {
-    setInputValue(newValue);
-  }
+  // const handleOnInputChange = (newValue: string) => {
+  //   setInputValue(newValue);
+  // }
+
+  useEffect(() => {
+    if (value === null) selectRef.current?.clearValue()
+  }, [value]);
+
+  if(options.length < 1) return <></>;
   
   return <InputWrapperModal label={label} width={width}>
     <Select
-      inputValue={inputValue}
-      onInputChange={handleOnInputChange}
+      ref={selectRef}
+      // onInputChange={handleOnInputChange}
       placeholder={placeholder || "Selecione"}
-      value={options.find(o => o.id == value)}
+      value={"options" in options[0]
+        ? (options as SelectOptionGroup[])
+            .flatMap(g => g.options)
+            .find(o => o.id === value)
+        : (options as SelectOption[]).find(o => o.id === value) ?? null
+      }
+      getOptionLabel={ o => o.label }
+      getOptionValue={ o => String("id" in o
+        ? o.id
+        : o.options.find(opt => opt.id == value)?.id
+      ) }
       options={options}
       onChange={handleOnChange}
       isClearable={true}
