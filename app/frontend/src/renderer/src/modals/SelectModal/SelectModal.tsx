@@ -5,7 +5,7 @@ import "./SelectModal.css"
 import Select, { SelectInstance, SingleValue } from 'react-select';
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 
-type InputModalProps = {
+type SelectModalProps = {
   width?: number | string;
   label: string;
   placeholder?: string;
@@ -15,7 +15,7 @@ type InputModalProps = {
   options: SelectOption[] | SelectOptionGroup[]
 };
 
-export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options }: InputModalProps) {
+export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options }: SelectModalProps) {
   // const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
@@ -61,6 +61,7 @@ export default function SelectModal({ width, label, placeholder, disabled, value
         option: (styles) => ({ ...styles, fontSize: "14px" }),
         indicatorsContainer: (styles) => ({ ...styles, padding: "0px !important" }),
       }}
+      noOptionsMessage={() => "Sem opções."}
     />
   </InputWrapperModal> 
 }

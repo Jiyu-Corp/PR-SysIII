@@ -13,6 +13,7 @@ import toast from "react-hot-toast";
 import { errorToastStyle } from "@renderer/types/ToastTypes";
 import { vehicleType } from "@renderer/types/resources/vehicleType";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
+import SelectCreateModal from "../SelectCreateModal/SelectCreateModal";
 
 type VehicleModalProps = { 
   vehicle: vehicleType | undefined;
@@ -28,8 +29,14 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   // Inputs
   const idVehicle = vehicle?.idVehicle;
   const [plate, setPlate] = useState<string>(vehicle?.plate || '');
-  const [idBrand, setIdBrand] = useState<number | null>(vehicle?.model?.idBrand || null);
-  const [idModel, setIdModel] = useState<number | null>(vehicle?.model?.idModel || null);
+  const [brand, setBrand] = useState<SelectOption | null>(vehicle && { 
+    id: vehicle.model.idBrand, 
+    label: vehicle.model.brand!.nameBrand 
+  } as SelectOption || null);
+  const [model, setModel] = useState<SelectOption | null>(vehicle && { 
+    id: vehicle.model.idModel,
+    label: vehicle.model.nameModel
+  } as SelectOption || null);
   const [idVehicleType, setIdVehicleType] = useState<number | null>(vehicle?.model?.idVehicleType || null);
   const [year, setYear] = useState<string>(vehicle?.year || '');
   const [color, setColor] = useState<string>(vehicle?.color || '');
@@ -37,7 +44,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
 
   // Options
   const [brands, setBrands] = useState<(SelectOption & {
-    models: ({ idVehicleType: number } & SelectOption)[];
+    models?: ({ idVehicleType: number } & SelectOption)[];
   })[]>([]);
   const [models, setModels] = useState<SelectOptionGroup[]>([]);
   const [vehicleTypes, setVehicleTypes] = useState<SelectOption[]>([]);
@@ -114,26 +121,26 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   
   useEffect(() => {
     populateModelOptionsWithSelectedBrand();
-    setIdModel(null);
-  }, [idBrand])
+    setModel(null);
+  }, [brand])
 
   function populateModelOptionsWithSelectedBrand(brandsOptions?: (SelectOption & {
-    models: SelectOption[];
+    models?: SelectOption[];
   })[]) {
     if(typeof brandsOptions === 'undefined')
       brandsOptions = brands;
 
-    const selectedBrand = brandsOptions.find(b => b.id == idBrand);
+    const selectedBrand = brandsOptions.find(b => b.id == brand?.id);
 
     const modelOptions = typeof selectedBrand !== 'undefined'
       ? [{
         label: selectedBrand.label,
-        options: selectedBrand.models
+        options: selectedBrand.models || []
       } as SelectOptionGroup]
-      : idBrand !== null
+      : brand === null
         ? brandsOptions.map(b => ({
           label: b.label,
-          options: b.models
+          options: b.models || []
         } as SelectOptionGroup))
         : [];
 
@@ -142,17 +149,17 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   
   useEffect(() => {
     selectVehicleTypeWithSelectedModel();
-  }, [idModel])
+  }, [model])
 
   function selectVehicleTypeWithSelectedModel() {
-   if(idModel === null) {
+   if(model === null) {
     setIdVehicleType(null);
     return;
    }  
 
    const idVehicleTypeOfModel = brands
     .flatMap(b => b.models)
-    .find(m => m.id === idModel)
+    .find(m => m?.id === model.id)
     ?.idVehicleType
 
     setIdVehicleType(idVehicleTypeOfModel || null);
@@ -174,8 +181,8 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
         <InputModal width="120px" label="Placa" value={plate} setValue={setPlate} mask={'_______'} replacement={{ _: /[A-Z0-9]/}} onChange={(value:string) => setPlate(value.toUpperCase())}/>
         <InputModal width="170px" label="Cor" value={color} setValue={setColor} />
         <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
-        <SelectModal width="180px" label="Marca" options={brands} value={idBrand} setValue={setIdBrand} />
-        <SelectModal width="180px" label="Modelo" options={models} value={idModel} setValue={setIdModel} /> 
+        <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} />
+        <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} /> 
         <SelectModal width="180px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
         <SelectModal width="180px" label="Cliente" options={clients} value={idClient} setValue={setIdClient} />
       </div>
