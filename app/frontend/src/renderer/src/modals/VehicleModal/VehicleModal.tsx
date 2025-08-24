@@ -10,10 +10,12 @@ import DeleteBtnModal from "../DeleteBtnModal";
 import SelectModal from "../SelectModal/SelectModal";
 import { requestPRSYS } from "@renderer/utils/http";
 import toast from "react-hot-toast";
-import { errorToastStyle } from "@renderer/types/ToastTypes";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { vehicleType } from "@renderer/types/resources/vehicleType";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import SelectCreateModal from "../SelectCreateModal/SelectCreateModal";
+import { getErrorMessage } from "@renderer/utils/utils";
+import { PrsysError } from "@renderer/types/prsysErrorType";
 
 type VehicleModalProps = { 
   vehicle: vehicleType | undefined;
@@ -167,6 +169,34 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   
   // Actions
   async function saveVehicle() {
+    const params = {
+      plate: plate,
+      model: {
+        idModel: model && model.id !== -1 
+          ? Number(model.id)
+          : undefined,
+        nameModel: model?.label,
+        idVehicleType: idVehicleType && Number(idVehicleType) || undefined,
+        idBrand: brand && brand.id !== -1
+          ? Number(brand.id)
+          : undefined,
+        brand: {
+          nameBrand: brand?.label
+        }
+      },
+      year: year && Number(year) || undefined,
+      color: color || undefined,
+      idClient: idClient && Number(idClient) || undefined
+    }
+    try {
+      await requestPRSYS('vehicle', '', 'POST', params);
+
+      closeModal();
+
+      toast.success('Veiculo criado.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
   
   async function editVehicle() {

@@ -15,6 +15,7 @@ import { clientType } from "@renderer/types/resources/clientType";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import { getErrorMessage } from "@renderer/utils/utils";
 import Swal from 'sweetalert2';
+import { SelectOption } from "@renderer/types/ReactSelectTypes";
 
 type ClienteModalProps = { 
   client: clientType | undefined;
