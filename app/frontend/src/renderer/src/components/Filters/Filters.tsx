@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import './Filters.css'
 import {MagnifyingGlassIcon} from '@phosphor-icons/react';
 import type { FilterField, GenericFiltersProps } from "../../types/FilterTypes";
+import InputWrapperModal from "../modals/InputWrapperModal/InputWrapperModal";
 
 const Filters: React.FC<GenericFiltersProps> = ({
   fields,

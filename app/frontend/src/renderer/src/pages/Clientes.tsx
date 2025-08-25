@@ -72,8 +72,6 @@ export default function ClientesPage() {
       }
     };
 
-
-  // Filters config (pass to GenericFilters)
   const filters: FilterField[] = [  
     { key: "cpf_cnpj", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
     { key: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
@@ -88,7 +86,6 @@ export default function ClientesPage() {
     },
   ];
 
-  // Table columns (pass to GenericTable)
   const columns: TableColumn<ClientRow>[] = [
     { key: "name", label: "Nome" },
     { key: "cpf_cnpj", label: "CPF/CNPJ" },
@@ -102,7 +99,6 @@ export default function ClientesPage() {
     },
   ];
 
-  // Actions for table rows (pass to GenericTable)
   const actions = [
     {
       key: "view",
@@ -136,7 +132,7 @@ export default function ClientesPage() {
   
     setLoading(true);
     try {
-      console.log(cpfFilter)
+      
       const params = {
         cpfCnpj: cpfFilter || undefined,
         name: nameFilter || undefined,
@@ -144,7 +140,6 @@ export default function ClientesPage() {
       }
         
       const response = await requestPRSYS("client", '', "GET", undefined, params);
-      console.log(response)
       const arr = Array.isArray(response) ? response : response?.data ?? [];
   
       const mapped: ClientRow[] = (arr as any[]).map((item: any) => ({

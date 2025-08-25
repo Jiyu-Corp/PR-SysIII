@@ -22,13 +22,6 @@ const TopContainer: React.FC<GenericTopProps> = ({
         <div>
           <button
             type="button"
-            onClick={onAction2}
-            className="btn"
-          >
-            <span>Tira esse botao dps, so coloquei pra testar o editar</span>
-          </button>
-          <button
-            type="button"
             onClick={onAction}
             className="btn"
           >
