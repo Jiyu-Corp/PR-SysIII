@@ -19,6 +19,59 @@
   flex-direction: row;
   flex-wrap: wrap;
   gap: 16px;
-  row-gap: 16px;
-  justify-content: space-between;
+}
+
+.price-table-modal .special-hours-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+  
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+
+  padding: 8px 2px;
+  border-top: 1.25px solid black;
+}
+
+.price-table-modal .special-hour-wrapper {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  padding: 6px 12px;
+  box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+
+  font-size: 10px;
+}
+
+.price-table-modal .special-hour-idx {
+  margin: 0px;
+  padding: 0px;
+  opacity: 0.5;
+}
+
+.price-table-modal .special-hour-delete {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 6px;
+  left: 6px;
+  padding: 3px 3px;
+  border-radius: 50%;
+
+  color: #fff;
+  background-color: #C2292E;
+
+  cursor: pointer;
+}
+
+.special-hour-wrapper .input-modal {
+  border: 1.5px solid rgba(0, 0, 0, 0.25);
 }
