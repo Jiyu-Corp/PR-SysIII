@@ -1,4 +1,4 @@
-export type FilterOption = { value: string; label: string };
+export type FilterOption = { id: number; label: string };
 
 export type FilterField = {
   key: string;

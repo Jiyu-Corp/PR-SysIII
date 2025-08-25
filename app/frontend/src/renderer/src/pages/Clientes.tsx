@@ -24,7 +24,6 @@ type ClientRow = {
   type?: "cnpj" | "cpf";
 };
 
-
 export default function ClientesPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ClientRow[]>([]);
@@ -86,8 +85,8 @@ export default function ClientesPage() {
       label: "Tipo de cliente",
       type: "select",
       options: [
-        { value: "2", label: "CNPJ" },
-        { value: "1", label: "CPF" },
+        { id: 2, label: "CNPJ" },
+        { id: 1, label: "CPF" },
       ],
     },
   ];

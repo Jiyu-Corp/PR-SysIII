@@ -3,6 +3,7 @@ import './Filters.css'
 import {MagnifyingGlassIcon} from '@phosphor-icons/react';
 import type { FilterField, GenericFiltersProps } from "../../types/FilterTypes";
 import InputModal from "../../modals/InputModal/InputModal";
+import SelectModal from "../../modals/SelectModal/SelectModal";
 
 const Filters: React.FC<GenericFiltersProps> = ({
   fields,
@@ -32,18 +33,14 @@ const Filters: React.FC<GenericFiltersProps> = ({
         {fields.map((f) => {
           if (f.type === "select") {
             return (
-              <select
+              <SelectModal
                 key={f.key}
                 value={state[f.key] ?? ""}
-                onChange={(e) => handleChange(f.key, e.target.value)}
-              >
-                <option value="">{f.label}</option>
-                {f.options?.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </option>
-                ))}
-              </select>
+                options={f.options ?? []}
+                label={f.label ?? f.key}
+                setValue={(newValue: string) => handleChange(f.key, newValue)}
+                selectClass="filters-select"
+              />
             );
           }
 

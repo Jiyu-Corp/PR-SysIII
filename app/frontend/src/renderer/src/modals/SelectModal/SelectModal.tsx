@@ -11,11 +11,12 @@ type SelectModalProps = {
   placeholder?: string;
   disabled?: boolean
   value: number | null;
-  setValue: React.Dispatch<React.SetStateAction<number | null>>;
+  setValue: React.Dispatch<React.SetStateAction<number | null>> | ((number) => void);
   options: SelectOption[] | SelectOptionGroup[]
+  selectClass?: string;
 };
 
-export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options }: SelectModalProps) {
+export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options, selectClass}: SelectModalProps) {
   // const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
@@ -61,6 +62,8 @@ export default function SelectModal({ width, label, placeholder, disabled, value
         option: (styles) => ({ ...styles, fontSize: "14px" }),
         indicatorsContainer: (styles) => ({ ...styles, padding: "0px !important" }),
       }}
+      className={selectClass ?? undefined} 
+      classNamePrefix="custom-select"     
       noOptionsMessage={() => "Sem opções."}
     />
   </InputWrapperModal> 
