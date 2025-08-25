@@ -52,8 +52,8 @@ export default function ClientesPage() {
             cpf_cnpj: formatCpfCnpj(item.cpfCnpj),
             phone: formatPhone(item.phone),
             email: item.email ?? "",
-            enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
-            type: item.clientType.idClientType == 1 ? 'cpf' : 'cnpj',
+            enterprise: item.clientEnterprise ? item.clientEnterprise.name : "----",
+            type: item.clientType.description,
             idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
           };
         });        
@@ -154,10 +154,7 @@ export default function ClientesPage() {
         phone: formatPhone(item.phone),
         email: item.email,
         enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
-        type:
-          item.clientType && (item.clientType.idClientType)
-            ? ( (item.clientType.idClientType) == 1 ? "cpf" : "cnpj")
-            : (item.type === "cpf" || item.type === "cnpj" ? item.type : ""),
+        type: item.clientType.description,
         idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
       }));
   
@@ -278,7 +275,7 @@ export default function ClientesPage() {
             rows={rowsToShow}
             actions={actions}
             perPage={5}
-            total={rows.length}
+            total={rowsToShow.length}
             onGenerateCSV={handleGenerateCSV}
           />
     }

@@ -21,7 +21,7 @@ export default function SelectModal({ width, label, placeholder, disabled, value
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
   const handleOnChange = (newValue: SingleValue<SelectOption | SelectOptionGroup>) => {
-    setValue((newValue as SelectOption)?.id );
+    setValue((newValue as SelectOption)?.id || null);
     // setInputValue('');
   };
 

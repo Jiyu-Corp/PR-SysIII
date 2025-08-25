@@ -49,6 +49,11 @@
   .generic-table th,
   .generic-table td {
     padding: 0.7rem 0.9rem;
+    text-wrap: nowrap;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 250px;
+    overflow: hidden;
   }
   
   .generic-table tbody tr:hover {
