@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import './Filters.css'
 import {MagnifyingGlassIcon} from '@phosphor-icons/react';
 import type { FilterField, GenericFiltersProps } from "../../types/FilterTypes";
-import InputWrapperModal from "../modals/InputWrapperModal/InputWrapperModal";
+import InputModal from "../../modals/InputModal/InputModal";
 
 const Filters: React.FC<GenericFiltersProps> = ({
   fields,
@@ -37,7 +37,7 @@ const Filters: React.FC<GenericFiltersProps> = ({
                 value={state[f.key] ?? ""}
                 onChange={(e) => handleChange(f.key, e.target.value)}
               >
-                <option value="">{f.placeholder ?? f.label}</option>
+                <option value="">{f.label}</option>
                 {f.options?.map((opt) => (
                   <option key={opt.value} value={opt.value}>
                     {opt.label}
@@ -48,12 +48,14 @@ const Filters: React.FC<GenericFiltersProps> = ({
           }
 
           return (
-            <input
+            <InputModal
               key={f.key}
               value={state[f.key] ?? ""}
-              onChange={(e) => handleChange(f.key, e.target.value)}
-              placeholder={f.placeholder ?? f.label}
-              type={f.type ?? "text"}
+              setValue={(newValue: string) => setState((s) => ({ ...s, [f.key]: newValue }))}
+              label={f.label ?? f.key}
+              mask={f.mask ? f.mask(state[f.key] ?? "") : undefined}
+              replacement={f.replacement}
+              unformat={f.unformater}              
             />
           );
         })}

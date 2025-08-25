@@ -8,7 +8,7 @@ type InputModalProps = {
   width?: number | string;
   label: string;
   value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setValue: React.Dispatch<React.SetStateAction<string>> | ((string) => void);
   onChange?: (string) => void;
   mask?: string;
   replacement?: string | Replacement;

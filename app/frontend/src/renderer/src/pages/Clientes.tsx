@@ -31,7 +31,8 @@ export default function ClientesPage() {
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState<boolean>(false);
   const [clientDetail, setClientDetail] = useState<clientType | undefined>(undefined);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);  
+  const cpfCpnjUnformater = (value: string) => value.replace(/\D/g, "");
 
   useEffect(() => {
     fetchClient();
@@ -73,8 +74,13 @@ export default function ClientesPage() {
     };
 
   const filters: FilterField[] = [  
-    { key: "cpf_cnpj", label: "CPF/CNPJ", type: "text", placeholder: "Digite o CPF/CNPJ" },
-    { key: "name", label: "Nome", type: "text", placeholder: "Digite o nome" },
+    { key: "cpf_cnpj", label: "CPF/CNPJ", 
+      mask: (cpfCnpj: string) => cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__',
+      replacement: { _: /\d/}, 
+      type: "text",
+      unformater: cpfCpnjUnformater
+    },
+    { key: "name", label: "Nome", type: "text"},
     {
       key: "type",
       label: "Tipo de cliente",
@@ -143,15 +149,15 @@ export default function ClientesPage() {
       const arr = Array.isArray(response) ? response : response?.data ?? [];
   
       const mapped: ClientRow[] = (arr as any[]).map((item: any) => ({
-        id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
-        name: item.name ?? item.nome ?? "",
-        cpf_cnpj: item.cpfCnpj ?? item.cpfCnpj ?? item.cpf_cnpj ?? "",
-        phone: item.phone ?? item.telefone ?? "",
-        email: item.email ?? "",
+        id: String(item.idClient),
+        name: item.name,
+        cpf_cnpj: formatCpfCnpj(item.cpfCnpj),
+        phone: formatPhone(item.phone),
+        email: item.email,
         enterprise: item.clientEnterprise ? item.clientEnterprise.name : "",
         type:
-          item.clientType && (item.clientType.idClientType ?? item.clientType.id ?? item.clientType)
-            ? ( (item.clientType.idClientType ?? item.clientType.id ?? item.clientType) == 1 ? "cpf" : "cnpj")
+          item.clientType && (item.clientType.idClientType)
+            ? ( (item.clientType.idClientType) == 1 ? "cpf" : "cnpj")
             : (item.type === "cpf" || item.type === "cnpj" ? item.type : ""),
         idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
       }));

@@ -3,8 +3,11 @@ export type FilterOption = { value: string; label: string };
 export type FilterField = {
   key: string;
   label?: string;
-  type?: "text" | "number" | "date" | "select";
-  placeholder?: string;
+  mask?: (value: string) => string;
+  replacement?: {};
+  type?: "text" | "select";
+  unformater?: (value: string) => string; 
+  onChange?: (value: string, setter: React.Dispatch<React.SetStateAction<any>>) => void;
   default?: string;
   options?: FilterOption[];
 };
