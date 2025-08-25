@@ -26,6 +26,10 @@ const Sidebar: React.FC = () => {
           <span>Convenios</span>
         </NavLink>
 
+        <NavLink to="/tabela-preco" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+          <span>Tabela de Preços</span>
+        </NavLink>
+
         {/* demais itens */}
       </nav>
     </aside>

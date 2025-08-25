@@ -1,0 +1,24 @@
+.price-table-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 20px;
+}
+
+.price-table-modal .inputs-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}
+
+.price-table-modal .btns-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}
