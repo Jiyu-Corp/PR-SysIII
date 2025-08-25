@@ -5,6 +5,7 @@ import {LoginPage} from './pages/LoginPage'
 import MainLayout from './components/MainLayout/mainlayout'
 import Dashboard from './pages/Dashboard' 
 import Clientes from './pages/Clientes' 
+import VeiculosPage from './pages/Veiculos'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const isAuth = !!sessionStorage.getItem('jwt_token') // true/false
@@ -31,6 +32,7 @@ export default function App() {
         {/* rotas filhas renderizadas dentro do <Outlet /> do MainLayout */}
         <Route path='/dashboard' index element={<Dashboard />} />
         <Route path='/clientes' index element={<Clientes />} />
+        <Route path='/veiculos' index element={<VeiculosPage />} />
       </Route>
 
       {/* fallback — se usuário abrir só #/ ou rota desconhecida */}

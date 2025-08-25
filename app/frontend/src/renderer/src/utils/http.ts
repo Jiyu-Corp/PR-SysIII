@@ -5,7 +5,7 @@ const PRSYS_API_PORT = 3001
 const PRSYS_API_URL = `${API_PROTOCOL}://localhost:${PRSYS_API_PORT}`
 
 // Need a better place
-type PRSYSResources = 'access' | 'client';
+type PRSYSResources = 'access' | 'client' | 'brand' | 'vehicle-type' | 'vehicle';
 
 function requestPRSYS(resource: PRSYSResources, endpoint: string, method: Method, body?: object, params?: object): Promise<any> {
     endpoint = `${resource}/${endpoint}`;

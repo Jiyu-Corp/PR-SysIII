@@ -17,13 +17,13 @@ export class BrandService {
         try {
             const brands = this.brandRepo
                 .createQueryBuilder('brand')
-                    .leftJoinAndSelect('brand.models', 'model', 'model.isActive = true')
+                    .leftJoinAndSelect('brand.models', 'model')
                     .leftJoinAndSelect('model.vehicleType', 'vehicleType')
-                .where('brand.isActive = true')
                 .getMany();
     
             return brands;
         } catch (err) {
+            console.log(err);
             throw new DatabaseError();
         }
     }

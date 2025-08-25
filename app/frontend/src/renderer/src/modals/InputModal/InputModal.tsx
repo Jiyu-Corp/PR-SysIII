@@ -22,7 +22,7 @@ export default function InputModal({ width, label, value, setValue, onChange, ma
       onChange(e.currentTarget.value);
   };
 
-  const isMaskedInput = typeof mask !== 'undefined' && typeof replacement !== 'undefined' && typeof unformat !== 'undefined';
+  const isMaskedInput = typeof mask !== 'undefined' && typeof replacement !== 'undefined';
   if(isMaskedInput) {
     const maskOptions = {
       mask: mask,
@@ -34,7 +34,9 @@ export default function InputModal({ width, label, value, setValue, onChange, ma
 
       const isValueMasked = maskPattern.test(value);
       if(!isValueMasked){
-        const unformatedValue = unformat(value);
+        const unformatedValue = typeof unformat !== 'undefined' 
+          ? unformat(value)
+          : value;
         setValue(format(unformatedValue, maskOptions));
       }
     }
