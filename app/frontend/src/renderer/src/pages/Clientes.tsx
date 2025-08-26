@@ -60,7 +60,7 @@ export default function ClientesPage() {
       } finally {
         setLoading(false);
       }
-    };
+  };
 
   const filters: FilterField[] = [  
     { key: "cpf_cnpj", label: "CPF/CNPJ", 

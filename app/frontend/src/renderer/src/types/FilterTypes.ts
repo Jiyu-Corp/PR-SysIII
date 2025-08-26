@@ -1,3 +1,5 @@
+import { SelectOption, SelectOptionGroup } from "./ReactSelectTypes";
+
 export type FilterOption = { id: number; label: string };
 
 export type FilterField = {
@@ -9,7 +11,7 @@ export type FilterField = {
   unformater?: (value: string) => string; 
   onChange?: (value: string, setter: React.Dispatch<React.SetStateAction<any>>) => void;
   default?: string;
-  options?: FilterOption[];
+  options?: SelectOption[] | SelectOptionGroup[];
 };
 
 export interface GenericFiltersProps {
