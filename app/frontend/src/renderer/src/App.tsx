@@ -7,6 +7,7 @@ import Dashboard from './pages/Dashboard'
 import Clientes from './pages/Clientes' 
 import VeiculosPage from './pages/Veiculos'
 import TabelaPrecoPage from './pages/TabelaPreco'
+import ConvenioPage from './pages/Convenios'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const isAuth = !!sessionStorage.getItem('jwt_token') // true/false
@@ -34,6 +35,7 @@ export default function App() {
         <Route path='/dashboard' index element={<Dashboard />} />
         <Route path='/clientes' index element={<Clientes />} />
         <Route path='/veiculos' index element={<VeiculosPage />} />
+        <Route path='/convenios' index element={<ConvenioPage />} />
         <Route path='/tabela-preco' index element={<TabelaPrecoPage />} />
       </Route>
 

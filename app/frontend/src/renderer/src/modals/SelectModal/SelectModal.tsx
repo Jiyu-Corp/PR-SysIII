@@ -9,7 +9,7 @@ type SelectModalProps = {
   width?: number | string;
   label: string;
   placeholder?: string;
-  disabled?: boolean
+  disabled?: boolean;
   value: number | null;
   setValue: React.Dispatch<React.SetStateAction<number | null>> | ((number) => void);
   options: SelectOption[] | SelectOptionGroup[]
