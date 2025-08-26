@@ -7,6 +7,7 @@ const TopContainer: React.FC<GenericTopProps> = ({
   subtitle = null,
   actionLabel = null,
   onAction,
+  actionLabel2 = null,
   onAction2,
   actionIcon,
   className = "mb-6",
@@ -28,6 +29,15 @@ const TopContainer: React.FC<GenericTopProps> = ({
             <span>{actionLabel}</span>
             {actionIcon}
           </button>
+          {actionLabel2 && 
+            <button
+              type="button"
+              onClick={onAction2}
+              className="btn"
+            >
+              <span>{actionLabel2}</span>
+            </button>
+          }
         </div>
       )}
     </div>
