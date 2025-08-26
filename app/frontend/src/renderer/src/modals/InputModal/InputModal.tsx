@@ -16,10 +16,14 @@ type InputModalProps = {
   replacement?: string | Replacement;
   formatInput?: (value: string) => string;
   unformat?: (value: string) => string;
-  fontSize?: string | number
+  fontSize?: string | number;
+  textAreaData?: {
+    rows: number; 
+    cols?: number;
+  };
 };
 
-export default function InputModal({ width, label, value, placeholder, disabled, setValue, onChange, mask, replacement, unformat, formatInput, fontSize }: InputModalProps) {
+export default function InputModal({ width, label, value, placeholder, disabled, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.currentTarget.value;
     if(typeof formatInput !== 'undefined')
@@ -57,7 +61,20 @@ export default function InputModal({ width, label, value, placeholder, disabled,
     return <InputWrapperModal label={label} width={width}>
       <input className="input-modal" value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled}/>
     </InputWrapperModal>
+  } else if(typeof textAreaData !== 'undefined') {
+    const handleChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      let value = e.target.value;
+      if(typeof formatInput !== 'undefined')
+        value = formatInput(value);
 
+      setValue(value);
+      if(typeof onChange !== 'undefined')
+        onChange(value);
+    };
+
+    return <InputWrapperModal label={label} width={width}>
+      <textarea className="input-modal" value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
+    </InputWrapperModal>
   } else return <InputWrapperModal label={label} width={width}>
       <input className="input-modal" value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled}/>
     </InputWrapperModal>

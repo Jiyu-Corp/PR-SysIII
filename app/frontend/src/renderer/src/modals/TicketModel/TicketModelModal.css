@@ -1,0 +1,24 @@
+.ticket-model-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 20px;
+}
+
+.ticket-model-modal .inputs-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}
+
+.ticket-model-modal .btns-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}
