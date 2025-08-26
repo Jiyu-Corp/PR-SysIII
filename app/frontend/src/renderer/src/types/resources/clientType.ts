@@ -9,3 +9,13 @@ export type clientType = {
     name: string
   } 
 }
+
+export type ClientRow = {
+  id: string;
+  name: string;
+  cpf_cnpj: string;
+  phone?: string;
+  email?: string;
+  enterprise?: string;
+  type?: "cnpj" | "cpf";
+};

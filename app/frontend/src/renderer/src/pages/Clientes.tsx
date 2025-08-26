@@ -8,21 +8,11 @@ import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 import { toast, Toaster } from "react-hot-toast";
-import { clientType } from "@renderer/types/resources/clientType";
+import { clientType, ClientRow } from "@renderer/types/resources/clientType";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
 import Swal from 'sweetalert2';
 import { formatCpfCnpj, formatPhone } from "@renderer/utils/utils";
-
-type ClientRow = {
-  id: string;
-  name: string;
-  cpf_cnpj: string;
-  phone?: string;
-  email?: string;
-  enterprise?: string;
-  type?: "cnpj" | "cpf";
-};
 
 export default function ClientesPage() {
   const navigate = useNavigate();
