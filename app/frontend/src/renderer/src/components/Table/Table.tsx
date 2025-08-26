@@ -96,6 +96,10 @@ function Table<T extends Record<string, any>>({
             setPage(0);
           }}
           rowsPerPageOptions={[perPage, perPage * 2, perPage * 5]}
+          labelRowsPerPage="Linhas por página:"
+          labelDisplayedRows={({ from, to, count }) =>
+            `${from}–${to} de ${count !== -1 ? count : `mais de ${to}`}`
+          }
         />
         <div>{summaryText}</div>
       </div>
