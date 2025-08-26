@@ -113,7 +113,7 @@ export default function VeiculosPage() {
   })[]) {
     if(typeof brandsOptions === 'undefined')
       brandsOptions = brands;
-    console.log(brandsOptions)
+    
     const modelOptions = brandsOptions.map(b => ({
           label: b.label,
           options: b.models || []
@@ -149,6 +149,9 @@ export default function VeiculosPage() {
   
   const filters: FilterField[] = [  
     { key: "plate", label: "Placa", 
+      mask: () => '_______',
+      replacement: { _: /[A-Z0-9]/},
+      onChange: (value, setter) => setter(value.toUpperCase()),
       type: "text"
     },
     {
@@ -199,6 +202,59 @@ export default function VeiculosPage() {
     },
   ];
 
+  const handleSearch = async (values: Record<string, any>) => {
+    
+    const plateFilter = values.plate ? values.plate.trim() : '';
+    const brandFilter = values.brands ? Number(values.brands) : null;
+    const modelFilter = values.models ? Number(values.models) : null;
+    const typeFilter = values.vehicleTypes ? Number(values.vehicleTypes) : null;
+    const clientFilter = values.clients ? Number(values.clients) : null;
+    
+    if (!plateFilter && !modelFilter && !typeFilter && !brandFilter && !clientFilter) {
+      setFiltered(null);
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      
+      const params = {
+        plate: plateFilter.toUpperCase() || undefined,
+        idBrand: brandFilter || undefined,
+        idModel: modelFilter || undefined,
+        idVehicleType: typeFilter || undefined,
+        idClient: clientFilter || undefined
+      }
+      
+      const response = await requestPRSYS('vehicle', '', 'GET', undefined, params);
+      const arr = Array.isArray(response) ? response : response?.data ?? [];
+
+      if(response.length < 1){
+        toast.error('Nenhum dado para esses filtros', errorToastStyle);
+      }
+      
+      const mapped: vehicleType[] = (arr as any[]).map((item: any) => ({
+          idVehicle: item.idVehicle,
+          plate: item.plate,
+          model: item.model,
+          brandName: item.model?.brand?.name,
+          modelName: item.model?.name,
+          vehicleType: item.model?.vehicleType?.description ?? '---',
+          year: item.year ?? '---',
+          color: item.color ?? '---',
+          clientName: item.client ? item.client.name : '---'
+      }));
+  
+      setFiltered(mapped);
+
+    } catch (err) {
+
+      console.error("handleSearch erro:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleCreate = () => {
     setIsVehicleModalOpen(true);
   };
@@ -227,6 +283,9 @@ export default function VeiculosPage() {
     }
   }, [isVehicleModalOpen])
 
+  
+  const rowsToShow = filtered ?? rows;
+
   return (<>
     <main>
       <Toaster
@@ -234,7 +293,7 @@ export default function VeiculosPage() {
         reverseOrder={true}
       />
       <GenericTop title="Veiculos" actionLabel="Cadastrar Veiculo" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
-      <GenericFilters fields={filters}  />
+      <GenericFilters fields={filters} onSearch={handleSearch} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
           <Grid
@@ -252,10 +311,10 @@ export default function VeiculosPage() {
           <GenericTable
             title="Listagem de Clientes"
             columns={columns}
-            rows={rows}
+            rows={rowsToShow}
             actions={actions}
             perPage={5}
-            total={rows.length}
+            total={rowsToShow.length}
             //onGenerateCSV={handleGenerateCSV}
           />
     }

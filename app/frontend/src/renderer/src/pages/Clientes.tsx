@@ -8,6 +8,7 @@ import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
 import { toast, Toaster } from "react-hot-toast";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { clientType, ClientRow } from "@renderer/types/resources/clientType";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
@@ -137,6 +138,10 @@ export default function ClientesPage() {
       const response = await requestPRSYS("client", '', "GET", undefined, params);
       const arr = Array.isArray(response) ? response : response?.data ?? [];
   
+      if(response.length < 1){
+        toast.error('Nenhum dado para esses filtros', errorToastStyle);
+      }
+
       const mapped: ClientRow[] = (arr as any[]).map((item: any) => ({
         id: String(item.idClient),
         name: item.name,
@@ -152,7 +157,7 @@ export default function ClientesPage() {
 
     } catch (err) {
 
-      console.error("handleSearch backend error, falling back to client-side filter:", err);
+      console.error("handleSearch erro:", err);
     } finally {
       setLoading(false);
     }

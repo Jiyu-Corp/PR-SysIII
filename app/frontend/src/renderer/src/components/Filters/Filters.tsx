@@ -52,7 +52,8 @@ const Filters: React.FC<GenericFiltersProps> = ({
               label={f.label ?? f.key}
               mask={f.mask ? f.mask(state[f.key] ?? "") : undefined}
               replacement={f.replacement}
-              unformat={f.unformater}              
+              unformat={f.unformater}
+              onChange={f.onChange ? (value) => f.onChange!(value, (newValue: string) => setState((s) => ({ ...s, [f.key]: newValue }))) : undefined}
             />
           );
         })}

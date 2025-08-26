@@ -3,6 +3,8 @@ import { TablePagination } from '@mui/material';
 import './Table.css';
 import { FileCsvIcon } from '@phosphor-icons/react';
 import type { GenericTableProps } from '../../types/TableTypes.ts';
+import { Toaster, toast } from "react-hot-toast";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 
 function Table<T extends Record<string, any>>({
   title = "Título",
@@ -30,7 +32,7 @@ function Table<T extends Record<string, any>>({
 
   return (
     <section className={`generic-table ${className}`}>
-      {/* Header and CSV button */}
+      
       <div className="generic-table-header">
         <h2 className="generic-top-title">{title}</h2>
         <button className="btn--small" onClick={onGenerateCSV}>
@@ -48,15 +50,15 @@ function Table<T extends Record<string, any>>({
               {actions.length > 0 && <th className="action-header">Ações</th>}
             </tr>
           </thead>
-          {/* Paginated rows */}
+          
           <tbody>
             {paginatedRows.length === 0
-              ? Array.from({ length: rowsPerPage }).map((_, i) => (
-                  <tr key={i}>
-                    {columns.map(col => <td key={String(col.key)}>{col.placeholder ?? "-"}</td>)}
-                    {actions.length > 0 && <td>...</td>}
-                  </tr>
-                ))
+              ?              
+                <tr className="empty-row">
+                  <td colSpan={columns.length + (actions.length > 0 ? 1 : 0)} style={{ textAlign: 'center', padding: '20px' }}>
+                    Nenhum dado disponível
+                  </td>
+                </tr>
               : paginatedRows.map((r, rowIndex) => (
                   <tr key={(r as any).id ?? rowIndex}>
                     {columns.map(col => (

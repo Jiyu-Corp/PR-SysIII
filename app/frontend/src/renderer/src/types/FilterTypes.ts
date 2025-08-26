@@ -9,7 +9,7 @@ export type FilterField = {
   replacement?: {};
   type?: "text" | "select";
   unformater?: (value: string) => string; 
-  onChange?: (value: string, setter: React.Dispatch<React.SetStateAction<any>>) => void;
+  onChange?: (value: string, setter: ((React.Dispatch<React.SetStateAction<any>>) | ((string) => void))) => void;
   default?: string;
   options?: SelectOption[] | SelectOptionGroup[];
 };
