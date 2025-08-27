@@ -12,16 +12,20 @@ export default function Modal1({
   maxWidth,
 	isOpen,
 	closeModal,
+  noBackground,
+  noExitBtn,
 	children
 }: Modal1Props) {
-	return <ModalWrapper isOpen={isOpen} closeModal={closeModal}>
+	return <ModalWrapper isOpen={isOpen} closeModal={closeModal} noBackground={noBackground}>
 		<div className="modal-1" style={{maxWidth: maxWidth}}>
 			<div className="entity-icon-wrapper">
 				<EntityIcon size={64} color="#4A87E8"/>
 			</div>
-			<div className="modal-1-close-wrapper" onClick={() => closeModal()}>
-				<XIcon/>
-			</div>
+      {!noExitBtn && 
+        <div className="modal-1-close-wrapper" onClick={() => closeModal()}>
+          <XIcon/>
+        </div>
+      }
 			<div className="modal-1-header">
 				<h1 className="modal-1-title">
 					{title}

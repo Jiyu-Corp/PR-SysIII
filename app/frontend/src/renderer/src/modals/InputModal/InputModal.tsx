@@ -8,7 +8,9 @@ type InputModalProps = {
   width?: number | string;
   label?: string;
   value: string;
+  type?: string;
   placeholder?: string;
+  locked?: boolean;
   disabled?: boolean;
   setValue: React.Dispatch<React.SetStateAction<string>> | ((string) => void);
   onChange?: (string) => void;
@@ -23,7 +25,7 @@ type InputModalProps = {
   };
 };
 
-export default function InputModal({ width, label, value, placeholder, disabled, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData }: InputModalProps) {
+export default function InputModal({ width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.currentTarget.value;
     if(typeof formatInput !== 'undefined')
@@ -76,7 +78,7 @@ export default function InputModal({ width, label, value, placeholder, disabled,
       <textarea className="input-modal" value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
     </InputWrapperModal>
   } else return <InputWrapperModal label={label} width={width}>
-      <input className="input-modal" value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled}/>
+      <input className={`input-modal ${locked ? "input-modal-locked" : ""}`} type={type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled || locked}/>
     </InputWrapperModal>
   
 }

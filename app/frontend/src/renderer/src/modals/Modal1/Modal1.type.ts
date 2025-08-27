@@ -6,4 +6,6 @@ export type Modal1Props = ModalWrapperProps & {
   entityIcon: React.ComponentType<IconProps>;
   maxWidth?: string | number;
   isLoading?: boolean;
+  noBackground?: boolean;
+  noExitBtn?: boolean;
 };

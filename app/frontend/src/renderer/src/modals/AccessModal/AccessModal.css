@@ -1,0 +1,24 @@
+.access-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 20px;
+}
+
+.access-modal .inputs-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}
+
+.access-modal .btns-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+  row-gap: 16px;
+  justify-content: space-between;
+}
