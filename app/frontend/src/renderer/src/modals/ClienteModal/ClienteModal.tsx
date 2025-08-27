@@ -83,7 +83,6 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 
   // Actions
   async function saveClient() {
-    console.log(idClientEnterprise)
     const params = {
       name: name,
       cpfCnpj: cpfCnpj.replace(/\D/g, ""),
