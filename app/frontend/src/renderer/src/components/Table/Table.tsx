@@ -3,8 +3,6 @@ import { TablePagination } from '@mui/material';
 import './Table.css';
 import { FileCsvIcon } from '@phosphor-icons/react';
 import type { GenericTableProps } from '../../types/TableTypes.ts';
-import { Toaster, toast } from "react-hot-toast";
-import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 
 function Table<T extends Record<string, any>>({
   title = "Título",

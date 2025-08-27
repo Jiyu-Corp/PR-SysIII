@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { UserIcon, MagnifyingGlassIcon, TrashIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import { Toaster, toast } from "react-hot-toast";
@@ -61,7 +61,7 @@ export default function VeiculosPage() {
             brandName: item.model?.brand?.name,
             idModel: item.model?.idModel,
             modelName: item.model?.name,
-            idVehicleType: item.model?.idVehicleType,
+            idVehicleType: item.model?.vehicleType?.idVehicleType,
             vehicleType: item.model?.vehicleType?.description ?? '---',
             year: item.year ?? '---',
             color: item.color ?? '---',
@@ -200,6 +200,15 @@ export default function VeiculosPage() {
         handleEdit(row);
       },
     },
+    {
+      key: "delete",
+      label: "Deletar",
+      icon: <TrashIcon size={14} />,
+      className: 'icon-btn-delete',
+      onClick: (row: vehicleType) => {
+        handleDelete(String(row.idVehicle!));
+      },
+    }
   ];
 
   const handleSearch = async (values: Record<string, any>) => {
@@ -260,30 +269,83 @@ export default function VeiculosPage() {
   };
 
   const handleEdit = async (row: any) => {
-    /*setVehicleDetail({
-      idClient: Number(row.id),
-      name: row.name,
-      cpfCnpj: row.cpf_cnpj,
-      email: row.email,
-      phone: row.phone,
-      enterprise: row.idClientEnterprise
-        ? {
-            idClient: Number(row.idClientEnterprise),
-            name: row.enterprise ?? row.enterprise ?? "" 
-          }
-        : undefined
-    });*/
+    setVehicleDetail({
+      idVehicle: row.idVehicle,
+      plate: row.plate,
+      model: {
+        idModel: row.idModel,
+        nameModel: row.modelName,
+        idVehicleType: row.idVehicleType,
+        idBrand: row.idBrand,
+        brand: {
+          nameBrand: row.brandName
+        }
+      },
+      year: row.year,
+      color: row.color,
+      idClient: row.idClient
+    });
+    
     setIsVehicleModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este veículo?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS("vehicle", `${id}`, "DELETE");
+        toast.success("Veículo excluído com sucesso!");
+        fetchVeiculos();
+      }
+    } catch (error) {
+      console.error("Erro ao excluir veículo:", error);
+      toast.error("Erro ao excluir veículo.");
+    }
   };
 
   useEffect(() => {
     if(!isVehicleModalOpen) {
       setVehicleDetail(undefined);
+      fetchBrandsAndModels();
       fetchVeiculos();
     }
   }, [isVehicleModalOpen])
 
-  
+  const handleGenerateCSV = () => {
+    const data = (filtered ?? rows).map((r: any) => ({
+      Placa: r.plate,
+      Marca: r.brandName,
+      Modelo: r.modelName,
+      Ano: r.year,
+      Tipo: r.vehicleType,
+      Cor: r.color,
+      Cliente: r.clientName
+    }));
+
+    const csv = [
+      Object.keys(data[0]).join(";"),
+      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(";")),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `veiculos.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const rowsToShow = filtered ?? rows;
 
   return (<>
@@ -315,7 +377,7 @@ export default function VeiculosPage() {
             actions={actions}
             perPage={5}
             total={rowsToShow.length}
-            //onGenerateCSV={handleGenerateCSV}
+            onGenerateCSV={handleGenerateCSV}
           />
     }
     </main>

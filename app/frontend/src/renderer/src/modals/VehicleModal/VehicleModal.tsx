@@ -16,6 +16,8 @@ import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectType
 import SelectCreateModal from "../SelectCreateModal/SelectCreateModal";
 import { getErrorMessage } from "@renderer/utils/utils";
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import useEffectSkipFirstRender from "@renderer/hooks/effectSkipFirstRender";
+import Swal from 'sweetalert2';
 
 type VehicleModalProps = { 
   vehicle: vehicleType | undefined;
@@ -121,7 +123,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   ? "Editar Veiculo"
   : "Cadastrar Veiculo";
   
-  useEffect(() => {
+  useEffectSkipFirstRender(() => {
     populateModelOptionsWithSelectedBrand();
     setModel(null);
   }, [brand])
@@ -149,7 +151,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
     setModels(modelOptions);
   }
   
-  useEffect(() => {
+  useEffectSkipFirstRender(() => {
     selectVehicleTypeWithSelectedModel();
   }, [model])
 
@@ -200,9 +202,65 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   }
   
   async function editVehicle() {
+    if(typeof idVehicle === 'undefined') return;
+
+    const params = {
+      idVehicle: idVehicle,
+      plate: plate,
+      model: {
+        idModel: model && model.id !== -1 
+          ? Number(model.id)
+          : undefined,
+        nameModel: model?.label,
+        idVehicleType: idVehicleType && Number(idVehicleType) || undefined,
+        idBrand: brand && brand.id !== -1
+          ? Number(brand.id)
+          : undefined,
+        brand: {
+          nameBrand: brand?.label
+        }
+      },
+      year: year && Number(year) || undefined,
+      color: color || undefined,
+      idClient: idClient && Number(idClient) || undefined
+    }
+    try {
+      await requestPRSYS('vehicle', idVehicle.toString(), 'PUT', params);
+
+      closeModal();
+
+      toast.success('Veículo editado.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   async function deleteVehicle() {
+    if(typeof idVehicle === 'undefined') return;
+
+    try {
+
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este veículo?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS('vehicle', idVehicle.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('Veículo deletado.', successToastStyle);
+      }
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>

@@ -235,7 +235,7 @@ export default function ClientesPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `clientes_${Date.now()}.csv`;
+    a.download = `clientes.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
