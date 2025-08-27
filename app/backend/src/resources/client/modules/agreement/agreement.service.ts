@@ -11,6 +11,7 @@ import { AgremeentClientExists, AgreementNotExists } from './agreement.errors';
 import { EditAgreementDto } from './dto/edit-agreement-dto';
 
 @Injectable()
+//DISABLE AGREEMENT AFTER SOME TIME
 export class AgreementService {
     constructor(
         @InjectRepository(Agreement)

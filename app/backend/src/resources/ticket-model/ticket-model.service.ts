@@ -43,9 +43,13 @@ export class TicketModelService {
         }
     }
 
+    // Just one model can be activated at same time, make it later
     async createTicketModel(createTicketModelDto: CreateTicketModelDto): Promise<TicketModel> {
         try {
-            const ticketModelData = this.ticketModelRepo.create(createTicketModelDto);
+            const ticketModelData = this.ticketModelRepo.create({ 
+              ...createTicketModelDto,
+              isActive: false 
+            });
             const ticketModel = await this.ticketModelRepo.save(ticketModelData);
 
             return ticketModel;
