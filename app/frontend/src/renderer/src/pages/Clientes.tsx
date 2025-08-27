@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon , TrashIcon, MagnifyingGlassIcon } from "@phosphor-icons/react";
+import { UserIcon , TrashIcon, PencilIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import ClienteModal from "@renderer/modals/ClienteModal/ClienteModal";
@@ -99,7 +99,7 @@ export default function ClientesPage() {
     {
       key: "view",
       label: "Visualizar",
-      icon: <MagnifyingGlassIcon size={14} />,
+      icon: <PencilIcon size={14} />,
       className: 'icon-btn-view',
       onClick: (row: ClientRow) => {
         handleEdit(row);

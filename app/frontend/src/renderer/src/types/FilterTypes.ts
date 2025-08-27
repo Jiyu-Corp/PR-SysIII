@@ -5,6 +5,7 @@ export type FilterOption = { id: number; label: string };
 export type FilterField = {
   key: string;
   label?: string;
+  placeholder?: string;
   mask?: (value: string) => string;
   replacement?: {};
   type?: "text" | "select";

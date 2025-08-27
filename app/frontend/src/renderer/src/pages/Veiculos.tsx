@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, MagnifyingGlassIcon, TrashIcon } from "@phosphor-icons/react";
+import { UserIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import { Toaster, toast } from "react-hot-toast";
@@ -194,7 +194,7 @@ export default function VeiculosPage() {
     {
       key: "view",
       label: "Visualizar",
-      icon: <MagnifyingGlassIcon size={14} />,
+      icon: <PencilIcon size={14} />,
       className: 'icon-btn-view',
       onClick: (row: vehicleType) => {
         handleEdit(row);
@@ -371,7 +371,7 @@ export default function VeiculosPage() {
         </div>
         : 
           <GenericTable
-            title="Listagem de Clientes"
+            title="Listagem de Veículos"
             columns={columns}
             rows={rowsToShow}
             actions={actions}

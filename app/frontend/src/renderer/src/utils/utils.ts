@@ -33,3 +33,27 @@ export function formatPhone(phone: string): string {
 
     return cleaned;
 }
+
+export function numeroParaMoeda(value: number): string {
+    if (value === null || value === undefined) return '---';
+    if (typeof value !== 'number') {
+      const parsed = Number(String(value).replace(',', '.'));
+      if (Number.isNaN(parsed)) return '---';
+      value = parsed;
+    }
+    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+export function formatPercentage(value: number): string {
+    if (value === null || value === undefined) return '---';
+    if (typeof value !== 'number') {
+      const parsed = Number(String(value).replace(',', '.'));
+      if (Number.isNaN(parsed)) return '---';
+      value = parsed;
+    }
+  
+    const isFraction = Math.abs(value) <= 1;
+    const percentValue = isFraction ? value * 100 : value;
+    
+    return `${percentValue}%`;
+  };

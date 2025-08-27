@@ -30,7 +30,7 @@ export class AgreementService {
                 .where('agreement.isActive = true');
             
             if(getActiveAgreementsDto.idClient) {
-                query.andWhere('agreement.idClient = :idClient', { 
+                query.andWhere('client.idClient = :idClient', { 
                     idClient: getActiveAgreementsDto.idClient 
                 });
             }
