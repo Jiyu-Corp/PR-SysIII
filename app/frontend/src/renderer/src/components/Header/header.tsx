@@ -21,9 +21,17 @@ const Header: React.FC = () => {
     }
 
     updateTime()
-    const interval = setInterval(updateTime, 60000)
+    const nowDate = new Date()
+    const msUntilNextMinute = (60 - nowDate.getSeconds()) * 1000 - nowDate.getMilliseconds()
 
-    return () => clearInterval(interval)
+    const timeout = setTimeout(() => {
+      updateTime()
+      const interval = setInterval(updateTime, 60000) 
+      
+      return () => clearInterval(interval)
+    }, msUntilNextMinute)
+
+    return () => clearTimeout(timeout)
   }, [])
 
   return (
