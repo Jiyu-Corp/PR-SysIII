@@ -104,8 +104,8 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
   async function saveAgreement() {
     const params = {
       idClient: idClient,
-      fixDiscount: fixDiscount ? parseFloat(fixDiscount.replace(/,/g, ".")) : undefined,
-      percentageDiscount: percentageDiscount ? Number(percentageDiscount) : undefined,
+      fixDiscount: fixDiscount ? parseFloat(fixDiscount.replace(/,/g, ".")) : null,
+      percentageDiscount: percentageDiscount ? Number(percentageDiscount) : null,
       dateExpiration: dateExpiration.split('/').reverse().join('-')
     }
     try {
@@ -120,9 +120,52 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
   }
 
   async function editAgreement() {
+    if(typeof idAgreement === 'undefined') return;
+
+    const params = {
+      idAgreement: idAgreement,
+      idClient: idClient,
+      fixDiscount: fixDiscount ? parseFloat(fixDiscount.replace(/,/g, ".")) : null,
+      percentageDiscount: percentageDiscount ? Number(percentageDiscount) : null,
+      dateExpiration: dateExpiration.split('/').reverse().join('-')
+    }
+    try {
+      await requestPRSYS('agreement', idAgreement.toString(), 'PUT', params);
+
+      closeModal();
+
+      toast.success('Convênio editado.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   async function deleteAgreement() {
+    if(typeof idAgreement === 'undefined') return;
+
+    try {
+
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este convênio?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS('agreement', idAgreement.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('convênio deletado.', successToastStyle);
+      }
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={HandshakeIcon}>

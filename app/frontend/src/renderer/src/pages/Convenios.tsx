@@ -47,14 +47,14 @@ export default function ConvenioPage() {
         const arr = Array.isArray(response) ? response : response?.data ?? [];
         
         const mapped: agreementType[] = (arr as any[]).map((item: any) => {
-
+        console.log(item)
         return {
             idAgreement: item.idAgreement,
             fixDiscount: numeroParaMoeda(item.fixDiscount) ?? '---',
             percentageDiscount: formatPercentage(item.percentageDiscount) ?? '---',
             dateExpiration: item.dateExpiration.split('-').reverse().join('/'),
             dateRegister: item.dateRegister.split('-').reverse().join('/'),
-            idClient: item.idClient,
+            idClient: item.client.idClient,
             enterpriseName: item.client?.name ?? '---'
           };
         });        
@@ -126,15 +126,15 @@ export default function ConvenioPage() {
         handleEdit(row);
       },
     },
-   /* {
+    {
       key: "delete",
       label: "Deletar",
       icon: <TrashIcon size={14} />,
       className: 'icon-btn-delete',
       onClick: (row: agreementType) => {
-        handleDelete(String(row.idVehicle!));
+        handleDelete(String(row.idAgreement!));
       },
-    }*/
+    }
   ];
 
    const handleSearch = async (values: Record<string, any>) => {
@@ -153,8 +153,8 @@ export default function ConvenioPage() {
       
       const params = {
         idClient: idClient,
-        dateExpirationStart: String(dateExpiration?.split('/').reverse().join('-')) || null,
-        dateExpirationEnd: String(dateRegister?.split('/').reverse().join('-')) || null
+        dateExpirationStart: dateExpiration?.split('/').reverse().join('-'),
+        dateExpirationEnd: dateRegister?.split('/').reverse().join('-') 
       }
       
       const response = await requestPRSYS('agreement', '', 'GET', undefined, params);
@@ -189,21 +189,72 @@ export default function ConvenioPage() {
   };
 
   const handleEdit = async (row: any) => {
-    /*setAgreementDetail({
-      idClient: Number(row.id),
-      name: row.name,
-      cpfCnpj: row.cpf_cnpj,
-      email: row.email,
-      phone: row.phone,
-      enterprise: row.idClientEnterprise
-        ? {
-            idClient: Number(row.idClientEnterprise),
-            name: row.enterprise ?? row.enterprise ?? "" 
-          }
-        : undefined
-    });*/
+    setAgreementDetail({
+      idAgreement: row.idAgreement,
+      fixDiscount: row.fixDiscount === '---' ? '' : row.fixDiscount,
+      percentageDiscount: row.percentageDiscount === '---' ? '' : row.percentageDiscount,
+      dateExpiration: row.dateExpiration,
+      idClient: row.idClient   
+    });
     setIsAgreementModalOpen(true);
   };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este convênio?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS("agreement", `${id}`, "DELETE");
+        toast.success("convênio excluído com sucesso!");
+        fetchConvenios();
+      }
+    } catch (error) {
+      console.error("Erro ao excluir convênio:", error);
+      toast.error("Erro ao excluir convênio.");
+    }
+  };
+
+  const handleGenerateCSV = () => {
+    const data = (filtered ?? rows).map((r: any) => ({
+      Empresa: r.enterpriseName,
+      Desconto: r.fixDiscount,
+      Percentual: r.percentageDiscount,
+      Cadastro: r.dateRegister,
+      Expiração: r.dateExpiration
+    }));
+  
+    if (!data.length) return;
+  
+    const escapeValue = (v: any) =>
+      `"${String(v ?? "").replace(/"/g, '""')}"`;
+  
+    const header = Object.keys(data[0]).map((h) => escapeValue(h)).join(";");
+    const body = data
+      .map((row) => Object.values(row).map((v) => escapeValue(v)).join(";"))
+      .join("\n");
+  
+    const csv = `${header}\n${body}`;
+  
+    const bom = "\uFEFF";
+    const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+  
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `convenios.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+  
 
   useEffect(() => {
     if(!isAgreementModalOpen) {
@@ -243,7 +294,7 @@ export default function ConvenioPage() {
             actions={actions}
             perPage={5}
             total={rowsToShow.length}
-            /*onGenerateCSV={handleGenerateCSV}*/
+            onGenerateCSV={handleGenerateCSV}
           />
       }
     </main>
