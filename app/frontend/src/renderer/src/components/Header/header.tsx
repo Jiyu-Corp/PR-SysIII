@@ -1,17 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { SignOutIcon } from '@phosphor-icons/react'
 import './Header.css'
 
 const Header: React.FC = () => {
   const navigate = useNavigate()
+  const [now, setNow] = useState<string>('')
 
   function handleLogout() {
     localStorage.removeItem('isAuth')
     navigate('/login', { replace: true })
   }
 
-  const now = '22:20 - 22/05/2025'
+  useEffect(() => {
+    function updateTime() {
+      const date = new Date()
+      const formatted =
+        date.toLocaleDateString('pt-BR') + ' - ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) 
+      setNow(formatted)
+    }
+
+    updateTime()
+    const interval = setInterval(updateTime, 60000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <header className="app-header">
