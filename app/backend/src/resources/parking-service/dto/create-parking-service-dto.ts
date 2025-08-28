@@ -1,23 +1,37 @@
 import { Type } from "class-transformer";
-import { IsDefined, IsObject, IsOptional, ValidateNested } from "class-validator";
-import { Client } from "src/resources/client/client.entity";
+import { IsDefined, IsObject, IsOptional, ValidateIf, ValidateNested } from "class-validator";
 import { CreateClientDto } from "src/resources/client/dto/create-client-dto";
 import { EditClientDto } from "src/resources/client/dto/edit-client-dto";
 import { CreateVehicleDto } from "src/resources/vehicle/dto/create-vehicle-dto";
 import { EditVehicleDto } from "src/resources/vehicle/dto/edit-vehicle-dto";
-import { CreateBrandDto } from "src/resources/vehicle/modules/brand/dto/create-brand-dto";
-import { Vehicle } from "src/resources/vehicle/vehicle.entity";
 
+// VALIDATE ERRORS!!!
 export class CreateParkingServiceDto {
+    @ValidateIf(o => typeof o.clientCreate === 'undefined')
     @IsOptional()
     @IsObject()
     @ValidateNested()
-    @Type(() => CreateClientDto || EditClientDto)
-    readonly clientDto?: CreateClientDto | EditClientDto;
-    
+    @Type(() => EditClientDto)
+    readonly clientEdit?: EditClientDto;
+
+    @ValidateIf(o => typeof o.clientEdit === 'undefined')
+    @IsOptional()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => CreateClientDto)
+    readonly clientCreate?: CreateClientDto;
+
+    @ValidateIf(o => typeof o.vehicleEdit === 'undefined')
     @IsDefined()
     @IsObject()
     @ValidateNested()
-    @Type(() => CreateVehicleDto || EditVehicleDto)
-    readonly vehicleDto: CreateVehicleDto | EditVehicleDto;
+    @Type(() => CreateVehicleDto)
+    readonly vehicleCreate?: CreateVehicleDto;
+    
+    @ValidateIf(o => typeof o.vehicleCreate === 'undefined')
+    @IsDefined()
+    @IsObject()
+    @ValidateNested()
+    @Type(() => EditVehicleDto)
+    readonly vehicleEdit?: EditVehicleDto;
 }

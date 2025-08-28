@@ -15,6 +15,8 @@ import { ServiceValueDto } from './dto/service-value-dto';
 import { PriceTableService } from './modules/price-table/price-table.service';
 import { ParkingServiceNotExists, VehicleWithoutModel } from './parking-service.errors';
 import { AgreementService } from '../client/modules/agreement/agreement.service';
+import { EditVehicleDto } from '../vehicle/dto/edit-vehicle-dto';
+import { EditClientDto } from '../client/dto/edit-client-dto';
 
 @Injectable()
 export class ParkingServiceService {
@@ -60,25 +62,27 @@ export class ParkingServiceService {
         const [parkError, park] = await promiseCatchError(this.parkService.getDefaultPark());
         if(parkError) throw parkError;
 
-        const clientDto = createParkingServiceDto.clientDto;
-        const vehicleDto = createParkingServiceDto.vehicleDto;
+        const clientDto = createParkingServiceDto.clientCreate || createParkingServiceDto.clientEdit;
+        const vehicleDto = (createParkingServiceDto.vehicleCreate || createParkingServiceDto.vehicleEdit)!;
         
         let client: Client | undefined;
         if(clientDto) {
             let clientError;
             
-            [clientError, client] = await promiseCatchError(clientDto instanceof CreateClientDto
-                ? this.clientService.createClient(clientDto)
-                : this.clientService.editClient(clientDto.idClient, clientDto)
+            [clientError, client] = await promiseCatchError(!("idClient" in clientDto)
+                ? this.clientService.createClient(clientDto as CreateClientDto)
+                : this.clientService.editClient((clientDto as EditClientDto).idClient, clientDto as EditClientDto)
             );
             if(clientError || typeof client === 'undefined') throw clientError;
             
             vehicleDto.idClient = client.idClient;
+        } else {
+          vehicleDto.idClient = null;
         }
-        
-        const [vehicleError, vehicle] = await promiseCatchError(vehicleDto instanceof CreateVehicleDto
-            ? this.vehicleService.createVehicle(vehicleDto)
-            : this.vehicleService.editVehicle(vehicleDto.idVehicle, vehicleDto)
+  
+        const [vehicleError, vehicle] = await promiseCatchError(!("idVehicle" in vehicleDto)
+            ? this.vehicleService.createVehicle(vehicleDto as CreateVehicleDto)
+            : this.vehicleService.editVehicle((vehicleDto as EditVehicleDto).idVehicle, vehicleDto as EditVehicleDto)
         );
         if(client && (vehicleError || vehicle.model === null)) 
             this.clientService.deleteClient(client.idClient); // Delete created client if vehicle creation didnt worked 

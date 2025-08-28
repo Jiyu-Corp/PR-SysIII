@@ -7,6 +7,7 @@ export type vehicleType = {
     idVehicleType: number;
     idBrand?: number;
     brand?: {
+      idBrand?: number;
       nameBrand: string;
     }
   };

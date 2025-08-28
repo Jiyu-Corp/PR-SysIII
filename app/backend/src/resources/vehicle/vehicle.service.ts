@@ -85,7 +85,9 @@ export class VehicleService {
                 year: createVehicleDto.year,
                 color: createVehicleDto.color,
                 client: typeof createVehicleDto.idClient !== 'undefined'
-                    ? { idClient: createVehicleDto.idClient }
+                    ? createVehicleDto.idClient
+                      ? { idClient: createVehicleDto.idClient }
+                      : null
                     : undefined,
                 model: {
                     idModel: typeof model.idModel !== 'undefined' // can be simplified
@@ -125,7 +127,7 @@ export class VehicleService {
                 plate: editVehicleDto.plate,
                 year: editVehicleDto.year,
                 color: editVehicleDto.color,
-                client: typeof editVehicleDto.idClient !== 'undefined'
+                client: typeof editVehicleDto.idClient !== 'undefined' && editVehicleDto.idClient
                     ? {
                         idClient: editVehicleDto.idClient
                     }

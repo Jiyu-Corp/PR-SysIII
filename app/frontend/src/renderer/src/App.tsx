@@ -11,6 +11,7 @@ import ConvenioPage from './pages/Convenios'
 import ModeloTicketPage from './pages/ModeloTicket'
 import AcessoPage from './pages/AcessoPage'
 import TipoVeiculoPage from './pages/TipoVeiculo'
+import EntradaSaidaPage from './pages/EntradaSaida'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const isAuth = !!sessionStorage.getItem('jwt_token') // true/false
@@ -35,7 +36,7 @@ export default function App() {
         }
       >
         {/* rotas filhas renderizadas dentro do <Outlet /> do MainLayout */}
-        <Route path='/dashboard' index element={<Dashboard />} />
+        <Route path='/entrada-saida' index element={<EntradaSaidaPage />} />
         <Route path='/clientes' index element={<Clientes />} />
         <Route path='/veiculos' index element={<VeiculosPage />} />
         <Route path='/convenios' index element={<ConvenioPage />} />

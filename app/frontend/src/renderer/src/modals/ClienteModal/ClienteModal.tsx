@@ -63,16 +63,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
         label: c.name 
       } as SelectOption))); 
     } catch(err) {
-      toast.error('Erro ao consultar empresas', {
-        style: {
-          padding: '16px',
-          color: '#C1292E',
-        },
-        iconTheme: {
-          primary: '#C1292E',
-          secondary: '#FFFAEE',
-        },
-      });
+      toast.error('Erro ao consultar empresas', errorToastStyle);
     }
   }
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import { SelectInstance, SingleValue } from 'react-select';
@@ -13,17 +13,19 @@ type SelectCreateModalProps = {
   value: SelectOption | null;
   setValue: React.Dispatch<React.SetStateAction<SelectOption | null>>;
   options: SelectOption[] | SelectOptionGroup[];
+  formatInput?: (input: string) => string;
   setOptions: React.Dispatch<React.SetStateAction<(SelectOption & any)[]>> | React.Dispatch<React.SetStateAction<(SelectOptionGroup & any)[]>>
   isGroupSelect?: boolean;
+  menuMaxHeight?: number | string;
 };
 
-export default function SelectCreateModal({ width, label, placeholder, disabled, value, setValue, options, setOptions, isGroupSelect }: SelectCreateModalProps) {
-  // const [inputValue, setInputValue] = useState('');
+export default function SelectCreateModal({ width, label, placeholder, disabled, value, setValue, options, setOptions, formatInput, isGroupSelect, menuMaxHeight }: SelectCreateModalProps) {
+  const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
   const handleOnChange = (newValue: SingleValue<SelectOption | SelectOptionGroup>) => {
     setValue((newValue as SelectOption) );
-    // setInputValue('');
+    setInputValue('');
   };
 
   const clearOptionsFromPreviousCreatedOpt = () => {
@@ -64,9 +66,10 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
     );
   }
 
-  // const handleOnInputChange = (newValue: string) => {
-  //   setInputValue(newValue);
-  // }
+  const handleOnInputChange = (newValue: string) => {
+    if(formatInput) newValue = formatInput(newValue);
+    setInputValue(newValue);
+  }
 
   useEffect(() => {
     if (value === null) selectRef.current?.clearValue()
@@ -75,7 +78,8 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
   return <InputWrapperModal label={label} width={width}>
     <CreatableSelect
       ref={selectRef}
-      // onInputChange={handleOnInputChange}
+      inputValue={inputValue}
+      onInputChange={handleOnInputChange}
       placeholder={placeholder || "Selecione"}
       value={options.length < 1 ? null
         : "options" in options[0]
@@ -101,6 +105,7 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
         valueContainer: (styles) => ({ ...styles, padding: "0px 8px", margin: "0px"}),
         option: (styles) => ({ ...styles, fontSize: "14px" }),
         indicatorsContainer: (styles) => ({ ...styles, padding: "0px !important" }),
+        menuList: (styles) => ({ ...styles, maxHeight: menuMaxHeight ?? "200px" })
       }}
       noOptionsMessage={() => "Sem opções."}
       createOptionPosition="first"

@@ -47,6 +47,6 @@ export class CreateVehicleDto {
 	@IsOptional()
 	@IsNumber()
 	@IsPositive()
-	idClient?: number
+	idClient?: number | null
 
 }

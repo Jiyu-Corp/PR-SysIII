@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import "./SelectModal.css"
@@ -10,13 +10,14 @@ type SelectModalProps = {
   label: string;
   placeholder?: string;
   disabled?: boolean;
-  value: number | null;
-  setValue: React.Dispatch<React.SetStateAction<number | null>> | ((number) => void);
+  value: string | number | null;
+  setValue: React.Dispatch<React.SetStateAction<string | number | null>> | ((number) => void);
   options: SelectOption[] | SelectOptionGroup[]
   selectClass?: string;
+  menuMaxHeight?: number | string;
 };
 
-export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options, selectClass}: SelectModalProps) {
+export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options, selectClass, menuMaxHeight}: SelectModalProps) {
   // const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
@@ -61,6 +62,7 @@ export default function SelectModal({ width, label, placeholder, disabled, value
         valueContainer: (styles) => ({ ...styles, padding: "0px 8px", margin: "0px"}),
         option: (styles) => ({ ...styles, fontSize: "14px" }),
         indicatorsContainer: (styles) => ({ ...styles, padding: "0px !important" }),
+        menuList: (styles) => ({ ...styles, maxHeight: menuMaxHeight ?? "200px" })
       }}
       className={selectClass ?? undefined} 
       classNamePrefix="custom-select"     

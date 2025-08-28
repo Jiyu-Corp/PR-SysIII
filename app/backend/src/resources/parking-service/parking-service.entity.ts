@@ -12,6 +12,7 @@ import { Park } from "./modules/park/park.entity";
 import { PriceTable } from "./modules/price-table/price-table.entity";
 import { Vehicle } from "../vehicle/vehicle.entity";
 
+// Limitar estacionar mesmo carro
 @Index("parking_service_pkey", ["idParkingService"], { unique: true })
 @Entity("parking_service", { schema: "public" })
 export class ParkingService {
