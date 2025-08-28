@@ -1,0 +1,36 @@
+.vehicle-type-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  gap: 20px;
+}
+
+.vehicle-type-modal .inputs-wrapper {
+  width: 100%;
+  
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 32px;
+  row-gap: 16px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vehicle-type-modal .btns-wrapper {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.vehicle-type-modal .input-image-wrapper {
+  display: flex;
+  flex-direction: row;
+  border: 1.5px solid rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  justify-content: space-around;
+  gap: 8px;
+
+  padding: 0px 8px;
+}

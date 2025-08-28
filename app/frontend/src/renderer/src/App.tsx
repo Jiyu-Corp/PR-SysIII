@@ -10,6 +10,7 @@ import TabelaPrecoPage from './pages/TabelaPreco'
 import ConvenioPage from './pages/Convenios'
 import ModeloTicketPage from './pages/ModeloTicket'
 import AcessoPage from './pages/AcessoPage'
+import TipoVeiculoPage from './pages/TipoVeiculo'
 
 function RequireAuth({ children }: { children: React.ReactNode }) {
   const isAuth = !!sessionStorage.getItem('jwt_token') // true/false
@@ -41,6 +42,7 @@ export default function App() {
         <Route path='/tabela-preco' index element={<TabelaPrecoPage />} />
         <Route path='/modelo-ticket' index element={<ModeloTicketPage />} />
         <Route path='/acesso' index element={<AcessoPage />} />
+        <Route path='/tipo-veiculo' index element={<TipoVeiculoPage />} />
       </Route>
 
       {/* fallback — se usuário abrir só #/ ou rota desconhecida */}

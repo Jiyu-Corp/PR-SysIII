@@ -38,6 +38,10 @@ const Sidebar: React.FC = () => {
           <span>Acesso</span>
         </NavLink>
 
+        <NavLink to="/tipo-veiculo" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+          <span>Tipo de Veiculo</span>
+        </NavLink>
+
         {/* damn itens */}
       </nav>
     </aside>
