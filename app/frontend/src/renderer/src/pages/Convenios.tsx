@@ -47,7 +47,7 @@ export default function ConvenioPage() {
         const arr = Array.isArray(response) ? response : response?.data ?? [];
         
         const mapped: agreementType[] = (arr as any[]).map((item: any) => {
-        console.log(item)
+          
         return {
             idAgreement: item.idAgreement,
             fixDiscount: numeroParaMoeda(item.fixDiscount) ?? '---',
@@ -94,17 +94,15 @@ export default function ConvenioPage() {
       type: "select",
       options: agreementEnterprises
     },
-    { key: "dateExpiration", label: "Data inicial", 
-      type: "text",
-      placeholder: "dd/mm/yyyy", 
-      mask: () => "dd/mm/yyyy", 
-      replacement: { d: /\d/, m: /\d/, y: /\d/ }
+    {
+      key: "dateExpiration",
+      label: "Data inicial",
+      type: "date"
     },
-    { key: "dateRegister", label: "Data final", 
-      type: "text",
-      placeholder: "dd/mm/yyyy", 
-      mask: () => "dd/mm/yyyy", 
-      replacement: { d: /\d/, m: /\d/, y: /\d/ }
+    {
+      key: "dateRegister",
+      label: "Data final",
+      type: "date"
     },
   ];
 

@@ -115,3 +115,6 @@
     font-size: 0.85rem;
   }
   
+.filters-date{
+  z-index: 0;
+}

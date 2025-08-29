@@ -8,7 +8,7 @@ export type FilterField = {
   placeholder?: string;
   mask?: (value: string) => string;
   replacement?: {};
-  type?: "text" | "select";
+  type?: "text" | "select" | "date";
   unformater?: (value: string) => string; 
   onChange?: (value: string, setter: ((React.Dispatch<React.SetStateAction<any>>) | ((string) => void))) => void;
   default?: string;

@@ -4,6 +4,7 @@ import {MagnifyingGlassIcon} from '@phosphor-icons/react';
 import type { FilterField, GenericFiltersProps } from "../../types/FilterTypes";
 import InputModal from "../../modals/InputModal/InputModal";
 import SelectModal from "../../modals/SelectModal/SelectModal";
+import DatePickerField from "../DatePicker/DatePicker"; 
 
 const Filters: React.FC<GenericFiltersProps> = ({
   fields,
@@ -41,6 +42,19 @@ const Filters: React.FC<GenericFiltersProps> = ({
                 setValue={(newValue: string) => handleChange(f.key, newValue)}
                 selectClass="filters-select"
               />
+            );
+          }
+
+          if (f.type === "date") {
+            return (
+              <div key={f.key} className="filters-date">
+                <DatePickerField
+                  label={f.label ?? f.key}
+                  value={state[f.key] ?? ""}
+                  onChange={(newIsoString) => handleChange(f.key, newIsoString)}
+                  size="small"
+                />
+              </div>
             );
           }
 
