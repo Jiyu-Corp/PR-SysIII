@@ -47,27 +47,26 @@ export default function ConvenioPage() {
         const arr = Array.isArray(response) ? response : response?.data ?? [];
         
         const mapped: agreementType[] = (arr as any[]).map((item: any) => {
-          
-        return {
-            idAgreement: item.idAgreement,
-            fixDiscount: numeroParaMoeda(item.fixDiscount) ?? '---',
-            percentageDiscount: formatPercentage(item.percentageDiscount) ?? '---',
-            dateExpiration: item.dateExpiration.split('-').reverse().join('/'),
-            dateRegister: item.dateRegister.split('-').reverse().join('/'),
-            idClient: item.client.idClient,
-            enterpriseName: item.client?.name ?? '---'
-          };
+          return {
+              idAgreement: item.idAgreement,
+              fixDiscount: numeroParaMoeda(item.fixDiscount) ?? '---',
+              percentageDiscount: formatPercentage(item.percentageDiscount) ?? '---',
+              dateExpiration: item.dateExpiration.split('-').reverse().join('/'),
+              dateRegister: item.dateRegister.split('-').reverse().join('/'),
+              idClient: item.client.idClient,
+              enterpriseName: item.client?.name ?? '---'
+            };
         });        
         
         if (mapped.length) {
           setRows(mapped);
           setFiltered(null);
         } else {
-          console.warn("fetchVeiculo: response:", response);
+          console.warn("fetchConvenio: response:", response);
         }
         
       } catch (err) {
-        console.error("fetchVeiculo error:", err);
+        console.error("fetchConvenio error:", err);
       } finally {
         setLoading(false);
       }

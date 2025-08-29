@@ -35,7 +35,7 @@ export class PriceTableService {
                 .where('priceTable.isActive = :active', { active: true });
             
             if(getActivePriceTablesDto.idVehicleType) {
-                query.andWhere('priceTable.idVehicleType = :idVehicleType', { 
+                query.andWhere('vehicleType.idVehicleType = :idVehicleType', { 
                     idVehicleType: getActivePriceTablesDto.idVehicleType 
                 });
             }

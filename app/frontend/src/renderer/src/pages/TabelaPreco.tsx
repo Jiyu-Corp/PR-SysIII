@@ -1,16 +1,180 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
-import { UserIcon  } from "@phosphor-icons/react";
-import { Toaster } from "react-hot-toast";
+import GenericFilters from "../components/Filters/Filters";
+import GenericTable from "../components/Table/Table";
+import { UserIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
+import { Toaster, toast } from "react-hot-toast";
 import PriceTableModal from "@renderer/modals/PriceTableModal/PriceTableModal";
 import { priceTableType } from "@renderer/types/resources/priceTableType";
+import { FilterField } from "@renderer/types/FilterTypes";
+import { TableColumn } from "@renderer/types/TableTypes";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
+import { requestPRSYS } from '@renderer/utils/http'
+import { Grid } from "react-loader-spinner";
+import { numeroParaMoeda, formatPercentage } from "@renderer/utils/utils";
+import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
+import Swal from 'sweetalert2';
 
 export default function TabelaPrecoPage() {
   const navigate = useNavigate();
   const [isPriceTableModalOpen, setIsPriceTableModalOpen] = useState<boolean>(false);
   const [priceTableDetail, setPriceTableDetail] = useState<priceTableType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
+  
+  const [rows, setRows] = useState<priceTableType[]>([]);
+  const [filtered, setFiltered] = useState<priceTableType[] | null>(null);
+
+  const [vehicleTypeOptions, setvehicleTypeOptions] = useState<SelectOption[]>([]);
+
+  useEffect(() => {
+    setLoading(true);
+
+    const fetches: Promise<void>[] = [
+      fetchPrice(),
+      fetchVehicleType()
+    ];
+
+    Promise.all(fetches).then(() => setLoading(false));
+  }, []);
+
+  const fetchPrice = async () => {
+        setLoading(true);
+        try {
+          const response = await requestPRSYS('price-table', '', 'GET');
+          
+          const arr = Array.isArray(response) ? response : response?.data ?? [];
+          
+          const mapped: priceTableType[] = (arr as any[]).map((item: any) => {
+            return {
+                idPriceTable: item.idPriceTable,
+                pricePerHour: item.pricePerHour,
+                toleranceMinutes: item.toleranceMinutes,
+                idVehicleType: item.vehicleType?.idVehicleType,
+                priceTableHours: item.priceTableHours,
+                vehicleTypeName: item.vehicleType?.description,
+                dateRegister: item.dateRegister
+              };
+          });    
+          
+          if (mapped.length) {
+            setRows(mapped);
+            setFiltered(null);
+          } else {
+            console.warn("fetchPrice: response:", response);
+          }
+          
+        } catch (err) {
+          console.error("fetchPrice error:", err);
+        } finally {
+          setLoading(false);
+        }
+  };
+
+  async function fetchVehicleType() {
+    try {
+      const vehicleTypes = await requestPRSYS('vehicle-type', '', 'GET');
+      
+      setvehicleTypeOptions(vehicleTypes.map(c => ({
+        id: c.idVehicleType,
+        label: c.description 
+      } as SelectOption))); 
+    } catch(err) {
+      toast.error('Erro ao consultar tipos de veiculos', errorToastStyle);
+    }
+  }
+
+  const filters: FilterField[] = [  
+    { key: "idVehicleType", label: "Tipo de Veículo", 
+      type: "select",
+      options: vehicleTypeOptions
+    },
+    {
+      key: "dateExpiration",
+      label: "Data inicial",
+      type: "date"
+    },
+    {
+      key: "dateRegister",
+      label: "Data final",
+      type: "date"
+    },
+  ];
+
+  const columns: TableColumn<priceTableType>[] = [
+    { key: "vehicleTypeName", label: "Tipo de veículo" },
+    { key: "pricePerHour", label: "Preço por hora" },
+    { key: "toleranceMinutes", label: "Tolerância(min)" },
+    { key: "dateRegister", label: "Data de cadastro" }
+  ];
+
+  const actions = [
+    {
+      key: "view",
+      label: "Visualizar",
+      icon: <PencilIcon size={14} />,
+      className: 'icon-btn-view',
+      onClick: (row: priceTableType) => {
+        handleEdit(row);
+      },
+    },
+    {
+      key: "delete",
+      label: "Deletar",
+      icon: <TrashIcon size={14} />,
+      className: 'icon-btn-delete',
+      /*onClick: (row: agreementType) => {
+        handleDelete(String(row.idAgreement!));
+      },*/
+    }
+  ];
+
+  const handleSearch = async (values: Record<string, any>) => {
+      
+      const idVehicleType = values.idVehicleType;
+      const dateExpiration = values.dateExpiration ? String(values.dateExpiration) : null;
+      const dateRegister = values.dateRegister ? String(values.dateRegister) : null;
+      
+      if (!idVehicleType && !dateExpiration && !dateRegister) {
+        setFiltered(null);
+        return;
+      }
+  
+      setLoading(true);
+      try {
+        
+        const params = {
+          idVehicleType: idVehicleType,
+          dateExpirationStart: dateExpiration?.split('/').reverse().join('-'),
+          dateExpirationEnd: dateRegister?.split('/').reverse().join('-') 
+        }
+        
+        const response = await requestPRSYS('price-table', '', 'GET', undefined, params);
+        const arr = Array.isArray(response) ? response : response?.data ?? [];
+        
+        if(response.length < 1 || !response){
+          toast.error('Nenhum dado para esses filtros', errorToastStyle);
+        }
+        
+        const mapped: priceTableType[] = (arr as any[]).map((item: any) => ({
+            idPriceTable: item.idPriceTable,
+            pricePerHour: item.pricePerHour,
+            toleranceMinutes: item.toleranceMinutes,
+            idVehicleType: item.vehicleType?.idVehicleType,
+            priceTableHours: item.priceTableHours ,
+            vehicleTypeName: item.vehicleType?.description,
+            dateRegister: item.dateRegister
+        }));
+    
+        setFiltered(mapped);
+  
+      } catch (err) {
+        toast.error('Verifique os filtros para estarem no padrão correto', errorToastStyle);
+        console.error("handleSearch erro:", err);
+      } finally {
+        setLoading(false);
+      }
+  };
 
   const handleCreate = () => {
     setIsPriceTableModalOpen(true);
@@ -18,17 +182,11 @@ export default function TabelaPrecoPage() {
 
   const handleEdit = async (row: any) => {
     setPriceTableDetail({
-      idClient: Number(row.id),
-      name: row.name,
-      cpfCnpj: row.cpf_cnpj,
-      email: row.email,
-      phone: row.phone,
-      enterprise: row.idClientEnterprise
-        ? {
-            idClient: Number(row.idClientEnterprise),
-            name: row.enterprise ?? row.enterprise ?? "" 
-          }
-        : undefined
+      idPriceTable: row.idPriceTable,
+      pricePerHour: row.pricePerHour,
+      toleranceMinutes: row.toleranceMinutes,
+      idVehicleType: row.idVehicleType,
+      priceTableHours: row.priceTableHours
     });
     setIsPriceTableModalOpen(true);
   };
@@ -36,8 +194,12 @@ export default function TabelaPrecoPage() {
   useEffect(() => {
     if(!isPriceTableModalOpen) {
       setPriceTableDetail(undefined);
+      fetchPrice();
+      fetchVehicleType();
     }
   }, [isPriceTableModalOpen])
+
+  const rowsToShow = filtered ?? rows;
 
   return (<>
     <main>
@@ -46,6 +208,31 @@ export default function TabelaPrecoPage() {
         reverseOrder={true}
       />
       <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
+      <GenericFilters fields={filters} onSearch={handleSearch} />
+      {loading ? 
+          <div style={{ margin: "24px 64px" }}>
+          <Grid
+            visible={true}
+            height="80"
+            width="80"
+            color="#4A87E8"
+            ariaLabel="grid-loading"
+            radius="12.5"
+            wrapperStyle={{justifyContent: "center"}}
+            wrapperClass="grid-wrapper"
+          />
+        </div>
+        : 
+          <GenericTable
+            title="Listagem de Convênios"
+            columns={columns}
+            rows={rowsToShow}
+            actions={actions}
+            perPage={5}
+            total={rowsToShow.length}
+            //onGenerateCSV={handleGenerateCSV}
+          />
+      }
     </main>
     {isPriceTableModalOpen && <PriceTableModal isOpen={isPriceTableModalOpen} closeModal={() => setIsPriceTableModalOpen(false)} priceTable={priceTableDetail}/>}
   </>);
