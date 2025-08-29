@@ -5,7 +5,7 @@ import { FindOptionsWhere, Repository, TypeORMError } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { CreateParkingServiceDto } from './dto/create-parking-service-dto';
 import { CreateVehicleDto } from '../vehicle/dto/create-vehicle-dto';
-import { promiseCatchError } from 'src/utils/utils';
+import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { VehicleService } from '../vehicle/vehicle.service';
 import { CreateClientDto } from '../client/dto/create-client-dto';
 import { ClientService } from '../client/client.service';
@@ -13,7 +13,7 @@ import { Client } from '../client/client.entity';
 import { ParkService } from './modules/park/park.service';
 import { ServiceValueDto } from './dto/service-value-dto';
 import { PriceTableService } from './modules/price-table/price-table.service';
-import { ParkingServiceNotExists, VehicleWithoutModel } from './parking-service.errors';
+import { ParkingServiceNotExists, VehicleAlreadyParked, VehicleWithoutModel } from './parking-service.errors';
 import { AgreementService } from '../client/modules/agreement/agreement.service';
 import { EditVehicleDto } from '../vehicle/dto/edit-vehicle-dto';
 import { EditClientDto } from '../client/dto/edit-client-dto';
@@ -104,7 +104,11 @@ export class ParkingServiceService {
             if(client) this.clientService.deleteClient(client.idClient);
             this.vehicleService.deleteVehicle(vehicle.idVehicle);
 
-            throw new DatabaseError();
+            throw buildDatabaseError(err, {
+                UKErrors: [
+                    new VehicleAlreadyParked()
+                ]
+            });
         }
     }
 

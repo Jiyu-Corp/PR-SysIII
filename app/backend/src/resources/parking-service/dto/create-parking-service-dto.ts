@@ -5,33 +5,32 @@ import { EditClientDto } from "src/resources/client/dto/edit-client-dto";
 import { CreateVehicleDto } from "src/resources/vehicle/dto/create-vehicle-dto";
 import { EditVehicleDto } from "src/resources/vehicle/dto/edit-vehicle-dto";
 
-// VALIDATE ERRORS!!!
 export class CreateParkingServiceDto {
     @ValidateIf(o => typeof o.clientCreate === 'undefined')
     @IsOptional()
     @IsObject()
-    @ValidateNested()
+    @ValidateNested({message: "Dados do cliente estão mal formados." })
     @Type(() => EditClientDto)
     readonly clientEdit?: EditClientDto;
 
     @ValidateIf(o => typeof o.clientEdit === 'undefined')
     @IsOptional()
     @IsObject()
-    @ValidateNested()
+    @ValidateNested({message: "Dados do cliente estão mal formados." })
     @Type(() => CreateClientDto)
     readonly clientCreate?: CreateClientDto;
 
     @ValidateIf(o => typeof o.vehicleEdit === 'undefined')
     @IsDefined()
     @IsObject()
-    @ValidateNested()
+    @ValidateNested({message: "Dados do veiculo estão mal formados." })
     @Type(() => CreateVehicleDto)
     readonly vehicleCreate?: CreateVehicleDto;
     
     @ValidateIf(o => typeof o.vehicleCreate === 'undefined')
     @IsDefined()
     @IsObject()
-    @ValidateNested()
+    @ValidateNested({message: "Dados do veiculo estão mal formados." })
     @Type(() => EditVehicleDto)
     readonly vehicleEdit?: EditVehicleDto;
 }

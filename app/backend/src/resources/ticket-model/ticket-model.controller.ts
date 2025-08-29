@@ -39,4 +39,10 @@ export class TicketModelController {
         const [httpError] = await promiseCatchErrorHTTPDefault(this.ticketModelService.deleteTicketModel(idTicketModel));
         if(httpError) throw httpError;
     }
+
+    @Put(':idTicketModel')
+    async manageTicketModelActivity(@Param('idTicketModel') idTicketModel: number) {
+        const [httpError] = await promiseCatchErrorHTTPDefault(this.ticketModelService.manageTicketModelActivity(idTicketModel));
+        if(httpError) throw httpError;
+    }
 }

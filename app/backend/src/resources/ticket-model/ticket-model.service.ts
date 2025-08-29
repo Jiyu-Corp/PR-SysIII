@@ -6,7 +6,7 @@ import { DatabaseError } from 'src/utils/app.errors';
 import { GetTicketModelsDto } from './dto/get-ticket-models-dto';
 import { CreateTicketModelDto } from './dto/create-ticket-model-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
-import { TicketModelNameExists, TicketModelNotExists } from './ticket-model.errors';
+import { ActiveTicketModelAlreadyExists, TicketModelNameExists, TicketModelNotExists } from './ticket-model.errors';
 import { EditTicketModelDto } from './dto/edit-ticket-model-dto';
 
 @Injectable()
@@ -59,6 +59,28 @@ export class TicketModelService {
                     new TicketModelNameExists()
                 ]
             })
+        }
+    }
+
+    async manageTicketModelActivity(idTicketModel: number): Promise<void> {
+        const [loadError, ticketModel] = await promiseCatchError(this.ticketModelRepo.findOneBy({ idTicketModel }));
+        if(loadError) throw new DatabaseError();
+        if(ticketModel === null) throw new TicketModelNotExists();
+
+        ticketModel.isActive = !ticketModel.isActive;
+        if(ticketModel.isActive) {
+          const [loadError, ticketModels] = await promiseCatchError(this.ticketModelRepo.find({where: {
+            isActive: true
+          }}));
+          if(loadError) throw new DatabaseError();
+
+          if(ticketModels.length > 0) throw new ActiveTicketModelAlreadyExists();
+        }
+
+        try {
+            await this.ticketModelRepo.save(ticketModel);
+        } catch(err) {
+            throw new DatabaseError();
         }
     }
     

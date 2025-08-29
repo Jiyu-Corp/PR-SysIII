@@ -14,6 +14,9 @@ import { Vehicle } from "../vehicle/vehicle.entity";
 
 // Limitar estacionar mesmo carro
 @Index("parking_service_pkey", ["idParkingService"], { unique: true })
+
+@Index('UK_ParkingService_vehicle', ['vehicle'], { unique: true, where: '"is_active" = TRUE' })
+
 @Entity("parking_service", { schema: "public" })
 export class ParkingService {
   @PrimaryGeneratedColumn({ type: "integer", name: "id_parking_service" })
