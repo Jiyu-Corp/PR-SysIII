@@ -16,7 +16,7 @@ const Header: React.FC = () => {
     function updateTime() {
       const date = new Date()
       const formatted =
-        date.toLocaleDateString('pt-BR') + ' - ' + date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) 
+         date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + ' - ' + date.toLocaleDateString('pt-BR')
       setNow(formatted)
     }
 
