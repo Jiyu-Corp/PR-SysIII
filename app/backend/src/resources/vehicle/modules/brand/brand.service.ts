@@ -32,6 +32,7 @@ export class BrandService {
         // Check if exists car parked
         const [pServiceError, existParkedVehicles] = await promiseCatchError(this.brandRepo
             .exists({ where: {
+                idBrand: idBrand,
                 models: { vehicles: {
                     parkingServices: {
                         isParking: true

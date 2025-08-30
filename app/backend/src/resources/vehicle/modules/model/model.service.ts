@@ -17,6 +17,7 @@ export class ModelService {
         // Check if exists car parked
         const [pServiceError, existParkedVehicles] = await promiseCatchError(this.modelRepo
             .exists({ where: {
+                idModel: idModel,
                 vehicles: {
                     parkingServices: {
                         isParking: true

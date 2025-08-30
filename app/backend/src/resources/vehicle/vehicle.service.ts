@@ -174,6 +174,7 @@ export class VehicleService {
         // Check if exists car parked
         const [pServiceError, existParkedVehicles] = await promiseCatchError(this.vehicleRepo
             .exists({ where: {
+                idVehicle: idVehicle,
                 parkingServices: {
                     isParking: true
                 }

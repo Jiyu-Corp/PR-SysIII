@@ -20,7 +20,7 @@ const TopContainer: React.FC<GenericTopProps> = ({
       </div>
 
       {actionLabel && (
-        <div>
+        <div style={{display: "flex", gap: 16}}>
           <button
             type="button"
             onClick={onAction}
@@ -34,6 +34,7 @@ const TopContainer: React.FC<GenericTopProps> = ({
               type="button"
               onClick={onAction2}
               className="btn"
+              style={{ backgroundColor: "#d33" }}
             >
               <span>{actionLabel2}</span>
             </button>

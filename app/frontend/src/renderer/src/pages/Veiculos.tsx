@@ -14,10 +14,14 @@ import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
+import BrandModelDeleteModal from "@renderer/modals/BrandModelDeleteModal/BrandModelDeleteModel";
+import { PrsysError } from "@renderer/types/prsysErrorType";
+import { getErrorMessage } from "@renderer/utils/utils";
 
 export default function VeiculosPage() {
   const navigate = useNavigate();
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState<boolean>(false);
+  const [isBrandModelDeleteModalOpen, setIsBrandModelDeleteModalOpen] = useState<boolean>(false);
   const [vehicleDetail, setVehicleDetail] = useState<vehicleType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
@@ -268,6 +272,10 @@ export default function VeiculosPage() {
     setIsVehicleModalOpen(true);
   };
 
+  const handleDeleteBrandModel = () => {
+    setIsBrandModelDeleteModalOpen(true);
+  }
+
   const handleEdit = async (row: any) => {
     setVehicleDetail({
       idVehicle: row.idVehicle,
@@ -304,22 +312,22 @@ export default function VeiculosPage() {
 
       if (result.isConfirmed) {
         await requestPRSYS("vehicle", `${id}`, "DELETE");
-        toast.success("Veículo excluído com sucesso!");
+        toast.success("Veículo excluído com sucesso!", successToastStyle);
         fetchVeiculos();
       }
     } catch (error) {
       console.error("Erro ao excluir veículo:", error);
-      toast.error("Erro ao excluir veículo.");
+      toast.error(getErrorMessage(error as PrsysError), errorToastStyle);
     }
   };
 
   useEffect(() => {
-    if(!isVehicleModalOpen) {
+    if(!isVehicleModalOpen && !isBrandModelDeleteModalOpen) {
       setVehicleDetail(undefined);
       fetchBrandsAndModels();
       fetchVeiculos();
     }
-  }, [isVehicleModalOpen])
+  }, [isVehicleModalOpen, isBrandModelDeleteModalOpen])
 
   const handleGenerateCSV = () => {
     const data = (filtered ?? rows).map((r: any) => ({
@@ -354,7 +362,7 @@ export default function VeiculosPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Veiculos" actionLabel="Cadastrar Veiculo" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
+      <GenericTop title="Veiculos" actionLabel="Cadastrar Veiculo" onAction={handleCreate} actionIcon={<UserIcon size={20} />} actionLabel2="Deletar Marca/Modelo" onAction2={handleDeleteBrandModel} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
@@ -382,5 +390,6 @@ export default function VeiculosPage() {
     }
     </main>
     {isVehicleModalOpen && <VehicleModal isOpen={isVehicleModalOpen} closeModal={() => setIsVehicleModalOpen(false)} vehicle={vehicleDetail}/>}
+    {isBrandModelDeleteModalOpen && <BrandModelDeleteModal isOpen={isBrandModelDeleteModalOpen} closeModal={() => setIsBrandModelDeleteModalOpen(false)}/>}
   </>);
 }

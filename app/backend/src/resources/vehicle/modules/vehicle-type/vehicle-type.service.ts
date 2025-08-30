@@ -86,6 +86,7 @@ export class VehicleTypeService {
         if(existsModels) {
             const [pServiceError, existParkedVehiclesWithThatVehicleType] = await promiseCatchError(this.vehicleTypeRepo
                 .exists({ where: {
+                    idVehicleType: idVehicleType,
                     models: { vehicles: {
                         parkingServices: {
                             isParking: true

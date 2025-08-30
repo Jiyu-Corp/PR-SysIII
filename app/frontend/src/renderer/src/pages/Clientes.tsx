@@ -13,7 +13,8 @@ import { clientType, ClientRow } from "@renderer/types/resources/clientType";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
 import Swal from 'sweetalert2';
-import { formatCpfCnpj, formatPhone } from "@renderer/utils/utils";
+import { formatCpfCnpj, formatPhone, getErrorMessage } from "@renderer/utils/utils";
+import { PrsysError } from "@renderer/types/prsysErrorType";
 
 export default function ClientesPage() {
   const navigate = useNavigate();
@@ -199,12 +200,12 @@ export default function ClientesPage() {
 
       if (result.isConfirmed) {
         await requestPRSYS("client", `${id}`, "DELETE");
-        toast.success("Cliente excluído com sucesso!");
+        toast.success("Cliente excluído com sucesso!", successToastStyle);
         fetchClient();
       }
     } catch (error) {
       console.error("Erro ao excluir cliente:", error);
-      toast.error("Erro ao excluir cliente.");
+      toast.error(getErrorMessage(error as PrsysError), errorToastStyle);
     }
   };
 

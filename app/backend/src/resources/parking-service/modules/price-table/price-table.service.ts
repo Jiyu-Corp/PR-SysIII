@@ -126,6 +126,7 @@ export class PriceTableService {
         // Check if exists car parked
         const [pServiceError, existParkedVehiclesWithThatPriceTable] = await promiseCatchError(this.priceTableRepo
             .exists({ where: {
+                idPriceTable: idPriceTable,
                 vehicleType: { models: { vehicles: {
                     parkingServices: {
                         isParking: true
