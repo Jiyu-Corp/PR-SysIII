@@ -271,7 +271,7 @@ export default function TabelaPrecoPage() {
         </div>
         : 
           <GenericTable
-            title="Listagem de Convênios"
+            title="Listagem de Tabelas de Preços"
             columns={columns}
             rows={rowsToShow}
             actions={actions}
