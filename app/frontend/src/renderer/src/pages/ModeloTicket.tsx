@@ -45,7 +45,7 @@ export default function ModeloTicketPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Modelos de Ticket" actionLabel="Cadastrar Modelo de Ticket" onAction={handleCreate} onAction2={handleEdit} actionIcon={<ArticleIcon size={20} />} />
+      <GenericTop title="Modelos de Ticket" actionLabel="Cadastrar Modelo de Ticket" onAction={handleCreate} actionIcon={<ArticleIcon size={20} />} />
     </main>
     {isTicketModelModalOpen && <TicketModelModal isOpen={isTicketModelModalOpen} closeModal={() => setIsTicketModelModalOpen(false)} ticketModel={ticketModelDetail}/>}
   </>);

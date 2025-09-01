@@ -52,10 +52,25 @@ function buildDatabaseError(error: Error, params?: {
     return new DatabaseError();
 }
 
+// Formatters
+function formatDateTime(date: Date): string {
+    const pad = (n: number): string => n.toString().padStart(2, '0');
+
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+
+    return `${hours}:${minutes} - ${day}/${month}/${year}`;
+}
+
 export {
     promiseCatchError,
     promiseCatchErrorHTTPDefault,
 
     checkAndGetUKError,
-    buildDatabaseError
+    buildDatabaseError,
+
+    formatDateTime
 }

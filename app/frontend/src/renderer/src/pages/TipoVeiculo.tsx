@@ -45,7 +45,7 @@ export default function TipoVeiculoPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
+      <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
     </main>
     {isVehicleTypeModalOpen && <VehicleTypeModal isOpen={isVehicleTypeModalOpen} closeModal={() => setIsVehicleTypeModalOpen(false)} vehicleType={vehicleTypeDetail}/>}
   </>);

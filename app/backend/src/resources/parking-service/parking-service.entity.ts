@@ -15,7 +15,7 @@ import { Vehicle } from "../vehicle/vehicle.entity";
 // Limitar estacionar mesmo carro
 @Index("parking_service_pkey", ["idParkingService"], { unique: true })
 
-@Index('UK_ParkingService_vehicle', ['vehicle'], { unique: true, where: '"is_active" = TRUE' })
+@Index('UK_ParkingService_vehicle', ['vehicle'], { unique: true, where: '"is_parking" = TRUE' })
 
 @Entity("parking_service", { schema: "public" })
 export class ParkingService {
@@ -41,14 +41,14 @@ export class ParkingService {
   })
   totalPrice: number | null;
 
-  @Column("date", { name: "date_register", default: () => "CURRENT_DATE" })
-  dateRegister: string;
+  @Column({ type: "timestamp", name: "date_register", default: () => "CURRENT_TIMESTAMP" })
+  dateRegister: Date;
 
-  @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
-  dateUpdate: string;
+  @Column({ type: "timestamp", name: "date_update", default: () => "CURRENT_TIMESTAMP" })
+  dateUpdate: Date;
 
-  @Column("date", { name: "date_checkout", nullable: true })
-  dateCheckout: string;
+  @Column({ type: "timestamp", name: "date_checkout", nullable: true })
+  dateCheckout: Date;
 
   // Soft delete
   @ManyToOne(() => Agreement, (agreement) => agreement.parkingServices, {

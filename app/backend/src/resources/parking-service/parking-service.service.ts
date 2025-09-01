@@ -117,9 +117,11 @@ export class ParkingServiceService {
             .createQueryBuilder('parkingService')
                 .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
                 .leftJoinAndSelect('clientEntry.agreements', 'agreement', 
-                    'agreement.isActive = :isActive', { isActive: true }
+                    'agreement.isActive = true'
                 )
                 .innerJoinAndSelect('parkingService.vehicle', 'vehicle')
+                .leftJoinAndSelect('vehicle.client', 'client', 'client.isActive = true')
+                .leftJoinAndSelect('client.agreements', 'vClientAgreement', 'vClientAgreement.isActive = true')
                 .innerJoinAndSelect('vehicle.model', 'model')
                 .innerJoinAndSelect('model.brand', 'brand')
                 .innerJoinAndSelect('model.vehicleType', 'vehicleType')
@@ -137,10 +139,13 @@ export class ParkingServiceService {
         if(pTableError) throw pTableError;
         serviceValues.push(priceTableValue);
 
-        const hasAgreement = service.clientEntry && service.clientEntry.agreements[0];
-        if(hasAgreement) {
+        // Client of entrance has priority compared to the client binded to the vehicle
+        const client = service.clientEntry || service.vehicle.client;
+
+        const agreement = client && client.agreements && client.agreements[0];
+        if(agreement) {
             const [agreementError, agreementDiscount] = await promiseCatchError(
-                this.agreementService.calculateServiceDiscount(service.clientEntry.agreements[0], priceTableValue.value)
+                this.agreementService.calculateServiceDiscount(agreement, priceTableValue.value)
             );
             if(agreementError) throw agreementError;
 

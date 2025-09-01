@@ -5,6 +5,7 @@ import { DatabaseError } from 'src/utils/app.errors';
 import { ParkingService } from '../parking-service/parking-service.entity';
 import { GetParkedServicesDto } from './dto/get-parked-services-dto';
 import { ParkedServicesDto } from './dto/parked-services-dto';
+import { formatDateTime } from 'src/utils/utils';
 
 @Injectable()
 export class ReportService {
@@ -47,8 +48,8 @@ export class ReportService {
                 plate: ps.vehicle.plate,
                 brandModelYear: `${ps.vehicle.model.brand.name} - ${ps.vehicle.model.name} - ${ps.vehicle.year}`,
                 clientName: ps.clientEntry?.name,
-                dateParkingServiceStart: ps.dateRegister,
-                dateParkingServiceEnd: ps.dateCheckout,
+                dateParkingServiceStart: formatDateTime(ps.dateRegister),
+                dateParkingServiceEnd: formatDateTime(ps.dateCheckout),
                 price: ps.totalPrice
             } as ParkedServicesDto));
             

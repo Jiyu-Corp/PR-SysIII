@@ -9,7 +9,7 @@ import { CreatePriceTableDto } from './dto/create-price-table-dto';
 import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
 import { EditPriceTableDto } from './dto/edit-price-table-dto';
 import { DatabaseError } from 'src/utils/app.errors';
-import { ExistParkedVehicleWithinModelUsingThatPriceTable, PriceTableHourExists, PriceTableNotExists, PriceTableVehicleTypeExists } from './price-table.errors';
+import { ExistParkedVehicleWithinModelUsingThatPriceTable, PriceTableHourExists, PriceTableNotExists, PriceTableNotFound, PriceTableVehicleTypeExists } from './price-table.errors';
 import { PriceTableHour } from './modules/price-table-hour/price-table-hour.entity';
 import { EditPriceTableHourDto } from './modules/price-table-hour/dto/edit-price-table-hour-dto';
 
@@ -23,7 +23,36 @@ export class PriceTableService {
     ) {}
 
     async calculateServiceValue(parkingService: ParkingService): Promise<ServiceValueDto> {
-        return new ServiceValueDto();
+        const [loadPTableError, priceTable] = await promiseCatchError(this.priceTableRepo.findOneBy({
+            vehicleType: parkingService.vehicle.model.vehicleType,
+            isActive: true
+        }));
+        if(loadPTableError) throw new DatabaseError();
+        if(!priceTable) throw new PriceTableNotFound();
+
+        const currentDate = new Date();
+        const curDateWithTolerance = new Date(currentDate.getTime() - ((priceTable.toleranceMinutes ?? 0) * 1000 * 60));
+        const timeOfServiceInMS = curDateWithTolerance.getTime() - parkingService.dateRegister.getTime();
+        const hoursOfService = Math.floor(timeOfServiceInMS / (1000 * 60 * 60));
+
+        // If tolerance make it negative, then the service was free
+        if(hoursOfService < 0) {
+          const serviceValue = {
+            description: "Preço estadia",
+            value: 0
+          } as ServiceValueDto;
+          
+          return serviceValue;
+        }
+        
+        const getServiceValueDescription = (hour: number) => `Preço estadia (${hour.toString()} Horas)`;
+        const specialServiceHour = priceTable.priceTableHours && priceTable.priceTableHours.find(h => h.hour == hoursOfService);
+        const serviceValue = {
+            description: getServiceValueDescription(hoursOfService),
+            value: specialServiceHour?.price || hoursOfService == 0 ? priceTable.pricePerHour : hoursOfService * priceTable.pricePerHour
+        } as ServiceValueDto;
+
+        return serviceValue;
     }
 
     async getActivePriceTables(getActivePriceTablesDto: GetActivePriceTablesDto): Promise<PriceTable[]> {

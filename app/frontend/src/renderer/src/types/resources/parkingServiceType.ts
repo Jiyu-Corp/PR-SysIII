@@ -4,5 +4,6 @@ import { vehicleType } from "./vehicleType";
 export type parkingServiceType = {
   idParkingService: number;
   vehicle: vehicleType 
-  client?: clientType
+  client?: clientType;
+  dateRegister?: string;
 }

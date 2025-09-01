@@ -1,0 +1,84 @@
+.finish-parking-tab {
+  position: absolute;
+  right: -16px;
+  top: 0px; 
+
+  border: 1px solid black;
+
+	border-radius: 8px;
+
+  background-color: white;
+}
+
+.finish-parking-header {
+  padding: 8px;
+  background-color: #4A87E8;
+  color: white;
+}
+
+.finish-parking-header .fp-title {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-items: center;
+}
+
+.finish-parking-header .fp-close {
+  position: absolute;
+  right: 8px;
+  top: 4px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 2px;
+  border-radius: 50%;
+
+  color: #fff;
+  background-color: #C2292E;
+
+  cursor: pointer;
+}
+
+.finish-parking-header .fp-header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.additional-discount-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 2px;
+
+  font-size: 12px;
+}
+
+.finish-parking-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: center;
+
+  padding: 8px;
+}
+
+.fp-prices-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.fp-price-wrapper {
+  width: 100%;
+}
+
+.fp-price-total-wrapper {
+  width: fit-content;
+  border-top: 1px solid black;
+}
+
+.finish-parking-footer {
+  border-top: 4px dashed #00000050;
+}

@@ -207,7 +207,7 @@ export default function TabelaPrecoPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
+      <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

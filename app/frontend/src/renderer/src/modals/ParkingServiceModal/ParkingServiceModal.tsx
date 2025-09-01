@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal1 from "../Modal1/Modal1";
-import { ArrowBendLeftDownIcon, CarIcon, CurrencyDollarIcon, LetterCirclePIcon, PlusSquareIcon, XIcon } from "@phosphor-icons/react";
+import { ArrowBendLeftDownIcon, CarIcon, CurrencyDollarIcon, LetterCirclePIcon, PlusSquareIcon, TrashIcon, XIcon } from "@phosphor-icons/react";
 import InputModal from "../InputModal/InputModal";
 
 import "./ParkingServiceModal.css"
@@ -20,6 +20,7 @@ import ButtonModal from "../ButtonModal/ButtonModal";
 import useEffectSkipFirstRender from "@renderer/hooks/effectSkipFirstRender";
 import { vehicleType } from "@renderer/types/resources/vehicleType";
 import { clientType } from "@renderer/types/resources/clientType";
+import FinishParkingServiceTab from "../FinishParkingServiceTab/FinishParkingServiceTab";
 
 type ParkingServiceModalProps = { 
   parkingService: parkingServiceType | undefined;
@@ -33,6 +34,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
   const isEdicaoParkingService = typeof parkingService !== 'undefined';
   const [isClientFieldsEnabled, setIsClientFieldsEnabled] = useState((parkingService && typeof parkingService.client !== 'undefined') || false);
   const [isVehicleSelectUsingPlate, setIsVehicleSelectUsingPlate] = useState(false);
+  const [isFinishServiceTabOpen, setIsFinishServiceTabOpen] = useState(false);
 
   // Inputs
   const idParkingService = parkingService?.idParkingService;
@@ -351,11 +353,13 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
         <SelectModal width="180px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
       </div>
       <div className="btns-wrapper">
-        <ButtonModal icon={ArrowBendLeftDownIcon} text={`${isClientFieldsEnabled ? "Remover Cliente" : "Adicionar Cliente"}`} color="#000000" backgroundColor="#FFFFFF" fontSize={16} action={() => setIsClientFieldsEnabled(prev => !prev)}/>
+        {typeof parkingService === 'undefined' && 
+          <ButtonModal icon={ArrowBendLeftDownIcon} text={`${isClientFieldsEnabled ? "Remover Cliente" : "Adicionar Cliente"}`} color="#000000" backgroundColor="#FFFFFF" fontSize={16} action={() => setIsClientFieldsEnabled(prev => !prev)}/>
+        }
         {isEdicaoParkingService
           ? <>
-            <EditBtnModal action={editParkingService}/>
-            <DeleteBtnModal action={deleteParkingService}/>
+            <ButtonModal icon={CurrencyDollarIcon} text="Finalizar" color="#FFFFFF" backgroundColor="#3BB373" isDisabled={isFinishServiceTabOpen} action={() => setIsFinishServiceTabOpen(true)}/>
+            <ButtonModal icon={TrashIcon} text="Cancelar" color="#FFFFFF" backgroundColor="#C2292E" action={deleteParkingService}/>
           </>
           : <>
             <SaveBtnModal action={saveParkingService}/>
@@ -374,5 +378,9 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
         </div>
       }</>}
     </div>
+    {isFinishServiceTabOpen && parkingService && <FinishParkingServiceTab
+      parkingService={parkingService}
+      closeTab={() => setIsFinishServiceTabOpen(false)}
+    />}
   </Modal1>
 }

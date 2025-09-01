@@ -269,7 +269,7 @@ export default function ConvenioPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Convenios" actionLabel="Cadastrar Convênio" onAction={handleCreate} onAction2={handleEdit} actionIcon={<HandshakeIcon size={20} />} />
+      <GenericTop title="Convenios" actionLabel="Cadastrar Convênio" onAction={handleCreate} actionIcon={<HandshakeIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

@@ -249,7 +249,7 @@ export default function ClientesPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
+      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
       <GenericFilters fields={filters} onSearch={handleSearch} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

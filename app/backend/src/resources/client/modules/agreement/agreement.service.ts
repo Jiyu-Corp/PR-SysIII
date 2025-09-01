@@ -19,7 +19,12 @@ export class AgreementService {
     ) {}
 
     async calculateServiceDiscount(agreement: Agreement, serviceValue: number): Promise<ServiceValueDto> {
-        return new ServiceValueDto();
+        const discount = agreement.fixDiscount ?? (agreement.percentageDiscount! / 100) * serviceValue;
+
+        return {
+          description: `Desconto Convenio ${agreement.percentageDiscount ? ` (${agreement.percentageDiscount} %)` : ""}`,
+          value: -discount
+        } as ServiceValueDto
     }
 
     async getActiveAgreements(getActiveAgreementsDto: GetActiveAgreementsDto): Promise<Agreement[]> {
