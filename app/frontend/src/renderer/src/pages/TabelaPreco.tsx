@@ -12,9 +12,10 @@ import { TableColumn } from "@renderer/types/TableTypes";
 import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
-import { numeroParaMoeda, formatPercentage } from "@renderer/utils/utils";
+import { numeroParaMoeda, formatPercentage, getErrorMessage } from "@renderer/utils/utils";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
+import { PrsysError } from "@renderer/types/prsysErrorType";
 
 export default function TabelaPrecoPage() {
   const navigate = useNavigate();
@@ -123,9 +124,9 @@ export default function TabelaPrecoPage() {
       label: "Deletar",
       icon: <TrashIcon size={14} />,
       className: 'icon-btn-delete',
-      /*onClick: (row: agreementType) => {
-        handleDelete(String(row.idAgreement!));
-      },*/
+      onClick: (row: priceTableType) => {
+        handleDelete(String(row.idPriceTable!));
+      },
     }
   ];
 
@@ -191,6 +192,30 @@ export default function TabelaPrecoPage() {
     setIsPriceTableModalOpen(true);
   };
 
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir esta tabela?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS("price-table", `${id}`, "DELETE");
+        toast.success("tabela excluída com sucesso!", successToastStyle);
+        fetchPrice();
+      }
+    } catch (error) {
+      console.error("Erro ao excluir tabela:", error);
+      toast.error(getErrorMessage(error as PrsysError), errorToastStyle);
+    }
+  };
+
   useEffect(() => {
     if(!isPriceTableModalOpen) {
       setPriceTableDetail(undefined);
@@ -198,6 +223,28 @@ export default function TabelaPrecoPage() {
       fetchVehicleType();
     }
   }, [isPriceTableModalOpen])
+
+  const handleGenerateCSV = () => {
+    const data = (filtered ?? rows).map((r: any) => ({
+      Tipo: r.vehicleTypeName,
+      Preco: r.pricePerHour,
+      Tolerancia: r.toleranceMinutes,
+      Cadastro: r.dateRegister
+    }));
+
+    const csv = [
+      Object.keys(data[0]).join(";"),
+      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(";")),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `tabelapreco.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const rowsToShow = filtered ?? rows;
 
@@ -230,7 +277,7 @@ export default function TabelaPrecoPage() {
             actions={actions}
             perPage={5}
             total={rowsToShow.length}
-            //onGenerateCSV={handleGenerateCSV}
+            onGenerateCSV={handleGenerateCSV}
           />
       }
     </main>

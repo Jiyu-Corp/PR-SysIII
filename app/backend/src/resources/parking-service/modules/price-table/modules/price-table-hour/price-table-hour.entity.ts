@@ -10,7 +10,7 @@ import { PriceTable } from "../../price-table.entity";
 
 @Index("price_table_hour_pkey", ["idPriceTableHour"], { unique: true })
 
-@Index('UK_PriceTableHour_priceTable_hour', ['priceTable', 'price'], { unique: true })
+@Index('UK_PriceTableHour_priceTable_hour', ['priceTable', 'hour'], { unique: true })
 
 @Entity("price_table_hour", { schema: "public" })
 export class PriceTableHour {
@@ -25,7 +25,8 @@ export class PriceTableHour {
 
   @ManyToOne(() => PriceTable, (priceTable) => priceTable.priceTableHours, {
     onDelete: "CASCADE",
-    onUpdate: "CASCADE"
+    onUpdate: "CASCADE",
+    cascade: ['insert', 'update']
   })
   @JoinColumn([
     { name: "id_price_table", referencedColumnName: "idPriceTable" },
