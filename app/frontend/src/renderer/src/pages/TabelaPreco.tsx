@@ -54,7 +54,7 @@ export default function TabelaPrecoPage() {
                 idVehicleType: item.vehicleType?.idVehicleType,
                 priceTableHours: item.priceTableHours,
                 vehicleTypeName: item.vehicleType?.description,
-                dateRegister: item.dateRegister
+                dateRegister: item.dateRegister.split('-').reverse().join('/')
               };
           });    
           

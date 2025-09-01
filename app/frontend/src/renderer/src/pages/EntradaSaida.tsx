@@ -33,48 +33,49 @@ export default function EntradaSaidaPage() {
   }, []);
 
   const fetchEntradaSaida = async () => {
-        setLoading(true);
-        try {
-          const response = await requestPRSYS('parking-service', 'getOpenServices', 'GET');
-          
-          const arr = Array.isArray(response) ? response : response?.data ?? [];
-          
-          const mapped: parkingServiceType[] = (arr as any[]).map((item: any) => {
-            return {
-                idParkingService: item.idParkingService,
-                vehicle: item.vehicle,
-                client: item.clientEntry ?? '---',
-                plate: item.vehicle.plate,
-                color: item.vehicle.color,
-                entry: item.dateRegister
-              };
-          });    
-          
-          if (mapped.length) {
-            setRows(mapped);
-            setFiltered(null);
-          } else {
-            console.warn("fetchParking: response:", response);
-          }
-          
-        } catch (err) {
-          console.error("fetchParking error:", err);
-        } finally {
-          setLoading(false);
+      setLoading(true);
+      try {
+        const response = await requestPRSYS('parking-service', 'getOpenServices', 'GET');
+        
+        const arr = Array.isArray(response) ? response : response?.data ?? [];
+        
+        const mapped: parkingServiceType[] = (arr as any[]).map((item: any) => {
+          return {
+              idParkingService: item.idParkingService,
+              vehicle: item.vehicle,
+              client: item.clientEntry ?? '---',
+              clientName: item.clientEntry?.name ?? '---',
+              plate: item.vehicle.plate,
+              color: item.vehicle.color,
+              entry: item.dateRegister.split('-').reverse().join('/')
+            };
+        });    
+        
+        if (mapped.length) {
+          setRows(mapped);
+          setFiltered(null);
+        } else {
+          console.warn("fetchParking: response:", response);
         }
+        
+      } catch (err) {
+        console.error("fetchParking error:", err);
+      } finally {
+        setLoading(false);
+      }
   };
 
   const filters: FilterField[] = [  
-    { key: "vehicleSearch", label: "Buscar Veículo", 
-      type: "text"
-    }
+      { key: "vehicleSearch", label: "Buscar Veículo", 
+        type: "text"
+      }
   ];
 
   const columns: TableColumn<parkingServiceType>[] = [
       { key: "plate", label: "Placa" },
       { key: "color", label: "Cor" },
       { key: "entry", label: "Horário de entrada" },
-      { key: "client", label: "Cliente" }
+      { key: "clientName", label: "Cliente" }
   ];
 
   const actions = [
@@ -98,30 +99,96 @@ export default function EntradaSaidaPage() {
       }
   ];
 
+  const handleSearch = (values: Record<string, any>) => {
+    const vehicleSearch = (values.vehicleSearch ?? "").toString().trim();
+  
+    if (!vehicleSearch) {
+      setFiltered(null);
+      return;
+    }
+  
+    setLoading(true);
+    try {
+      const query = vehicleSearch.toLowerCase();
+      const tokens = query.split(/\s+/).filter(Boolean);
+  
+      const filteredRows = rows.filter((row) => {
+        
+        const vehicleAsString =
+          row.vehicle && typeof row.vehicle === "object"
+            ? Object.values(row.vehicle).filter(Boolean).join(" ")
+            : String(row.vehicle ?? "");
+  
+        const searchable = [
+          row.vehicle.plate,
+          row.client?.name,
+          row.vehicle.color,
+          vehicleAsString,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLowerCase();
+  
+        return tokens.every((t) => searchable.includes(t));
+      });
+  
+      if (!filteredRows.length) {
+        toast.error("Nenhum dado para esses filtros", errorToastStyle);
+      }
+  
+      setFiltered(filteredRows);
+    } catch (err) {
+      console.error("handleSearch erro (frontend):", err);
+      toast.error("Verifique os filtros para estarem no padrão correto", errorToastStyle);
+    } finally {
+      setLoading(false);
+    }
+  };
+  
   const handleCreate = () => {
     setIsParkingServiceModalOpen(true);
   };
 
   const handleEdit = async (row: any) => {
-    /*setParkingServiceDetail({
-      idClient: Number(row.id),
-      name: row.name,
-      cpfCnpj: row.cpf_cnpj,
-      email: row.email,
-      phone: row.phone,
-      enterprise: row.idClientEnterprise
-        ? {
-            idClient: Number(row.idClientEnterprise),
-            name: row.enterprise ?? row.enterprise ?? "" 
+    
+    setParkingServiceDetail({
+      idParkingService: row.idParkingService,
+      vehicle: {
+        idVehicle: row.vehicle.idVehicle,
+        plate: row.vehicle.plate,
+        model: {
+          idModel: row.vehicle.model.idModel,
+          nameModel: row.vehicle.model.name,
+          idVehicleType: row.vehicle.model.vehicleType.idVehicleType,
+          idBrand: row.vehicle.model.brand.idBrand,
+          brand: {
+            idBrand: row.vehicle.model.brand.idBrand,
+            nameBrand: row.vehicle.model.brand.name
           }
-        : undefined
-    });*/
+        },
+        year: row.vehicle.year,
+        color: row.color,    
+        idClient: row.client ?? undefined
+      },
+      client: {
+        idClient: row.client?.idClient,
+        cpfCnpj: row.client?.cpfCnpj,
+        name: row.client?.name,
+        phone: row.client?.phone,
+        email: row.client?.email,
+        enterprise: {
+          idClient: row.client?.clientEnterprise?.idClient,
+          name: row.client?.clientEnterprise?.name,
+        } 
+      }
+    });
     setIsParkingServiceModalOpen(true);
   };
 
   useEffect(() => {
     if(!isParkingServiceModalOpen) {
       setParkingServiceDetail(undefined);
+      fetchEntradaSaida();
     }
   }, [isParkingServiceModalOpen])
   
@@ -134,7 +201,7 @@ export default function EntradaSaidaPage() {
         reverseOrder={true}
       />
       <GenericTop title="Veiculos Estacionados" actionLabel="Estacionar Veiculo" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
-      <GenericFilters fields={filters} /*onSearch={handleSearch}*/ />
+      <GenericFilters fields={filters} onSearch={handleSearch} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
           <Grid

@@ -332,9 +332,6 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     }
   }
   
-  async function editParkingService() {
-  }
-
   async function deleteParkingService() {
   }
 
@@ -354,7 +351,6 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
         <ButtonModal icon={ArrowBendLeftDownIcon} text={`${isClientFieldsEnabled ? "Remover Cliente" : "Adicionar Cliente"}`} color="#000000" backgroundColor="#FFFFFF" fontSize={16} action={() => setIsClientFieldsEnabled(prev => !prev)}/>
         {isEdicaoParkingService
           ? <>
-            <EditBtnModal action={editParkingService}/>
             <DeleteBtnModal action={deleteParkingService}/>
           </>
           : <>
@@ -370,7 +366,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
           <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater}/>
           <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
           <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
-          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} />
+          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={100}/>
         </div>
       }</>}
     </div>

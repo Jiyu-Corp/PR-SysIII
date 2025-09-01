@@ -51,6 +51,8 @@ export default function ConvenioPage() {
           return {
               idAgreement: item.idAgreement,
               fixDiscount: numeroParaMoeda(item.fixDiscount) ?? '---',
+              fixDiscountEdit: item.fixDiscount,
+              percentageDiscountEdit: item.percentageDiscount,
               percentageDiscount: formatPercentage(item.percentageDiscount) ?? '---',
               dateExpiration: item.dateExpiration.split('-').reverse().join('/'),
               dateRegister: item.dateRegister.split('-').reverse().join('/'),
@@ -189,8 +191,8 @@ export default function ConvenioPage() {
   const handleEdit = async (row: any) => {
     setAgreementDetail({
       idAgreement: row.idAgreement,
-      fixDiscount: row.fixDiscount === '---' ? '' : row.fixDiscount,
-      percentageDiscount: row.percentageDiscount === '---' ? '' : row.percentageDiscount,
+      fixDiscount: row.fixDiscount === '---' ? '' : row.fixDiscountEdit,
+      percentageDiscount: row.percentageDiscount === '---' ? '' : row.percentageDiscountEdit,
       dateExpiration: row.dateExpiration,
       idClient: row.idClient   
     });
