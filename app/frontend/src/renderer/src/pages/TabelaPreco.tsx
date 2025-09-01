@@ -12,7 +12,7 @@ import { TableColumn } from "@renderer/types/TableTypes";
 import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
-import { numeroParaMoeda, formatPercentage, getErrorMessage } from "@renderer/utils/utils";
+import { getErrorMessage } from "@renderer/utils/utils";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";

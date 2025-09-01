@@ -12,7 +12,7 @@ import { TableColumn } from "@renderer/types/TableTypes";
 import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
-import { numeroParaMoeda, formatPercentage, getErrorMessage } from "@renderer/utils/utils";
+import { getErrorMessage } from "@renderer/utils/utils";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
@@ -93,9 +93,9 @@ export default function EntradaSaidaPage() {
         label: "Deletar",
         icon: <TrashIcon size={14} />,
         className: 'icon-btn-delete',
-        /*onClick: (row: parkingServiceType) => {
-          handleDelete(String(row.idPriceTable!));
-        },*/
+        onClick: (row: parkingServiceType) => {
+          handleDelete(String(row.idParkingService!));
+        },
       }
   ];
 
@@ -150,7 +150,6 @@ export default function EntradaSaidaPage() {
   };
 
   const handleEdit = async (row: any) => {
-    
     setParkingServiceDetail({
       idParkingService: row.idParkingService,
       vehicle: {
@@ -183,6 +182,52 @@ export default function EntradaSaidaPage() {
       }
     });
     setIsParkingServiceModalOpen(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir esta entrada?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS("parking-service", `${id}`, "DELETE");
+        toast.success("Entrada excluída com sucesso!", successToastStyle);
+        fetchEntradaSaida();
+      }
+    } catch (error) {
+      console.error("Erro ao Entrada tabela:", error);
+      toast.error(getErrorMessage(error as PrsysError), errorToastStyle);
+    }
+  };
+  
+  const handleGenerateCSV = () => {
+    const data = (filtered ?? rows).map((r: any) => ({
+      Placa: r.plate,
+      Cor: r.color,
+      Horario: r.entry,
+      Cliente: r.clientName
+    }));
+
+    const csv = [
+      Object.keys(data[0]).join(";"),
+      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(";")),
+    ].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `entrada_saida.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   useEffect(() => {
@@ -223,7 +268,7 @@ export default function EntradaSaidaPage() {
             actions={actions}
             perPage={5}
             total={rowsToShow.length}
-            //onGenerateCSV={handleGenerateCSV}
+            onGenerateCSV={handleGenerateCSV}
           />
       }
     </main>
