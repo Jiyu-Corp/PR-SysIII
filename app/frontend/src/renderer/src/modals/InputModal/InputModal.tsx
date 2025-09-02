@@ -5,6 +5,7 @@ import "./InputModal.css"
 import { useEffect, useState } from "react";
 
 type InputModalProps = {
+  className?: string;
   width?: number | string;
   label?: string;
   value: string;
@@ -25,7 +26,7 @@ type InputModalProps = {
   };
 };
 
-export default function InputModal({ width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData }: InputModalProps) {
+export default function InputModal({ className, width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.currentTarget.value;
     if(typeof formatInput !== 'undefined')
@@ -61,7 +62,7 @@ export default function InputModal({ width, label, value, type, placeholder, dis
     }, [value]);
 
     return <InputWrapperModal label={label} width={width}>
-      <input className="input-modal" value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled}/>
+      <input className={`input-modal ${className ?? ""}`} value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled}/>
     </InputWrapperModal>
   } else if(typeof textAreaData !== 'undefined') {
     const handleChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -75,10 +76,10 @@ export default function InputModal({ width, label, value, type, placeholder, dis
     };
 
     return <InputWrapperModal label={label} width={width}>
-      <textarea className="input-modal" value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
+      <textarea className={`input-modal ${className ?? ""}`} value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
     </InputWrapperModal>
   } else return <InputWrapperModal label={label} width={width}>
-      <input className={`input-modal ${locked ? "input-modal-locked" : ""}`} type={type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled || locked}/>
+      <input className={`input-modal ${locked ? "input-modal-locked" : ""} ${className ?? ""}`} type={type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled || locked}/>
     </InputWrapperModal>
   
 }

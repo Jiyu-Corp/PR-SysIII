@@ -6,6 +6,7 @@ import "./Modal1.css"
 import { Grid } from "react-loader-spinner";
 
 export default function Modal1({
+  className,
 	title,
 	entityIcon: EntityIcon,
   isLoading,
@@ -17,7 +18,7 @@ export default function Modal1({
 	children
 }: Modal1Props) {
 	return <ModalWrapper isOpen={isOpen} closeModal={closeModal} noBackground={noBackground}>
-		<div className="modal-1" style={{maxWidth: maxWidth}}>
+		<div className={`modal-1 ${className}`} style={{maxWidth: maxWidth}}>
 			<div className="entity-icon-wrapper">
 				<EntityIcon size={64} color="#4A87E8"/>
 			</div>

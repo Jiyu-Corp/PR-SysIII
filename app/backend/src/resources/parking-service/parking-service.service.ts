@@ -17,6 +17,7 @@ import { ParkingServiceNotExists, VehicleAlreadyParked, VehicleWithoutModel } fr
 import { AgreementService } from '../client/modules/agreement/agreement.service';
 import { EditVehicleDto } from '../vehicle/dto/edit-vehicle-dto';
 import { EditClientDto } from '../client/dto/edit-client-dto';
+import { FinishParkingServiceDto } from './dto/finish-parking-service-dto';
 
 @Injectable()
 export class ParkingServiceService {
@@ -163,5 +164,48 @@ export class ParkingServiceService {
         );
         if(pServiceError) throw new DatabaseError();
         if(service.affected === 0) throw new ParkingServiceNotExists();
+    }
+
+    async finishService(finishParkingServiceDto: FinishParkingServiceDto): Promise<void> {
+        const [pServiceError, parkingService] = await promiseCatchError(this.parkingServiceRepo
+            .createQueryBuilder('parkingService')
+                .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
+                .leftJoinAndSelect('clientEntry.agreements', 'agreement', 
+                    'agreement.isActive = true'
+                )
+                .innerJoinAndSelect('parkingService.vehicle', 'vehicle')
+                .leftJoinAndSelect('vehicle.client', 'client', 'client.isActive = true')
+                .leftJoinAndSelect('client.agreements', 'vClientAgreement', 'vClientAgreement.isActive = true')
+                .innerJoinAndSelect('vehicle.model', 'model')
+                .innerJoinAndSelect('model.brand', 'brand')
+                .innerJoinAndSelect('model.vehicleType', 'vehicleType')
+                .innerJoinAndSelect('vehicleType.priceTables', 'priceTable', 'priceTable.isActive = true')
+            .where('parkingService.idParkingService = :idParkingService', { idParkingService: finishParkingServiceDto.idParkingService })
+            .getOne());
+        if(pServiceError) throw new DatabaseError();
+        if(!parkingService) throw new ParkingServiceNotExists();
+
+        const [sValuesError, serviceValues] = await promiseCatchError(this.getServiceValues(
+            finishParkingServiceDto.idParkingService
+        ));
+        if(sValuesError) throw sValuesError;
+
+        const serviceTotalCost = 
+            serviceValues.reduce((acc, sCost) => acc+sCost.value, 0) + 
+            (finishParkingServiceDto.additionalDiscount ?? 0);
+        
+        // Client of entrance has priority compared to the client binded to the vehicle
+        const client = parkingService.clientEntry || parkingService.vehicle.client;
+        const agreement = client && client.agreements && client.agreements[0];
+        
+        parkingService.priceTable = parkingService.vehicle.model.vehicleType.priceTables[0];
+        parkingService.agreement = agreement;
+
+        parkingService.price = serviceValues.find(v => v.description.includes("Preço estadia"))!.value;
+        parkingService.discountAdditional = finishParkingServiceDto.additionalDiscount;
+        parkingService.totalPrice = serviceTotalCost;
+
+        parkingService.isParking = false;
+        parkingService.dateCheckout = new Date();
     }
 }

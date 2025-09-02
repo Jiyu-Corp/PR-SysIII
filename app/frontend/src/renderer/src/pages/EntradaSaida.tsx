@@ -42,6 +42,7 @@ export default function EntradaSaidaPage() {
         const mapped: parkingServiceType[] = (arr as any[]).map((item: any) => {
           return {
               idParkingService: item.idParkingService,
+              dateRegister: item.dateRegister,
               vehicle: item.vehicle,
               client: item.clientEntry ?? '---',
               clientName: item.clientEntry?.name ?? '---',
@@ -152,6 +153,7 @@ export default function EntradaSaidaPage() {
   const handleEdit = async (row: any) => {
     setParkingServiceDetail({
       idParkingService: row.idParkingService,
+      dateRegister: row.dateRegister,
       vehicle: {
         idVehicle: row.vehicle.idVehicle,
         plate: row.vehicle.plate,
@@ -181,6 +183,41 @@ export default function EntradaSaidaPage() {
         } 
       }
     });
+    console.log(
+      {
+      idParkingService: row.idParkingService,
+      dateRegister: row.dateRegister,
+      vehicle: {
+        idVehicle: row.vehicle.idVehicle,
+        plate: row.vehicle.plate,
+        model: {
+          idModel: row.vehicle.model.idModel,
+          nameModel: row.vehicle.model.name,
+          idVehicleType: row.vehicle.model.vehicleType.idVehicleType,
+          idBrand: row.vehicle.model.brand.idBrand,
+          brand: {
+            idBrand: row.vehicle.model.brand.idBrand,
+            nameBrand: row.vehicle.model.brand.name
+          }
+        },
+        year: row.vehicle.year,
+        color: row.color,    
+        idClient: row.client ?? undefined
+      },
+      client: {
+        idClient: row.client?.idClient,
+        cpfCnpj: row.client?.cpfCnpj,
+        name: row.client?.name,
+        phone: row.client?.phone,
+        email: row.client?.email,
+        enterprise: {
+          idClient: row.client?.clientEnterprise?.idClient,
+          name: row.client?.clientEnterprise?.name,
+        } 
+      }
+    },
+    row
+    )
     setIsParkingServiceModalOpen(true);
   };
 

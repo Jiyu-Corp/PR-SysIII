@@ -363,10 +363,13 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     }
   }
 
-  return <Modal1 isLoading={isLoading} maxWidth={isClientFieldsEnabled ? "650px" : "450px" } title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={LetterCirclePIcon}>
+  return <Modal1 className={`
+    ${isClientFieldsEnabled && "client-open-modal"}
+    ${isFinishServiceTabOpen && "finish-service-open-modal"}
+  `} isLoading={isLoading} maxWidth={isClientFieldsEnabled ? "700px" : "450px" } title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={LetterCirclePIcon}>
     <div className="parking-service-modal">
-      <div className="inputs-wrapper">
-        <div style={{width: "100%", display: "flex", gap: "16px"}}>
+      <div className="inputs-wrapper" style={{justifyContent: isClientFieldsEnabled ? "start" : "space-between"}}>
+        <div style={{width: !isClientFieldsEnabled ? "100%" : "inherit", display: "flex", gap: "16px"}}>
           <SelectCreateModal width="160px" label="Placa" options={plates} setOptions={setPlates} value={plate} setValue={setPlate} formatInput={(value:string) => value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase()}/>
           <InputModal width="140px" label="Cor" value={color} setValue={setColor} />
           <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
@@ -391,18 +394,17 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
       </div>
       {isClientFieldsEnabled && <> {
         <div className="client-inputs-wrapper">
-          <div style={{width: "100%"}}>
-            <SelectCreateModal width="270px" label="Nome" options={clientNames} setOptions={setClientNames} value={clientName} setValue={setClientName} menuMaxHeight={160}/>
-          </div>
+          <SelectCreateModal width="270px" label="Nome" options={clientNames} setOptions={setClientNames} value={clientName} setValue={setClientName} menuMaxHeight={160}/>
           <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater}/>
           <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
           <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
-          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={100}/>
+          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={75}/>
         </div>
       }</>}
     </div>
     {isFinishServiceTabOpen && parkingService && <FinishParkingServiceTab
       parkingService={parkingService}
+      closeModal={closeModal}
       closeTab={() => setIsFinishServiceTabOpen(false)}
     />}
   </Modal1>

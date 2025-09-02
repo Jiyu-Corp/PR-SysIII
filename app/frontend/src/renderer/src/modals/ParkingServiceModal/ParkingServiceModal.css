@@ -30,7 +30,17 @@
   flex-wrap: wrap;
   gap: 16px;
   row-gap: 16px;
-  justify-content: space-between;
+  justify-content: start;
 
   padding-top: 16px;
+}
+
+/* CLIENT OPEN */
+.client-open-modal {
+  transform: translate(0, -20px);
+}
+
+/* FINISH OPEN */
+.finish-service-open-modal {
+  transform: translate(-22.5%, -20px);
 }

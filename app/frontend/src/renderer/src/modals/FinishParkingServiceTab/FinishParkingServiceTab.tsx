@@ -7,15 +7,20 @@ import ButtonModal from "../ButtonModal/ButtonModal";
 import { Grid } from "react-loader-spinner";
 import { requestPRSYS } from "@renderer/utils/http";
 import { parkingServiceType } from "@renderer/types/resources/parkingServiceType";
+import { formatDateTime, getErrorMessage } from "@renderer/utils/utils";
+import toast from "react-hot-toast";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
+import { PrsysError } from "@renderer/types/prsysErrorType";
 
 type FinishParkingServiceTabProps = { 
   parkingService: parkingServiceType;
   closeTab: () => void;
+  closeModal: () => void;
 };
 
-export default function FinishParkingServiceTab({ parkingService }: FinishParkingServiceTabProps) {
+export default function FinishParkingServiceTab({ parkingService, closeTab, closeModal }: FinishParkingServiceTabProps) {
   // Control Params
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Inputs
   const [additionalDiscount, setAdditionalDiscount] = useState<string>("");
@@ -90,35 +95,50 @@ export default function FinishParkingServiceTab({ parkingService }: FinishParkin
     if(typeof currentAdditionalDiscount !== 'undefined') 
       newPrices = newPrices.filter(p => p !== currentAdditionalDiscount);
 
-    const newAdditionalDiscount: {
-      description: string,
-      value: number
-    } = {
-      description: additionalDiscountLabel,
-      value: parseFloat(newValue.replace(/,/g, "."))
+    if(newValue != "" ) {
+      const newAdditionalDiscount: {
+        description: string,
+        value: number
+      } = {
+        description: additionalDiscountLabel,
+        value: -parseFloat(newValue.replace(/,/g, "."))
+      }
+      newPrices.push(newAdditionalDiscount);
     }
-    newPrices.push(newAdditionalDiscount);
 
     setPrices(newPrices);
-    setPriceTotal(newPrices.reduce((acc, cur) => acc + cur.value, 0));
+    setPriceTotal(parseFloat(newPrices.reduce((acc, cur) => acc + cur.value, 0).toFixed(2)));
   }
   
   // Actions
-  function handleFinishParkingService() {
+  async function handleFinishParkingService() {
+    const params = {
+      idParkingService: parkingService.idParkingService,
+      additionalDiscount: additionalDiscount
+    }
+    try {
+      await requestPRSYS('parking-service', 'finishService', 'POST', params);
 
+      closeTab();
+      closeModal();
+
+      toast.success('Serviço finalizado.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   return <div className="finish-parking-tab">
     <div className="finish-parking-header">
       <div className="fp-title">
         <h1>Saída</h1>
-        <div className="fp-close"><XIcon/></div>
+        <div className="fp-close" onClick={closeTab}><XIcon/></div>
       </div>
       <div className="fp-header-content">
-        <p>Horario de Entrada: {parkingService.dateRegister}</p>
+        <p>Horario de Entrada: {formatDateTime(new Date(parkingService.dateRegister!))}</p>
         <div className="additional-discount-wrapper">
           <p>Desconto Adicional</p>
-          <InputModal value={additionalDiscount} setValue={setAdditionalDiscount} formatInput={formatAdditionalPrice} onChange={updatePrices} placeholder="0,00"/>
+          <InputModal className="additional-discount" value={additionalDiscount} setValue={setAdditionalDiscount} formatInput={formatAdditionalPrice} onChange={updatePrices} placeholder="0,00" width="70px"/>
         </div>
       </div>
     </div>
@@ -137,12 +157,12 @@ export default function FinishParkingServiceTab({ parkingService }: FinishParkin
       </div>
       : <div className="finish-parking-body">
         <div className="fp-prices-wrapper">
-          {prices.map(p => <div className="fp-price-wrapper" key={p.description}>
-            <span style={{width: "50%"}}>{p.description}</span>
-            <div style={{display: "flex", alignItems: "center", justifyContent: "center", width: "25%"}}>
+          {prices.map(p => <div className={`fp-price-wrapper ${p.value < 0 && 'fp-price-discount'}`} key={p.description}>
+            <span style={{width: "65%"}}>{p.description}</span>
+            <div style={{display: "flex", alignItems: "end", justifyContent: "center", width: "5%", marginTop: "7px"}}>
               <ArrowRightIcon size={12}/>
             </div>
-            <span style={{width: "25%"}}>R${Math.abs(p.value).toString()}</span>
+            <span style={{width: "30%", textAlign: "end"}}>{p.value < 0 && "- "}R${Math.abs(p.value).toString()}</span>
           </div>
           )}
         </div>

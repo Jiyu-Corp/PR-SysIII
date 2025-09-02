@@ -22,7 +22,7 @@ export class AgreementService {
         const discount = agreement.fixDiscount ?? (agreement.percentageDiscount! / 100) * serviceValue;
 
         return {
-          description: `Desconto Convenio ${agreement.percentageDiscount ? ` (${agreement.percentageDiscount} %)` : ""}`,
+          description: `Desconto Convenio ${agreement.percentageDiscount ? ` (${agreement.percentageDiscount}%)` : ""}`,
           value: -discount
         } as ServiceValueDto
     }

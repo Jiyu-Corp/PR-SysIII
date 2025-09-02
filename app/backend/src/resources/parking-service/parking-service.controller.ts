@@ -4,6 +4,7 @@ import { ParkingService } from './parking-service.entity';
 import { promiseCatchErrorHTTPDefault } from 'src/utils/utils';
 import { CreateParkingServiceDto } from './dto/create-parking-service-dto';
 import { ServiceValueDto } from './dto/service-value-dto';
+import { FinishParkingServiceDto } from './dto/finish-parking-service-dto';
 
 @Controller('parking-service')
 export class ParkingServiceController {
@@ -36,6 +37,12 @@ export class ParkingServiceController {
     }
 
     // finishService
+    // 3 weaks ago... sounds like it took forever. We shall finish it and then back to original work.
+    @Post('finishService')
+    async finishService(@Body() finishParkingServiceDto: FinishParkingServiceDto) {
+        const [httpError] = await promiseCatchErrorHTTPDefault(this.parkingServiceService.finishService(finishParkingServiceDto));
+        if(httpError) throw httpError;
+    }
 
     @Delete(':idParkingService')
     async cancelService(@Param('idParkingService') idParkingService: number): Promise<void> {
