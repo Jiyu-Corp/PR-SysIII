@@ -18,6 +18,7 @@ import { getErrorMessage } from "@renderer/utils/utils";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "../ButtonModal/ButtonModal";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
+import Swal from "sweetalert2";
 
 type PriceTableModalProps = { 
   priceTable: priceTableType | undefined;
@@ -35,7 +36,7 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
   // Control Params
   const [isLoading, setIsLoading] = useState(false);
   const isEdicaoPriceTable = typeof priceTable !== 'undefined';
-  const [isSpecialHoursOpen, setIsSpecialHoursOpen] = useState(false);
+  const [isSpecialHoursOpen, setIsSpecialHoursOpen] = useState(typeof priceTable?.priceTableHours !== 'undefined' && priceTable?.priceTableHours.length > 0 || false);
 
   // Inputs
   const idPriceTable = priceTable?.idPriceTable;
@@ -141,9 +142,57 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
   }
   
   async function editPriceTable() {
+    if(typeof idPriceTable === 'undefined') return;
+
+    const params = {
+      idPriceTable: idPriceTable,
+      idVehicleType: idVehicleType,
+      pricePerHour: typeof pricePerHour === 'string' ? parseFloat(pricePerHour.replace(/,/g, ".")) : pricePerHour,
+      toleranceMinutes: toleranceMinutes ? Number(toleranceMinutes) : null,
+      priceTableHours: priceTableHours.map(pth => ({
+        idPriceTableHour: pth.idPriceTableHour,
+        hour: Number(pth.hour),
+        price: typeof pth.price === "string" ? parseFloat(pth.price.replace(/,/g, ".")) : pth.price
+      }))
+    }
+    
+    try {
+      await requestPRSYS('price-table', idPriceTable.toString(), 'PUT', params);
+
+      closeModal();
+
+      toast.success('Tabela editada.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   async function deletePriceTable() {
+    if(typeof idPriceTable === 'undefined') return;
+
+    try {
+
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir esta tabela?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS('price-table', idPriceTable.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('Tabela deletada.', successToastStyle);
+      }
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   function addNewPriceTableHour() {
@@ -174,7 +223,7 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
     setPriceTableHours(newPriceTableHours);
   }
 
-  return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CurrencyDollarIcon}>
+  return <Modal1 isLoading={isLoading} maxWidth="500px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CurrencyDollarIcon}>
     <div className="price-table-modal">
       <div className="inputs-wrapper">
         <SelectModal width="150px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />

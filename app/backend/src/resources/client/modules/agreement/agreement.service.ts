@@ -83,6 +83,7 @@ export class AgreementService {
             ... {
                 fixDiscount: editAgreementDto.fixDiscount,
                 percentageDiscount: editAgreementDto.percentageDiscount,
+                dateExpiration: editAgreementDto.dateExpiration,
                 client: {
                     idClient: editAgreementDto.idClient
                 }

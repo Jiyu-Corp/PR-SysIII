@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
-import { ArticleIcon } from "@phosphor-icons/react";
-import { Toaster } from "react-hot-toast";
+import GenericFilters from "../components/Filters/Filters";
+import GenericTable from "../components/Table/Table";
+import { ArticleIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
+import { Toaster, toast } from "react-hot-toast";
 import TicketModelModal from "@renderer/modals/TicketModel/TicketModelModal";
 import { ticketModelType } from "@renderer/types/resources/ticketModelType";
+import { FilterField } from "@renderer/types/FilterTypes";
+import { TableColumn } from "@renderer/types/TableTypes";
+import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
+import { requestPRSYS } from '@renderer/utils/http'
+import { Grid } from "react-loader-spinner";
+import { getErrorMessage } from "@renderer/utils/utils";
+import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
+import Swal from 'sweetalert2';
+import { PrsysError } from "@renderer/types/prsysErrorType";
 
 export default function ModeloTicketPage() {
   const navigate = useNavigate();
@@ -17,7 +28,7 @@ export default function ModeloTicketPage() {
   };
 
   const handleEdit = async (row: any) => {
-    setTicketModelDetail({
+    /*setTicketModelDetail({
       idClient: Number(row.id),
       name: row.name,
       cpfCnpj: row.cpf_cnpj,
@@ -29,7 +40,7 @@ export default function ModeloTicketPage() {
             name: row.enterprise ?? row.enterprise ?? "" 
           }
         : undefined
-    });
+    });*/
     setIsTicketModelModalOpen(true);
   };
 

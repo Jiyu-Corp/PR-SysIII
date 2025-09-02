@@ -1,6 +1,7 @@
 import { PartialType } from "@nestjs/mapped-types";
 import { CreateAgreementDto } from "./create-agreement-dto";
-import { IsDefined, IsNumber, IsPositive, Max, Min, ValidateIf } from "class-validator";
+import { IsDateString, IsDefined, IsNumber, IsPositive, Max, Min, ValidateIf } from "class-validator";
+import { ValidateFn } from "src/decorators/validateBy.decorator";
 
 export class EditAgreementDto extends PartialType(CreateAgreementDto) {
     @IsDefined()
@@ -20,4 +21,19 @@ export class EditAgreementDto extends PartialType(CreateAgreementDto) {
     @IsNumber({}, { message: "Desconto fixo esta fora de padrão." })
     @Min(0, { message: "Desconto fixo deve ser no minimo 0." })
     readonly fixDiscount?: number;
+
+    @IsDefined({ message: "Data de expiração do convenio é obrigatoria." })
+    @IsDateString({}, { message: "Data de expiração esta fora de padrão." })
+    @ValidateFn((date: string) => {
+        const parsedDate = new Date(date);
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+
+        return parsedDate > yesterday;
+    }, "Data de expiração não pode ser anterior a data atual.")
+    readonly dateExpiration: string;
 }

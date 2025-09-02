@@ -41,7 +41,9 @@ export class ParkingServiceService {
                         isParking: true
                     },
                     relations: {
-                        clientEntry: true,
+                        clientEntry: {
+                            clientEnterprise: true
+                        },
                         vehicle: {
                             model: {
                                 brand: true,

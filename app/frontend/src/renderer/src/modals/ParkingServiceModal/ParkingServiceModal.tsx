@@ -20,6 +20,7 @@ import ButtonModal from "../ButtonModal/ButtonModal";
 import useEffectSkipFirstRender from "@renderer/hooks/effectSkipFirstRender";
 import { vehicleType } from "@renderer/types/resources/vehicleType";
 import { clientType } from "@renderer/types/resources/clientType";
+import Swal from "sweetalert2";
 import FinishParkingServiceTab from "../FinishParkingServiceTab/FinishParkingServiceTab";
 
 type ParkingServiceModalProps = { 
@@ -334,10 +335,32 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     }
   }
   
-  async function editParkingService() {
-  }
-
   async function deleteParkingService() {
+    if(typeof idParkingService === 'undefined') return;
+
+    try {
+
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir esta entrada?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS('parking-service', idParkingService.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('Entrada deletada.', successToastStyle);
+      }
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   return <Modal1 isLoading={isLoading} maxWidth={isClientFieldsEnabled ? "650px" : "450px" } title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={LetterCirclePIcon}>
@@ -374,7 +397,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
           <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater}/>
           <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
           <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
-          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} />
+          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={100}/>
         </div>
       }</>}
     </div>
