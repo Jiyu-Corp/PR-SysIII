@@ -93,7 +93,12 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
         ? o.id
         : -1
       )}
-      options={options}
+      options={options.length == 0 ? [] 
+        : "options" in options[0]
+          ? (options.sort((a: SelectOption | SelectOptionGroup, b : SelectOption | SelectOptionGroup) => a.label.localeCompare(b.label)) as SelectOptionGroup[])
+              .map((o: SelectOptionGroup) => ({... o, options: o.options.sort((a,b) => a.label.localeCompare(b.label))} as SelectOptionGroup))
+          : options.sort((a: SelectOption | SelectOptionGroup, b : SelectOption | SelectOptionGroup) => a.label.localeCompare(b.label))
+      }
       formatCreateLabel={(input) => `Criar "${input}"` }
       onChange={handleOnChange}
       onCreateOption={handleCreateOption}

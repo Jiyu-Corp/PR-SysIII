@@ -52,7 +52,7 @@ export default function SelectModal({ width, label, placeholder, disabled, value
         ? o.id
         : o.options.find(opt => opt.id == value)?.id
       ) }
-      options={options}
+      options={options.sort((a: SelectOption | SelectOptionGroup, b : SelectOption | SelectOptionGroup) => a.label.localeCompare(b.label))}
       onChange={handleOnChange}
       isClearable={true}
       isDisabled={disabled || false}

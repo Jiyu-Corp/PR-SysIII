@@ -12,7 +12,7 @@ import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { parkingServiceType } from "@renderer/types/resources/parkingServiceType";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import SelectCreateModal from "../SelectCreateModal/SelectCreateModal";
-import { getErrorMessage } from "@renderer/utils/utils";
+import { formatCpfCnpj, formatPhone, getErrorMessage } from "@renderer/utils/utils";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "../ButtonModal/ButtonModal";
 import useEffectSkipFirstRender from "@renderer/hooks/effectSkipFirstRender";
@@ -61,9 +61,9 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     id: parkingService.client.idClient,
     label: parkingService.client.name
   } as SelectOption || null);
-	const [cpfCnpj, setCpfCnpj] = useState<string>(parkingService?.client?.cpfCnpj || '');
+	const [cpfCnpj, setCpfCnpj] = useState<string>(parkingService?.client?.cpfCnpj ?? '');
   const cpfCpnjUnformater = (value: string) => value.replace(/\D/g, "");
-	const [phone, setPhone] = useState<string>(parkingService?.client?.phone || '');
+	const [phone, setPhone] = useState<string>(parkingService?.client?.phone ?? '');
   const phoneUnformater = (value: string) => value.replace(/\+55/g, '').replace(/\D/g, "");
 	const [email, setEmail] = useState<string>(parkingService?.client?.email || '');
 	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(parkingService?.client?.enterprise?.idClient || null);
@@ -275,8 +275,8 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     if(client) {
       setIdClient(client.idClient);
       setClientName(clientNames.find(cn => cn.id === client.idClient)!)
-      setCpfCnpj(client.cpfCnpj);
-      setPhone(client.phone || "");
+      setCpfCnpj(formatCpfCnpj(client.cpfCnpj));
+      setPhone(client.phone ? "+55 " + formatPhone(client.phone) : "");
       setEmail(client.email || "");
       setIdClientEnterprise(client.enterprise?.idClient || null);
     } else {
