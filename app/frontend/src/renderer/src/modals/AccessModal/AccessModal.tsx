@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Modal1 from "../Modal1/Modal1";
-import { User, UserIcon } from "@phosphor-icons/react";
+import { UserIcon } from "@phosphor-icons/react";
 import InputModal from "../InputModal/InputModal";
 
 import "./AccessModal.css"
@@ -24,6 +24,7 @@ export default function AccessModal({isOpen, closeModal}: AccessModalProps) {
 	const [username, setUsername] = useState<string>('');
 	const [password, setPassword] = useState<string>('');
 	const [newPassword, setNewPassword] = useState<string>('');
+	const [repeatNewPassword, setRepeatNewPassword] = useState<string>('');
 
   // Options Fetch
   useEffect(() => {
@@ -49,6 +50,10 @@ export default function AccessModal({isOpen, closeModal}: AccessModalProps) {
       toast.error("A nova senha e a antiga são a mesma. Elas devem ser diferentes.", errorToastStyle);
       return;
     }
+    if(newPassword != repeatNewPassword) {
+      toast.error("A senha nova e a repetida não coincidem!", errorToastStyle);
+      return;  
+    }
     const params = {
       username: username,
       password: password,
@@ -63,12 +68,13 @@ export default function AccessModal({isOpen, closeModal}: AccessModalProps) {
     }
   }
 
-	return <Modal1 isLoading={isLoading} maxWidth="450px" title={"Mudar Senha"} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon} noBackground={true} noExitBtn={true}>
+	return <Modal1 isLoading={isLoading} maxWidth="450px" title="Mudar Senha" isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon} noBackground={true} noExitBtn={true}>
     <div className="access-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="Login" value={username} setValue={setUsername} locked={true}/>
-        <InputModal width="150px" label="Senha Atual" type="password" value={password} setValue={setPassword}/>
-        <InputModal width="150px" label="Nova Senha" type="password" value={newPassword} setValue={setNewPassword}/>
+        <InputModal width="180px" label="Login" value={username} setValue={setUsername} locked={true}/>
+        <InputModal width="180px" label="Senha Atual" type="password" value={password} setValue={setPassword}/>
+        <InputModal width="180px" label="Nova Senha" type="password" value={newPassword} setValue={setNewPassword}/>
+        <InputModal width="180px" label="Repita Senha" type="password" value={repeatNewPassword} setValue={setRepeatNewPassword}/>
       </div>
       <div className="btns-wrapper">
         <SaveBtnModal action={changeAccessPassword}/>

@@ -63,7 +63,7 @@ export default function TicketModelModal({ticketModel, isOpen, closeModal}: Tick
   return <Modal1 maxWidth="650px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={HandshakeIcon}>
     <div className="ticket-model-modal">
       <div className="inputs-wrapper">
-        <InputModal width="160px" label="Modelo" value={name} setValue={setName}/>
+        <InputModal width="200px" label="Modelo" value={name} setValue={setName}/>
         <InputModal width="400px" label="Cabeçalho" value={header} setValue={setHeader} textAreaData={{rows: 5}}/>
         <InputModal width="400px" label="Rodape" value={footer} setValue={setFooter} textAreaData={{rows: 5}}/>
       </div>

@@ -368,7 +368,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     <div className="parking-service-modal">
       <div className="inputs-wrapper" style={{justifyContent: isClientFieldsEnabled ? "start" : "space-between"}}>
         <div style={{width: !isClientFieldsEnabled ? "100%" : "inherit", display: "flex", gap: "16px"}}>
-          <SelectCreateModal width="160px" label="Placa" options={plates} setOptions={setPlates} value={plate} setValue={setPlate} formatInput={(value:string) => value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase()}/>
+          <SelectCreateModal width="160px" label="Placa" options={plates} setOptions={setPlates} value={plate} setValue={setPlate} formatInput={(value:string) => value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 7)}/>
           <InputModal width="140px" label="Cor" value={color} setValue={setColor} />
           <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
         </div>

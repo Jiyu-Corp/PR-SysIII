@@ -62,7 +62,7 @@ export default function SelectModal({ width, label, placeholder, disabled, value
         valueContainer: (styles) => ({ ...styles, padding: "0px 8px", margin: "0px"}),
         option: (styles) => ({ ...styles, fontSize: "14px" }),
         indicatorsContainer: (styles) => ({ ...styles, padding: "0px !important" }),
-        menuList: (styles) => ({ ...styles, maxHeight: menuMaxHeight ?? "200px" })
+        menuList: (styles) => ({ ...styles, maxHeight: menuMaxHeight ?? "120px" })
       }}
       className={selectClass ?? undefined} 
       classNamePrefix="custom-select"     

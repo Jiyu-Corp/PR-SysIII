@@ -172,7 +172,7 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
     <div className="agreement-modal">
       <div className="inputs-wrapper">
         <div style={{width: "100%", marginBottom: 4}}>
-          <SelectModal width="180px" label="Empresa" options={agreementEnterprises} value={idClient} setValue={setIdClient} />
+          <SelectModal width="240px" label="Empresa" options={agreementEnterprises} value={idClient} setValue={setIdClient} />
         </div>
         <InputModal width="90px" label="Desconto Fixo" value={fixDiscount} setValue={setFixDiscount} disabled={percentageDiscount != ""} formatInput={formatFixDiscount}/>
         <InputModal width="78px" label="Desconto(%)" value={percentageDiscount} setValue={setPercentageDiscount} disabled={fixDiscount != ""} formatInput={formatPercentageDiscount}/>
