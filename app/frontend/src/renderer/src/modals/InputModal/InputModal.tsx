@@ -24,9 +24,10 @@ type InputModalProps = {
     rows: number; 
     cols?: number;
   };
+  required?: boolean;
 };
 
-export default function InputModal({ className, width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData }: InputModalProps) {
+export default function InputModal({ className, width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData, required }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.currentTarget.value;
     if(typeof formatInput !== 'undefined')
@@ -62,7 +63,10 @@ export default function InputModal({ className, width, label, value, type, place
     }, [value]);
 
     return <InputWrapperModal label={label} width={width}>
-      <input className={`input-modal ${className ?? ""}`} value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled}/>
+      <div style={{width: width}}>
+        {required && <span className="input-modal-required">*</span>}
+        <input className={`input-modal ${className ?? ""}`} value={value} onChange={handleChange} style={{fontSize: fontSize, width: width}} placeholder={placeholder} disabled={disabled}/>
+      </div>
     </InputWrapperModal>
   } else if(typeof textAreaData !== 'undefined') {
     const handleChangeTextArea = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -70,16 +74,22 @@ export default function InputModal({ className, width, label, value, type, place
       if(typeof formatInput !== 'undefined')
         value = formatInput(value);
 
-      setValue(value);
+      setValue(value);  
       if(typeof onChange !== 'undefined')
         onChange(value);
     };
 
     return <InputWrapperModal label={label} width={width}>
-      <textarea className={`input-modal ${className ?? ""}`} value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
+      <div style={{width: width}}>
+        {required && <span className="input-modal-required">*</span>}
+        <textarea className={`input-modal ${className ?? ""} ${required ? "input-modal-required" : ""}`} value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
+      </div>
     </InputWrapperModal>
   } else return <InputWrapperModal label={label} width={width}>
-      <input className={`input-modal ${locked ? "input-modal-locked" : ""} ${className ?? ""}`} type={type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize}} placeholder={placeholder} disabled={disabled || locked}/>
+      <div style={{width: width}}>
+        {required && <span className="input-modal-required">*</span>}
+        <input className={`input-modal ${locked ? "input-modal-locked" : ""} ${className ?? ""} ${required ? "input-modal-required" : ""}`} type={type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize, width: width}} placeholder={placeholder} disabled={disabled || locked}/>
+      </div>
     </InputWrapperModal>
   
 }

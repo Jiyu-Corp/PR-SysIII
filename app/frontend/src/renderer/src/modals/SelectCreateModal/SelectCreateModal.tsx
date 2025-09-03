@@ -17,9 +17,10 @@ type SelectCreateModalProps = {
   setOptions: React.Dispatch<React.SetStateAction<(SelectOption & any)[]>> | React.Dispatch<React.SetStateAction<(SelectOptionGroup & any)[]>>
   isGroupSelect?: boolean;
   menuMaxHeight?: number | string;
+  required?: boolean;
 };
 
-export default function SelectCreateModal({ width, label, placeholder, disabled, value, setValue, options, setOptions, formatInput, isGroupSelect, menuMaxHeight }: SelectCreateModalProps) {
+export default function SelectCreateModal({ width, label, placeholder, disabled, value, setValue, options, setOptions, formatInput, isGroupSelect, menuMaxHeight, required }: SelectCreateModalProps) {
   const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
@@ -75,7 +76,8 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
     if (value === null) selectRef.current?.clearValue()
   }, [value]);
   
-  return <InputWrapperModal label={label} width={width}>
+  return <InputWrapperModal label={label} width={width}><div>
+    {required && <span className="input-modal-required">*</span>}
     <CreatableSelect
       ref={selectRef}
       inputValue={inputValue}
@@ -115,5 +117,6 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
       noOptionsMessage={() => "Sem opções."}
       createOptionPosition="first"
     />
+  </div>
   </InputWrapperModal> 
 }
