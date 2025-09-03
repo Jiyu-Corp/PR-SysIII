@@ -8,6 +8,7 @@ import TextField from "@mui/material/TextField";
 dayjs.locale("pt-br");
 
 type DatePickerFieldProps = {
+  modal?: boolean;
   value?: string | null;            
   onChange: (value: string) => void; 
   label?: string;
@@ -20,6 +21,7 @@ type DatePickerFieldProps = {
 };
 
 const DatePickerField: React.FC<DatePickerFieldProps> = ({
+  modal,
   value,
   onChange,
   label,
@@ -55,10 +57,13 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
           size: 'small',
 					fullWidth,
           sx: {
+            '.MuiPickersOutlinedInput-notchedOutline': {
+              borderColor: modal ? "#000000bf" : ""
+            },
             '.MuiPickersInputBase-root': {
 							height: 32,                    
 							minHeight: 32,
-							padding: 0,
+							padding: 0
 						},
 						'.MuiFormLabel-root': {
 							top: '-3px'
@@ -67,7 +72,7 @@ const DatePickerField: React.FC<DatePickerFieldProps> = ({
 							right: '15px'
 						},
 						'.css-15395ss-MuiPickersSectionList-root-MuiPickersInputBase-sectionsContainer-MuiPickersOutlinedInput-sectionsContainer': {
-							paddingLeft: '10px'
+							paddingLeft: '10px',
 						}
           },
         },

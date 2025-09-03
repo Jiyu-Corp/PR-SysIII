@@ -1,0 +1,26 @@
+.input-modal {
+  position: relative;
+  padding: 6px 12px;
+  border: 1.5px solid rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  flex-shrink: 1;
+}
+
+.input-modal-locked {
+  opacity: 1 !important;
+}
+
+.input-modal:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.input-modal-required {
+  content: '*';
+  position: absolute;
+  right: 0px;
+  top: 0px;
+
+  font-size: 16px;
+  color: #C2292E;
+}

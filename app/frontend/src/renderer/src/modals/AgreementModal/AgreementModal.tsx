@@ -16,6 +16,8 @@ import { PrsysError } from "@renderer/types/prsysErrorType";
 import { getErrorMessage } from "@renderer/utils/utils";
 import Swal from 'sweetalert2';
 import { SelectOption } from "@renderer/types/ReactSelectTypes";
+import DatePickerField from "@renderer/components/DatePicker/DatePicker";
+import DatePickerModal from "../DatePickerModal/DatePickerModal";
 
 type AgreementModalProps = { 
   agreement: agreementType | undefined;
@@ -176,7 +178,13 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
         </div>
         <InputModal width="90px" label="Desconto Fixo" value={fixDiscount} setValue={setFixDiscount} disabled={percentageDiscount != ""} formatInput={formatFixDiscount}/>
         <InputModal width="78px" label="Desconto(%)" value={percentageDiscount} setValue={setPercentageDiscount} disabled={fixDiscount != ""} formatInput={formatPercentageDiscount}/>
-        <InputModal width="115px" label="Data de Expiração" value={dateExpiration} setValue={setDateExpiration} placeholder="dd/mm/yyyy" mask="dd/mm/yyyy" replacement={{ d: /\d/, m: /\d/, y: /\d/ }}/>
+        {/* <InputModal width="115px" label="Data de Expiração" value={dateExpiration} setValue={setDateExpiration} placeholder="dd/mm/yyyy" mask="dd/mm/yyyy" replacement={{ d: /\d/, m: /\d/, y: /\d/ }}/> */}
+        <DatePickerModal
+          width="164px"
+          label="Expiração"
+          value={dateExpiration}
+          setValue={setDateExpiration}
+        />
       </div>
       <div className="btns-wrapper">
         {isEdicaoAgreement
