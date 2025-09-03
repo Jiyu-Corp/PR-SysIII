@@ -207,5 +207,7 @@ export class ParkingServiceService {
 
         parkingService.isParking = false;
         parkingService.dateCheckout = new Date();
+
+        await this.parkingServiceRepo.save(parkingService);
     }
 }

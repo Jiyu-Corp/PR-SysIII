@@ -22,7 +22,7 @@ export class ReportService {
                     .innerJoinAndSelect('vehicle.model', 'model')
                     .innerJoinAndSelect('model.brand', 'brand')
                     .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
-                .where('1=1');
+                .where('parkingService.isParking = false');
             
             if(getParkedServicesDto.plate) {
                 query.andWhere('parkingService.plate = :plate', { 
