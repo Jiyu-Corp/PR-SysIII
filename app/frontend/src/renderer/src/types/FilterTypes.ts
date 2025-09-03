@@ -1,4 +1,6 @@
+import React from "react";
 import { SelectOption, SelectOptionGroup } from "./ReactSelectTypes";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 
 export type FilterOption = { id: number; label: string };
 
@@ -16,8 +18,10 @@ export type FilterField = {
 };
 
 export interface GenericFiltersProps {
+  title: string;
   fields: FilterField[];
   onSearch?: (values: Record<string, any>) => void;
   initial?: Record<string, any>;
   className?: string;
+  buttons?: React.ReactElement<typeof ButtonModal>[];
 }

@@ -7,10 +7,12 @@ import SelectModal from "../../modals/SelectModal/SelectModal";
 import DatePickerField from "../DatePicker/DatePicker"; 
 
 const Filters: React.FC<GenericFiltersProps> = ({
+  title,
   fields,
   onSearch,
   initial = {},
   className = "mb-6",
+  buttons
 }) => {
   const [state, setState] = useState<Record<string, any>>(() => ({ ...initial }));
 
@@ -24,10 +26,16 @@ const Filters: React.FC<GenericFiltersProps> = ({
   return (
     <section className={`generic-filters ${className}`}>
       <div className="generic-filters-header">
-        <div className="generic-filters-badge">
-          1
+        <div className="generic-filters-header-info">
+          <h1 className="generic-filters-title">{title}</h1>
         </div>
-        <div className="filter-title">Preencher filtros</div>
+        <div className="generic-filters-header-actions">
+          {buttons?.map((buttonElement, index) => (
+            <React.Fragment key={buttonElement.key ?? index}>
+              {buttonElement}
+            </React.Fragment>
+          ))}
+        </div>
       </div>
 
       <div className="generic-filters-grid">

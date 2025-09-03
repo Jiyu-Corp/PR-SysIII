@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, PencilIcon, TrashIcon  } from "@phosphor-icons/react";
+import { UserIcon, PencilIcon, TrashIcon, CarIcon  } from "@phosphor-icons/react";
 import { Toaster, toast } from "react-hot-toast";
 import ParkingServiceModal from "@renderer/modals/ParkingServiceModal/ParkingServiceModal";
 import { parkingServiceType } from "@renderer/types/resources/parkingServiceType";
@@ -13,9 +13,9 @@ import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
 import { getErrorMessage } from "@renderer/utils/utils";
-import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 
 export default function EntradaSaidaPage() {
   const navigate = useNavigate();
@@ -183,41 +183,6 @@ export default function EntradaSaidaPage() {
         } 
       }
     });
-    console.log(
-      {
-      idParkingService: row.idParkingService,
-      dateRegister: row.dateRegister,
-      vehicle: {
-        idVehicle: row.vehicle.idVehicle,
-        plate: row.vehicle.plate,
-        model: {
-          idModel: row.vehicle.model.idModel,
-          nameModel: row.vehicle.model.name,
-          idVehicleType: row.vehicle.model.vehicleType.idVehicleType,
-          idBrand: row.vehicle.model.brand.idBrand,
-          brand: {
-            idBrand: row.vehicle.model.brand.idBrand,
-            nameBrand: row.vehicle.model.brand.name
-          }
-        },
-        year: row.vehicle.year,
-        color: row.color,    
-        idClient: row.client ?? undefined
-      },
-      client: {
-        idClient: row.client?.idClient,
-        cpfCnpj: row.client?.cpfCnpj,
-        name: row.client?.name,
-        phone: row.client?.phone,
-        email: row.client?.email,
-        enterprise: {
-          idClient: row.client?.clientEnterprise?.idClient,
-          name: row.client?.clientEnterprise?.name,
-        } 
-      }
-    },
-    row
-    )
     setIsParkingServiceModalOpen(true);
   };
 
@@ -282,10 +247,11 @@ export default function EntradaSaidaPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Veiculos Estacionados" actionLabel="Estacionar Veiculo" onAction={handleCreate} onAction2={handleEdit} actionIcon={<UserIcon size={20} />} />
-      <GenericFilters fields={filters} onSearch={handleSearch} />
-      {loading ? 
-          <div style={{ margin: "24px 64px" }}>
+      <GenericFilters title="Veiculos Estacionados" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Estacionar Veiculo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>
+      ]}/>
+      {loading 
+        ? <div style={{ margin: "24px 64px" }}>
           <Grid
             visible={true}
             height="80"
@@ -297,8 +263,7 @@ export default function EntradaSaidaPage() {
             wrapperClass="grid-wrapper"
           />
         </div>
-        : 
-          <GenericTable
+        : <GenericTable
             title="Entrada e saída de veículos"
             columns={columns}
             rows={rowsToShow}

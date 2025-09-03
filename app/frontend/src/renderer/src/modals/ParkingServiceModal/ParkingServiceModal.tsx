@@ -5,8 +5,6 @@ import InputModal from "../InputModal/InputModal";
 
 import "./ParkingServiceModal.css"
 import SaveBtnModal from "../SaveBtnModal";
-import EditBtnModal from "../EditBtnModal";
-import DeleteBtnModal from "../DeleteBtnModal";
 import SelectModal from "../SelectModal/SelectModal";
 import { requestPRSYS } from "@renderer/utils/http";
 import toast from "react-hot-toast";

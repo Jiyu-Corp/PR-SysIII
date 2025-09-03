@@ -16,6 +16,7 @@ import { numeroParaMoeda, formatPercentage, getErrorMessage } from "@renderer/ut
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 
 
 export default function ConvenioPage() {
@@ -271,8 +272,9 @@ export default function ConvenioPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Convenios" actionLabel="Cadastrar Convênio" onAction={handleCreate} actionIcon={<HandshakeIcon size={20} />} />
-      <GenericFilters fields={filters} onSearch={handleSearch} />
+      <GenericFilters title="Convenios" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Cadastrar Convenio" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={HandshakeIcon}/>
+      ]}/>
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
           <Grid

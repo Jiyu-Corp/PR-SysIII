@@ -15,6 +15,7 @@ import { Grid } from "react-loader-spinner";
 import Swal from 'sweetalert2';
 import { formatCpfCnpj, formatPhone, getErrorMessage } from "@renderer/utils/utils";
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 
 export default function ClientesPage() {
   const navigate = useNavigate();
@@ -249,8 +250,9 @@ export default function ClientesPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Clientes" actionLabel="Cadastrar Cliente" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
-      <GenericFilters fields={filters} onSearch={handleSearch} />
+      <GenericFilters title="Clientes" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Cadastrar Cliente" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={UserIcon}/>
+      ]}/>
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
           <Grid

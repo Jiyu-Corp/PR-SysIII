@@ -34,7 +34,7 @@
   /* area onde as páginas são renderizadas; scroll se necessário */
   .content-area {
     flex: 1;
-    padding: 24px;
+    padding: 16px;
     background: #f5f5f5;
     overflow: auto;
   }

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
+import { UserIcon, PencilIcon, TrashIcon, CarIcon } from "@phosphor-icons/react";
 import { FilterField } from "@renderer/types/FilterTypes";
 import { TableColumn } from "@renderer/types/TableTypes";
 import { Toaster, toast } from "react-hot-toast";
@@ -17,6 +17,7 @@ import Swal from 'sweetalert2';
 import BrandModelDeleteModal from "@renderer/modals/BrandModelDeleteModal/BrandModelDeleteModel";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import { getErrorMessage } from "@renderer/utils/utils";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 
 export default function VeiculosPage() {
   const navigate = useNavigate();
@@ -362,8 +363,10 @@ export default function VeiculosPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Veiculos" actionLabel="Cadastrar Veiculo" onAction={handleCreate} actionIcon={<UserIcon size={20} />} actionLabel2="Deletar Marca/Modelo" onAction2={handleDeleteBrandModel} />
-      <GenericFilters fields={filters} onSearch={handleSearch} />
+      <GenericFilters title="Veiculos" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Cadastrar Veiculo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>,
+        <ButtonModal key={0} text="Deletar Marca/Modelo" action={handleDeleteBrandModel} color="#FFFFFF" backgroundColor="#C2292E" icon={CarIcon}/>,
+      ]} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
           <Grid

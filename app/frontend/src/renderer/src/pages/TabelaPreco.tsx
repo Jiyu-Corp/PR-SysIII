@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
+import { UserIcon, PencilIcon, TrashIcon, CurrencyDollarIcon } from "@phosphor-icons/react";
 import { Toaster, toast } from "react-hot-toast";
 import PriceTableModal from "@renderer/modals/PriceTableModal/PriceTableModal";
 import { priceTableType } from "@renderer/types/resources/priceTableType";
@@ -16,6 +16,7 @@ import { getErrorMessage } from "@renderer/utils/utils";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 
 export default function TabelaPrecoPage() {
   const navigate = useNavigate();
@@ -254,8 +255,9 @@ export default function TabelaPrecoPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
-      <GenericFilters fields={filters} onSearch={handleSearch} />
+      <GenericFilters title="Tabelas de Preços" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Cadastrar Tabela de Preço" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CurrencyDollarIcon}/>,
+      ]}/>
       {loading ? 
           <div style={{ margin: "24px 64px" }}>
           <Grid
