@@ -12,7 +12,7 @@ import { TableColumn } from "@renderer/types/TableTypes";
 import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
-import { getErrorMessage } from "@renderer/utils/utils";
+import { formatDateTime, getErrorMessage } from "@renderer/utils/utils";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
@@ -48,7 +48,7 @@ export default function EntradaSaidaPage() {
               clientName: item.clientEntry?.name ?? '---',
               plate: item.vehicle.plate,
               color: item.vehicle.color,
-              entry: item.dateRegister.split('-').reverse().join('/')
+              entry: formatDateTime(new Date(item.dateRegister))
             };
         });    
         

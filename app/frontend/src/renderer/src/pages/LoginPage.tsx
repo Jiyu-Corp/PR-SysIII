@@ -38,7 +38,7 @@ export const LoginPage: React.FC = () => {
       const jwtToken = loginRes.authToken;
       sessionStorage.setItem('jwt_token', jwtToken);
       
-      navigate('/', { replace: true });
+      navigate('/entrada-saida', { replace: true });
     } catch(err) { 
       toast.error('Senha incorreta.', {
         style: {
