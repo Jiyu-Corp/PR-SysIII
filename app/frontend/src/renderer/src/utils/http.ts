@@ -9,7 +9,7 @@ type PRSYSResources =
     'access' | 'client' | 'brand' | 
     'vehicle-type' | 'vehicle' | 'price-table' | 
     'agreement' | 'ticket-model' | 'parking-service' |
-    'brand' | 'model';
+    'brand' | 'model' | 'report';
 
 function requestPRSYS(resource: PRSYSResources, endpoint: string, method: Method, body?: object, params?: object): Promise<any> {
     endpoint = `${resource}/${endpoint}`;

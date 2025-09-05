@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, PencilIcon, TrashIcon, CarIcon  } from "@phosphor-icons/react";
+import { UserIcon, MagnifyingGlassIcon, TrashIcon, CarIcon  } from "@phosphor-icons/react";
 import { Toaster, toast } from "react-hot-toast";
 import ParkingServiceModal from "@renderer/modals/ParkingServiceModal/ParkingServiceModal";
 import { parkingServiceType } from "@renderer/types/resources/parkingServiceType";
@@ -83,7 +82,7 @@ export default function EntradaSaidaPage() {
       {
         key: "view",
         label: "Visualizar",
-        icon: <PencilIcon size={14} />,
+        icon: <MagnifyingGlassIcon size={14} />,
         className: 'icon-btn-view',
         onClick: (row: parkingServiceType) => {
           handleEdit(row);

@@ -25,13 +25,13 @@ export class ReportService {
                 .where('parkingService.isParking = false');
             
             if(getParkedServicesDto.plate) {
-                query.andWhere('parkingService.plate = :plate', { 
-                    plate: getParkedServicesDto.plate 
+                query.andWhere('vehicle.plate ILIKE :plate', { 
+                    plate: `%${getParkedServicesDto.plate}%` 
                 });
             }
 
             if(getParkedServicesDto.clientName) {
-                query.andWhere('clientEntry.name = :name', { 
+                query.andWhere('clientEntry.name ILIKE :name', { 
                     name: `%${getParkedServicesDto.clientName}%` 
                 });
             }

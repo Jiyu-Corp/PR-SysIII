@@ -8,6 +8,7 @@ import VeiculosPage from './pages/Veiculos'
 import TabelaPrecoPage from './pages/TabelaPreco'
 import ConvenioPage from './pages/Convenios'
 import ModeloTicketPage from './pages/ModeloTicket'
+import RelatorioPage from './pages/Relatorio'
 import AcessoPage from './pages/AcessoPage'
 import TipoVeiculoPage from './pages/TipoVeiculo'
 import EntradaSaidaPage from './pages/EntradaSaida'
@@ -41,6 +42,7 @@ export default function App() {
         <Route path='/convenios' index element={<ConvenioPage />} />
         <Route path='/tabela-preco' index element={<TabelaPrecoPage />} />
         <Route path='/modelo-ticket' index element={<ModeloTicketPage />} />
+        <Route path='/relatorio' index element={<RelatorioPage />} />
         <Route path='/acesso' index element={<AcessoPage />} />
         <Route path='/tipo-veiculo' index element={<TipoVeiculoPage />} />
       </Route>

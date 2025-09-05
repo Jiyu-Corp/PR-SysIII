@@ -34,6 +34,10 @@ const Sidebar: React.FC = () => {
           <span>Modelo de Ticket</span>
         </NavLink>
 
+        <NavLink to="/relatorio" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
+          <span>Relatórios</span>
+        </NavLink>
+
         <NavLink to="/acesso" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
           <span>Acesso</span>
         </NavLink>
