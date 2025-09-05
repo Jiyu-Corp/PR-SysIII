@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import GenericTop from "../components/TopContainer/TopContainer";
 import GenericFilters from "../components/Filters/Filters";
+import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
 import GenericTable from "../components/Table/Table";
 import { ArticleIcon, PencilIcon, TrashIcon } from "@phosphor-icons/react";
 import { Toaster, toast } from "react-hot-toast";
@@ -23,9 +23,97 @@ export default function ModeloTicketPage() {
   const [ticketModelDetail, setTicketModelDetail] = useState<ticketModelType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
+  
+    const [rows, setRows] = useState<ticketModelType[]>([]);
+    const [filtered, setFiltered] = useState<ticketModelType[] | null>(null);
+
   const handleCreate = () => {
     setIsTicketModelModalOpen(true);
   };
+
+  useEffect(() => {
+    setLoading(true);
+
+      fetchTicket();
+
+    setLoading(false);
+  }, []);
+
+  const fetchTicket = async () => {
+        setLoading(true);
+        try {
+          const response = await requestPRSYS('ticket-model', '', 'GET');
+          
+          const arr = Array.isArray(response) ? response : response?.data ?? [];
+          console.log(response)
+          const mapped: ticketModelType[] = (arr as any[]).map((item: any) => {
+            return {
+                idTicketModel: item.idTicketModel,
+                name: item.name,
+                header: item.header,
+                footer: item.footer,
+                dateregister: item.dateRegister.split('-').reverse().join('/'),
+                dateUpdate: item.dateUpdate,
+                isactive: item.isActive
+              };
+          });    
+          
+          if (mapped.length) {
+            setRows(mapped);
+            setFiltered(null);
+          } else {
+            console.warn("fetchPrice: response:", response);
+          }
+          
+        } catch (err) {
+          console.error("fetchPrice error:", err);
+        } finally {
+          setLoading(false);
+        }
+  };
+
+  const filters: FilterField[] = [  
+      { key: "vehicleSearch", label: "Nome Modelo", 
+        type: "text"
+      },      
+      {
+        key: "dateregister",
+        label: "Data inicial",
+        type: "date"
+      },
+      {
+        key: "dateUpdate",
+        label: "Data final",
+        type: "date"
+      },
+  ];
+  
+    const columns: TableColumn<ticketModelType>[] = [
+        { key: "name", label: "Nome do modelo" },
+        { key: "dateregister", label: "Data de Cadastro" },
+        { key: "isactive", label: "Habilitada" }
+    ];
+  
+    const actions = [
+      {
+        key: "view",
+        label: "Visualizar",
+        icon: <PencilIcon size={14} />,
+        className: 'icon-btn-view',
+        onClick: (row: ticketModelType) => {
+          handleEdit(row);
+        },
+      },
+      {
+        key: "delete",
+        label: "Deletar",
+        icon: <TrashIcon size={14} />,
+        className: 'icon-btn-delete',
+        onClick: (row: ticketModelType) => {
+          //handleDelete(String(row.idParkingService!));
+        },
+      }
+  ];
 
   const handleEdit = async (row: any) => {
     /*setTicketModelDetail({
@@ -47,8 +135,11 @@ export default function ModeloTicketPage() {
   useEffect(() => {
     if(!isTicketModelModalOpen) {
       setTicketModelDetail(undefined);
+      fetchTicket();
     }
   }, [isTicketModelModalOpen])
+
+  const rowsToShow = filtered ?? rows;
 
   return (<>
     <main>
@@ -56,7 +147,33 @@ export default function ModeloTicketPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Modelos de Ticket" actionLabel="Cadastrar Modelo de Ticket" onAction={handleCreate} actionIcon={<ArticleIcon size={20} />} />
+      <GenericFilters title="Modelos Ticket" fields={filters} /*onSearch={handleSearch}*/ buttons={[
+        <ButtonModal key={0} text="Criar Ticket" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={ArticleIcon}/>
+      ]}/>
+      {loading ? 
+          <div style={{ margin: "24px 64px" }}>
+          <Grid
+            visible={true}
+            height="80"
+            width="80"
+            color="#4A87E8"
+            ariaLabel="grid-loading"
+            radius="12.5"
+            wrapperStyle={{justifyContent: "center"}}
+            wrapperClass="grid-wrapper"
+          />
+        </div>
+        : 
+          <GenericTable
+            title="Listagem de modelos de ticket"
+            columns={columns}
+            rows={rowsToShow}
+            actions={actions}
+            perPage={5}
+            total={rowsToShow.length}
+            //onGenerateCSV={handleGenerateCSV}
+          />
+      }
     </main>
     {isTicketModelModalOpen && <TicketModelModal isOpen={isTicketModelModalOpen} closeModal={() => setIsTicketModelModalOpen(false)} ticketModel={ticketModelDetail}/>}
   </>);
