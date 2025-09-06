@@ -172,7 +172,7 @@ export default function FinishParkingServiceTab({ parkingService, closeTab, clos
       </div>
     }
     <div className="finish-parking-footer">
-      <ButtonModal icon={ArrowUpRightIcon} text="Finalizar" action={handleFinishParkingService} color="#FFFFFF" backgroundColor="#3BB373" fontSize={12}/>
+      <ButtonModal icon={ArrowUpRightIcon} text="Finalizar" action={handleFinishParkingService} color="#FFFFFF" backgroundColor="#3BB373" fontSize={12} isDisabled={priceTotal == 0 && prices.length < 2}/>
     </div>
   </div>
 }

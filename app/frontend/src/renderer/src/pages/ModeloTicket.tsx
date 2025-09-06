@@ -148,7 +148,7 @@ export default function ModeloTicketPage() {
         reverseOrder={true}
       />
       <GenericFilters title="Modelos Ticket" fields={filters} /*onSearch={handleSearch}*/ buttons={[
-        <ButtonModal key={0} text="Criar Ticket" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={ArticleIcon}/>
+        <ButtonModal key={0} text="Cadastrar Modelo de Ticket" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={ArticleIcon}/>
       ]}/>
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

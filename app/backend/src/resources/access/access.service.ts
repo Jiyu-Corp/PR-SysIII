@@ -49,15 +49,12 @@ export class AccessService {
         return buf.toString('base64url').slice(0, size);
     }
 
-    async forgotPassword(idAccess: number): Promise<void> {
-        const [dbError, access] = await promiseCatchError(this.accessRepo
-            .findOne({
-                where: { idAccess: idAccess }
-            }));
+    async forgotPassword(): Promise<void> {
+        const [dbError, access] = await promiseCatchError(this.getDefault(true));
         if(dbError) throw new DatabaseError();
         
         if(access == null) return;
-
+        
         const newPassword = this.generateSimplePassword();
         const newPasswordEncrypted = this.encryptService.encrypt(newPassword);
 

@@ -22,8 +22,8 @@ export class AccessController {
 
     @Public()
     @Post('forgotPassword')
-    async forgotPassword(@Body() body: { idAccess: number }): Promise<void> {
-        const [httpError] = await promiseCatchErrorHTTPDefault(this.accessService.forgotPassword(body.idAccess));
+    async forgotPassword(): Promise<void> {
+        const [httpError] = await promiseCatchErrorHTTPDefault(this.accessService.forgotPassword());
         if(httpError) throw httpError;
     }
 

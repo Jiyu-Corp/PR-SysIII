@@ -11,19 +11,11 @@ export class ParkedServicesDto {
     @IsString()
     readonly brandModelYear: string;
 
-    @IsOptional()
-    @IsString()
-    readonly clientName: string;
-
     @IsDefined()
     @IsDateString()
     readonly dateParkingServiceStart: string;
-    
-    @IsDefined()
-    @IsDateString()
-    readonly dateParkingServiceEnd: string;
 
-    @IsDefined()
-    @IsNumber()
-    readonly price: number
+    @IsOptional()
+    @IsString()
+    readonly clientName: string;
 }

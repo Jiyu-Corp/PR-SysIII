@@ -181,7 +181,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
   
   // Behaviour
   const title = isEdicaoParkingService
-    ? "Editar Entrada"
+    ? "Veiculo estacionado"
     : "Estacionar Veiculo";
 
   useEffectSkipFirstRender(() => {

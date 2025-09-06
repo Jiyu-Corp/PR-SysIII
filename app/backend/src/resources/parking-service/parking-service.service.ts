@@ -18,6 +18,7 @@ import { AgreementService } from '../client/modules/agreement/agreement.service'
 import { EditVehicleDto } from '../vehicle/dto/edit-vehicle-dto';
 import { EditClientDto } from '../client/dto/edit-client-dto';
 import { FinishParkingServiceDto } from './dto/finish-parking-service-dto';
+import { PriceTableNotExists } from './modules/price-table/price-table.errors';
 
 @Injectable()
 export class ParkingServiceService {
@@ -34,25 +35,16 @@ export class ParkingServiceService {
     async getOpenServices(): Promise<ParkingService[]> {
         try {
             const services = await this.parkingServiceRepo
-                .find({
-                    order: {
-                        dateRegister: "DESC"
-                    },
-                    where: {
-                        isParking: true
-                    },
-                    relations: {
-                        clientEntry: {
-                            clientEnterprise: true
-                        },
-                        vehicle: {
-                            model: {
-                                brand: true,
-                                vehicleType: true
-                            },
-                        }
-                    }
-                });
+                .createQueryBuilder('parkingService')
+                    .innerJoinAndSelect('parkingService.vehicle', 'vehicle')
+                    .innerJoinAndSelect('vehicle.model', 'model')
+                    .innerJoinAndSelect('model.vehicleType', 'vehicleType')
+                    .innerJoinAndSelect('model.brand', 'brand')
+                    .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry', 'clientEntry.isActive = true')
+                    .leftJoinAndSelect('vehicle.client', 'clientVehicle', 'clientVehicle.isActive = true')
+                .where('parkingService.isParking = true')
+                .orderBy('parkingService.idParkingService', 'DESC')
+                .getMany();
             
             return services;
         } catch (err) {
@@ -65,8 +57,13 @@ export class ParkingServiceService {
         const [parkError, park] = await promiseCatchError(this.parkService.getDefaultPark());
         if(parkError) throw parkError;
 
+        
         const clientDto = createParkingServiceDto.clientCreate || createParkingServiceDto.clientEdit;
         const vehicleDto = (createParkingServiceDto.vehicleCreate || createParkingServiceDto.vehicleEdit)!;
+
+        const [pTableError, existsPTable] = await promiseCatchError(this.priceTableService.existsPriceTableWithinVehicleType(vehicleDto.model?.idVehicleType!));
+        if(pTableError) throw pTableError;
+        if(!existsPTable) throw new PriceTableNotExists();
         
         let client: Client | undefined;
         if(clientDto) {
@@ -118,13 +115,27 @@ export class ParkingServiceService {
     async getServiceValues(idParkingService: number): Promise<ServiceValueDto[]> {
         const [pServiceError, service] = await promiseCatchError(this.parkingServiceRepo
             .createQueryBuilder('parkingService')
-                .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
-                .leftJoinAndSelect('clientEntry.agreements', 'agreement', 
-                    'agreement.isActive = true'
+                .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry', 
+                    'clientEntry.isActive = true'
+                )
+                .leftJoinAndSelect('clientEntry.agreements', 'agreementEntry', 
+                    'agreementEntry.isActive = true'
+                )
+                .leftJoinAndSelect('clientEntry.clientEnterprise', 'clientEntryEnterprise', 
+                    'clientEntryEnterprise.isActive = true'
+                )
+                .leftJoinAndSelect('clientEntryEnterprise.agreements', 'agreementEntryEnterprise',
+                    'agreementEntryEnterprise.isActive = true'
                 )
                 .innerJoinAndSelect('parkingService.vehicle', 'vehicle')
                 .leftJoinAndSelect('vehicle.client', 'client', 'client.isActive = true')
                 .leftJoinAndSelect('client.agreements', 'vClientAgreement', 'vClientAgreement.isActive = true')
+                .leftJoinAndSelect('client.clientEnterprise', 'vClientEnterprise', 
+                    'vClientEnterprise.isActive = true'
+                )
+                .leftJoinAndSelect('vClientEnterprise.agreements', 'agreementVClientEnterprise',
+                    'agreementVClientEnterprise.isActive = true'
+                )
                 .innerJoinAndSelect('vehicle.model', 'model')
                 .innerJoinAndSelect('model.brand', 'brand')
                 .innerJoinAndSelect('model.vehicleType', 'vehicleType')
@@ -134,7 +145,7 @@ export class ParkingServiceService {
         if(pServiceError) throw new DatabaseError();
         if(service == null) throw new ParkingServiceNotExists();
 
-        const serviceValues:ServiceValueDto[] = new Array();
+        const serviceValues: ServiceValueDto[] = new Array();
 
         const [pTableError, priceTableValue] = await promiseCatchError(
             this.priceTableService.calculateServiceValue(service)
@@ -144,16 +155,20 @@ export class ParkingServiceService {
 
         // Client of entrance has priority compared to the client binded to the vehicle
         const client = service.clientEntry || service.vehicle.client;
-
-        const agreement = client && client.agreements && client.agreements[0];
-        if(agreement) {
-            const [agreementError, agreementDiscount] = await promiseCatchError(
-                this.agreementService.calculateServiceDiscount(agreement, priceTableValue.value)
-            );
-            if(agreementError) throw agreementError;
-
-            serviceValues.push(agreementDiscount);
+        if(client) {
+            const agreement = client.agreements.length > 0
+                ? client.agreements[0]
+                : client.clientEnterprise && client.clientEnterprise.agreements.length > 0 && client.clientEnterprise.agreements[0];
+            if(agreement) {
+                const [agreementError, agreementDiscount] = await promiseCatchError(
+                    this.agreementService.calculateServiceDiscount(agreement, priceTableValue.value)
+                );
+                if(agreementError) throw agreementError;
+    
+                serviceValues.push(agreementDiscount);
+            }
         }
+
 
         return serviceValues;
     }

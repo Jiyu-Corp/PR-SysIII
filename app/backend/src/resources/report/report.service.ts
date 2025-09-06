@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { ParkingService } from '../parking-service/parking-service.entity';
 import { GetParkedServicesDto } from './dto/get-parked-services-dto';
-import { ParkedServicesDto } from './dto/parked-services-dto';
+import { FinishedParkingServices } from './dto/finished-parking-services-dto';
 import { formatDateTime } from 'src/utils/utils';
 
 @Injectable()
@@ -14,7 +14,7 @@ export class ReportService {
         private readonly parkingServiceRepo: Repository<ParkingService>
     ) {}
 
-    async getParkedServices(getParkedServicesDto: GetParkedServicesDto): Promise<ParkedServicesDto[]> {
+    async getParkedServices(getParkedServicesDto: GetParkedServicesDto): Promise<FinishedParkingServices[]> {
         try {  
             const query = this.parkingServiceRepo
                 .createQueryBuilder('parkingService')
@@ -44,14 +44,14 @@ export class ReportService {
             }
                 
             const parkedServicesData = await query.getMany();
-            const parkedServices: ParkedServicesDto[] = parkedServicesData.map(ps => ({
+            const parkedServices: FinishedParkingServices[] = parkedServicesData.map(ps => ({
                 plate: ps.vehicle.plate,
                 brandModelYear: `${ps.vehicle.model.brand.name} - ${ps.vehicle.model.name} - ${ps.vehicle.year}`,
                 clientName: ps.clientEntry?.name,
                 dateParkingServiceStart: formatDateTime(ps.dateRegister),
                 dateParkingServiceEnd: formatDateTime(ps.dateCheckout),
                 price: ps.totalPrice
-            } as ParkedServicesDto));
+            } as FinishedParkingServices));
             
             return parkedServices;
         } catch (err) {

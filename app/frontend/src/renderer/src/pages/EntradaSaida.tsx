@@ -43,15 +43,15 @@ export default function EntradaSaidaPage() {
               idParkingService: item.idParkingService,
               dateRegister: item.dateRegister,
               vehicle: item.vehicle,
-              client: item.clientEntry ?? '---',
-              clientName: item.clientEntry?.name ?? '---',
+              client: item.clientEntry ?? item.vehicle.client ?? '---',
+              clientName: item.clientEntry?.name ?? item.vehicle.client?.name ?? '---',
+              brandModelYear:  `${item.vehicle.model.brand.name} - ${item.vehicle.model.name} - ${item.vehicle.year}`,
               plate: item.vehicle.plate,
               color: item.vehicle.color,
               entry: formatDateTime(new Date(item.dateRegister))
             };
         });    
-        
-        if (mapped.length) {
+        if (mapped.length) { // ERRO, TRATAR URGENTE
           setRows(mapped);
           setFiltered(null);
         } else {
@@ -73,6 +73,7 @@ export default function EntradaSaidaPage() {
 
   const columns: TableColumn<parkingServiceType>[] = [
       { key: "plate", label: "Placa" },
+      { key: "brandModelYear", label: "Marca/Modelo/Ano" },
       { key: "color", label: "Cor" },
       { key: "entry", label: "Horário de entrada" },
       { key: "clientName", label: "Cliente" }

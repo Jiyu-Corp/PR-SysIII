@@ -1,6 +1,30 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
+import { ValidationError } from 'class-validator';
+
+function extractDTOErrorMessages(errors: ValidationError[]): string[] {
+  const msgs: string[] = [];
+
+  function recurse(err: ValidationError) {
+    if (err.constraints) {
+      msgs.push(...Object.values(err.constraints));
+    }
+    if (err.children && err.children.length) {
+      err.children.forEach(recurse);
+    }
+  }
+
+  errors.forEach(recurse);
+  return msgs;
+}
+const formatErrorPipe = new ValidationPipe({
+  whitelist: true,
+  transform: true,
+  exceptionFactory: (errors: ValidationError[]) =>
+    new BadRequestException(extractDTOErrorMessages(errors)),
+});
+
 
 async function bootstrap() {
   const port = 3001;
@@ -15,12 +39,7 @@ async function bootstrap() {
   });
 
   // Check DTO 
-  app.useGlobalPipes(
-    new ValidationPipe({
-        whitelist: true,
-        transform: true
-    })
-  );
+  app.useGlobalPipes(formatErrorPipe);
 
   await app.listen(process.env.PORT ?? port).then(() =>
     console.log(`Server started at port ${port}`)

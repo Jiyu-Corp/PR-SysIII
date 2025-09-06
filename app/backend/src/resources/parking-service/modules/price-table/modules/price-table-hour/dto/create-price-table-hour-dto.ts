@@ -3,7 +3,7 @@ import { IsDefined, IsNumber, Min } from "class-validator";
 export class CreatePriceTableHourDto {
     @IsDefined({ message: "A hora para cada horario especial é obrigatorio." })
     @IsNumber({}, { message: "A hora para um horario especial esta fora do padrão." })
-    @Min(0, { message: "A hora para um horario especial não pode ser negativo." })
+    @Min(1, { message: "A hora para um horario especial não pode ser negativo nem zero." })
     readonly hour: number;
 
     @IsDefined({ message: "O preço para cada hora especial é obrigatorio." })

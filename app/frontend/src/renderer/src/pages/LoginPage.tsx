@@ -61,7 +61,7 @@ export const LoginPage: React.FC = () => {
   
     const result = await Swal.fire({
       title: 'Confirmação',
-      text: 'Tem certeza que deseja resetar a senha?',
+      text: 'Tem certeza de que deseja resetar a senha? A nova senha provisoria será enviada em seu email.',
       icon: 'warning',
       showCancelButton: true,
       cancelButtonText: 'Cancelar',
@@ -72,9 +72,7 @@ export const LoginPage: React.FC = () => {
   
     if (result.isConfirmed) {
       try {
-        const res = requestPRSYS('access', 'forgotPassword', 'POST', {
-          idAccess: 1
-        });
+        const res = requestPRSYS('access', 'forgotPassword', 'POST');
 
         toast.promise(res, 
           {

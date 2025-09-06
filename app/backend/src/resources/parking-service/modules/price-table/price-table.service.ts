@@ -84,6 +84,15 @@ export class PriceTableService {
         }
     }
 
+    async existsPriceTableWithinVehicleType(idVehicleType: number): Promise<boolean> {
+        try {
+            return this.priceTableRepo
+                .existsBy({ vehicleType: { idVehicleType: idVehicleType } });
+        } catch (err) {
+            throw new DatabaseError();
+        }
+    }
+
     async createPriceTable(createPriceTableDto: CreatePriceTableDto): Promise<PriceTable> {
         try {
             const priceTableData = this.priceTableRepo.create({

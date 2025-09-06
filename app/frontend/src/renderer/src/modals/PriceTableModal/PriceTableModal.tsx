@@ -227,7 +227,7 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
     <div className="price-table-modal">
       <div className="inputs-wrapper">
         <SelectModal width="150px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
-        <InputModal width="70px" label="Preço" value={pricePerHour} setValue={setPricePerHour} formatInput={formatPricePerHour}/>
+        <InputModal width="70px" label="Preço(R$)" value={pricePerHour} setValue={setPricePerHour} formatInput={formatPricePerHour}/>
         <InputModal width="90px" label="Tolerancia(min)" value={toleranceMinutes} setValue={setToleranceMinutes} formatInput={formatToleranceTime} />
       </div>
       <div className="btns-wrapper">
@@ -248,8 +248,8 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
           <span className="special-hour-delete" onClick={() => deletePriceTableHour(pth)}>
             <XIcon/>
           </span>
-          <InputModal width="70px" placeholder="Hora" value={pth.hour} setValue={updatePriceTableHour(pth, "hour")} formatInput={formatPricePerHour}/>
-          <InputModal width="70px" placeholder="Preço" value={pth.price} setValue={updatePriceTableHour(pth, "price")} formatInput={formatSpecialHour}/>
+          <InputModal width="70px" placeholder="Hora" value={pth.hour} setValue={updatePriceTableHour(pth, "hour")} formatInput={formatSpecialHour}/>
+          <InputModal width="70px" placeholder="Preço" value={pth.price} setValue={updatePriceTableHour(pth, "price")} formatInput={formatPricePerHour}/>
         </div>)}
         <div className="special-hour-creator-wrapper" onClick={addNewPriceTableHour}>
           <PlusSquareIcon size={40} opacity={0.5} cursor={"pointer"}/>
