@@ -34,7 +34,7 @@ export default function ModeloTicketPage() {
   useEffect(() => {
     setLoading(true);
 
-      fetchTicket();
+    fetchTicket();
 
     setLoading(false);
   }, []);
@@ -45,7 +45,7 @@ export default function ModeloTicketPage() {
           const response = await requestPRSYS('ticket-model', '', 'GET');
           
           const arr = Array.isArray(response) ? response : response?.data ?? [];
-          console.log(response)
+          
           const mapped: ticketModelType[] = (arr as any[]).map((item: any) => {
             return {
                 idTicketModel: item.idTicketModel,
@@ -62,6 +62,8 @@ export default function ModeloTicketPage() {
             setRows(mapped);
             setFiltered(null);
           } else {
+            setRows([]);
+            setFiltered(null);
             console.warn("fetchPrice: response:", response);
           }
           
@@ -73,7 +75,7 @@ export default function ModeloTicketPage() {
   };
 
   const filters: FilterField[] = [  
-      { key: "vehicleSearch", label: "Nome Modelo", 
+      { key: "ticketName", label: "Nome Modelo", 
         type: "text"
       },      
       {
@@ -88,13 +90,13 @@ export default function ModeloTicketPage() {
       },
   ];
   
-    const columns: TableColumn<ticketModelType>[] = [
-        { key: "name", label: "Nome do modelo" },
-        { key: "dateregister", label: "Data de Cadastro" },
-        { key: "isactive", label: "Habilitada" }
-    ];
+  const columns: TableColumn<ticketModelType>[] = [
+      { key: "name", label: "Nome do modelo" },
+      { key: "dateregister", label: "Data de Cadastro" },
+      { key: "isactive", label: "Habilitada" }
+  ];
   
-    const actions = [
+  const actions = [
       {
         key: "view",
         label: "Visualizar",
@@ -115,20 +117,60 @@ export default function ModeloTicketPage() {
       }
   ];
 
+  const handleSearch = async (values: Record<string, any>) => {
+      
+      const ticketName = values.ticketName;
+      const dateUpdate = values.dateUpdate ? String(values.dateUpdate) : null;
+      const dateRegister = values.dateRegister ? String(values.dateRegister) : null;
+      
+      if (!ticketName && !dateUpdate && !dateRegister) {
+        setFiltered(null);
+        return;
+      }
+  
+      setLoading(true);
+      try {
+        
+        const params = {
+          name: ticketName,
+          dateRegisterStart: dateRegister?.split('/').reverse().join('-'),
+          dateRegisterEnd: dateUpdate?.split('/').reverse().join('-')
+        }
+        
+        const response = await requestPRSYS('ticket-model', '', 'GET', undefined, params);
+        const arr = Array.isArray(response) ? response : response?.data ?? [];
+        
+        if(response.length < 1 || !response){
+          toast.error('Nenhum dado para esses filtros', errorToastStyle);
+        }
+        
+        const mapped: ticketModelType[] = (arr as any[]).map((item: any) => ({
+            idTicketModel: item.idTicketModel,
+            name: item.name,
+            header: item.header,
+            footer: item.footer,
+            dateregister: item.dateRegister.split('-').reverse().join('/'),
+            dateUpdate: item.dateUpdate,
+            isactive: item.isActive
+        }));
+    
+        setFiltered(mapped);
+  
+      } catch (err) {
+        toast.error('Verifique os filtros para estarem no padrão correto', errorToastStyle);
+        console.error("handleSearch erro:", err);
+      } finally {
+        setLoading(false);
+      }
+  };
+
   const handleEdit = async (row: any) => {
-    /*setTicketModelDetail({
-      idClient: Number(row.id),
+    setTicketModelDetail({
+      idTicketModel: row.idTicketModel,
       name: row.name,
-      cpfCnpj: row.cpf_cnpj,
-      email: row.email,
-      phone: row.phone,
-      enterprise: row.idClientEnterprise
-        ? {
-            idClient: Number(row.idClientEnterprise),
-            name: row.enterprise ?? row.enterprise ?? "" 
-          }
-        : undefined
-    });*/
+      header: row.header,
+      footer: row.footer
+    });
     setIsTicketModelModalOpen(true);
   };
 
@@ -147,7 +189,7 @@ export default function ModeloTicketPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericFilters title="Modelos Ticket" fields={filters} /*onSearch={handleSearch}*/ buttons={[
+      <GenericFilters title="Modelos Ticket" fields={filters} onSearch={handleSearch} buttons={[
         <ButtonModal key={0} text="Cadastrar Modelo de Ticket" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={ArticleIcon}/>
       ]}/>
       {loading ? 

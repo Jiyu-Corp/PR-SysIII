@@ -55,6 +55,22 @@ export default function TicketModelModal({ticketModel, isOpen, closeModal}: Tick
   }
 
   async function editTicketModel() {
+    if(typeof idTicketModel === 'undefined') return;
+
+    const params = {
+      name: name,
+      header: header,
+      footer: footer
+    }
+    try {
+      await requestPRSYS('ticket-model', idTicketModel.toString(), 'PUT', params);
+
+      closeModal();
+
+      toast.success('Ticket editado.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   async function deleteTicketModel() {
