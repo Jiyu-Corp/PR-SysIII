@@ -58,6 +58,7 @@ export default function TicketModelModal({ticketModel, isOpen, closeModal}: Tick
     if(typeof idTicketModel === 'undefined') return;
 
     const params = {
+      idTicketModel: idTicketModel,
       name: name,
       header: header,
       footer: footer
@@ -74,6 +75,31 @@ export default function TicketModelModal({ticketModel, isOpen, closeModal}: Tick
   }
 
   async function deleteTicketModel() {
+    if(typeof idTicketModel === 'undefined') return;
+
+    try {
+
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este ticket?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS('ticket-model', idTicketModel.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('Ticket desativado.', successToastStyle);
+      }
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   return <Modal1 maxWidth="650px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={HandshakeIcon}>

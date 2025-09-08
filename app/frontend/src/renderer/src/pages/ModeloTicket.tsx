@@ -13,7 +13,6 @@ import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
 import { getErrorMessage } from "@renderer/utils/utils";
-import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
 
@@ -24,8 +23,8 @@ export default function ModeloTicketPage() {
   const [loading, setLoading] = useState(false);
 
   
-    const [rows, setRows] = useState<ticketModelType[]>([]);
-    const [filtered, setFiltered] = useState<ticketModelType[] | null>(null);
+  const [rows, setRows] = useState<ticketModelType[]>([]);
+  const [filtered, setFiltered] = useState<ticketModelType[] | null>(null);
 
   const handleCreate = () => {
     setIsTicketModelModalOpen(true);
@@ -112,7 +111,7 @@ export default function ModeloTicketPage() {
         icon: <TrashIcon size={14} />,
         className: 'icon-btn-delete',
         onClick: (row: ticketModelType) => {
-          //handleDelete(String(row.idParkingService!));
+          handleDelete(String(row.idTicketModel!));
         },
       }
   ];
@@ -174,6 +173,30 @@ export default function ModeloTicketPage() {
     setIsTicketModelModalOpen(true);
   };
 
+  const handleDelete = async (id: string) => {
+      try {
+        const result = await Swal.fire({
+          title: "Confirmação",
+          text: "Tem certeza que deseja excluir este ticket?",
+          icon: "warning",
+          showCancelButton: true,
+          cancelButtonText: "Cancelar",
+          confirmButtonText: "Sim, excluir",
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+        });
+  
+        if (result.isConfirmed) {
+          await requestPRSYS("ticket-model", `${id}`, "DELETE");
+          toast.success("Ticket desativado com sucesso!", successToastStyle);
+          fetchTicket();
+        }
+      } catch (error) {
+        console.error("Erro ao desativar Ticket:", error);
+        toast.error(getErrorMessage(error as PrsysError), errorToastStyle);
+      }
+  };
+
   useEffect(() => {
     if(!isTicketModelModalOpen) {
       setTicketModelDetail(undefined);
@@ -181,9 +204,39 @@ export default function ModeloTicketPage() {
     }
   }, [isTicketModelModalOpen])
 
+  const handleGenerateCSV = () => {
+    const data = (filtered ?? rows).map((r: any) => ({
+      Nome: r.name,
+      Cadastro: r.dateregister,
+      Ativo: r.isactive ?? false ? "Sim" : "Não"
+    }));
+  
+    if (!data.length) return;
+  
+    const escapeValue = (v: any) =>
+      `"${String(v ?? "").replace(/"/g, '""')}"`;
+  
+    const header = Object.keys(data[0]).map((h) => escapeValue(h)).join(";");
+    const body = data
+      .map((row) => Object.values(row).map((v) => escapeValue(v)).join(";"))
+      .join("\n");
+  
+    const csv = `${header}\n${body}`;
+  
+    const bom = "\uFEFF";
+    const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+  
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ticket.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const rowsToShow = filtered ?? rows;
 
-  return (<>
+  return (<>  
     <main>
       <Toaster
         position="top-right"
@@ -213,7 +266,7 @@ export default function ModeloTicketPage() {
             actions={actions}
             perPage={5}
             total={rowsToShow.length}
-            //onGenerateCSV={handleGenerateCSV}
+            onGenerateCSV={handleGenerateCSV}
           />
       }
     </main>
