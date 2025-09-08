@@ -66,6 +66,8 @@ export default function ConvenioPage() {
           setRows(mapped);
           setFiltered(null);
         } else {
+          setRows([]);
+          setFiltered(null);
           console.warn("fetchConvenio: response:", response);
         }
         

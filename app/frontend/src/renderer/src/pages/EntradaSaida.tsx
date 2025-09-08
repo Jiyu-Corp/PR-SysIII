@@ -51,10 +51,12 @@ export default function EntradaSaidaPage() {
               entry: formatDateTime(new Date(item.dateRegister))
             };
         });    
-        if (mapped.length) { // ERRO, TRATAR URGENTE
+        if (mapped.length) {
           setRows(mapped);
           setFiltered(null);
         } else {
+          setRows([]);
+          setFiltered(null);
           console.warn("fetchParking: response:", response);
         }
         

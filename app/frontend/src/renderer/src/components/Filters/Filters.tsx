@@ -12,7 +12,8 @@ const Filters: React.FC<GenericFiltersProps> = ({
   onSearch,
   initial = {},
   className = "mb-6",
-  buttons
+  buttons,
+  style
 }) => {
   const [state, setState] = useState<Record<string, any>>(() => ({ ...initial }));
 
@@ -22,14 +23,14 @@ const Filters: React.FC<GenericFiltersProps> = ({
   const handleSearch = () => {
     onSearch?.(state);
   };
-
+  console.log(style)
   return (
     <section className={`generic-filters ${className}`}>
-      <div className="generic-filters-header">
+      <div className={`generic-filters-header  ${style}`}>
         <div className="generic-filters-header-info">
           <h1 className="generic-filters-title">{title}</h1>
         </div>
-        <div className="generic-filters-header-actions">
+        <div className='generic-filters-header-actions'>
           {buttons?.map((buttonElement, index) => (
             <React.Fragment key={buttonElement.key ?? index}>
               {buttonElement}

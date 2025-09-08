@@ -23,6 +23,13 @@
     border-bottom: 1px solid #2c2c2c57;
   }
 
+  .header-flex-start {
+    display: flex;
+    justify-content: flex-start !important;
+    gap: 20px;
+    align-items: flex-end;
+  }
+
   .generic-filters-header-info {
     display:flex;
     align-items:center;

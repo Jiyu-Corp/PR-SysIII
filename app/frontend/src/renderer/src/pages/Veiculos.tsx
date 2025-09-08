@@ -79,6 +79,8 @@ export default function VeiculosPage() {
           setRows(mapped);
           setFiltered(null);
         } else {
+          setRows([]);
+          setFiltered(null);
           console.warn("fetchVeiculo: response:", response);
         }
         

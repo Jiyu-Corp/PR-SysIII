@@ -24,4 +24,5 @@ export interface GenericFiltersProps {
   initial?: Record<string, any>;
   className?: string;
   buttons?: React.ReactElement<typeof ButtonModal>[];
+  style?: string
 }

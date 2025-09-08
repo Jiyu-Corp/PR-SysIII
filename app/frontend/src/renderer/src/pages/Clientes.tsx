@@ -55,6 +55,8 @@ export default function ClientesPage() {
           setRows(mapped);
           setFiltered(null);
         } else {
+          setRows([]);
+          setFiltered(null);
           console.warn("fetchClient: response:", response);
         }
         

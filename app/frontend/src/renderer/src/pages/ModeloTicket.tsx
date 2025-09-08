@@ -62,6 +62,8 @@ export default function ModeloTicketPage() {
             setRows(mapped);
             setFiltered(null);
           } else {
+            setRows([]);
+            setFiltered(null);
             console.warn("fetchPrice: response:", response);
           }
           
