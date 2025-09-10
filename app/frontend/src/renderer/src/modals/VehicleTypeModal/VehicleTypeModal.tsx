@@ -68,7 +68,7 @@ export default function VehicleTypeModal({vehicleType, isOpen, closeModal}: Vehi
   return <Modal1 maxWidth="550px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
     <div className="vehicle-type-modal">
       <div className="inputs-wrapper">
-        <InputModal width="160px" label="Tipo de Veiculo" value={description} setValue={setDescription}/>
+        <InputModal width="160px" label="Tipo de Veiculo" value={description} setValue={setDescription} required/>
         <div style={{display: "flex", flexDirection: "column", gap: 5}}>
           <label htmlFor="input-idimage" style={{fontSize: 14}}>Imagem Representativa</label>
           <div className="input-image-wrapper">

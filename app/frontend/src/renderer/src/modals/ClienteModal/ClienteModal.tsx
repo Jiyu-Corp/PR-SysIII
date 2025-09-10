@@ -145,8 +145,8 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	return <Modal1 isLoading={isLoading} maxWidth="550px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
     <div className="cliente-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater}/>
-        <InputModal width="310px" label="Nome" value={name} setValue={setName}/>
+        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater} required={true}/>
+        <InputModal width="310px" label="Nome" value={name} setValue={setName} required={true}/>
         <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
         <InputModal width="305px" label="Email" value={email} setValue={setEmail}/>
         <SelectModal width="240px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={120} />

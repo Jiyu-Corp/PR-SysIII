@@ -11,7 +11,7 @@ type DatePickerModalProps = {
 
 export default function DatePickerModal({ width, label, value, setValue, required }: DatePickerModalProps) {
   
-  return <div style={{display: "flex", alignItems: "end", width: width}}>
+  return <div style={{position: "relative", display: "flex", alignItems: "end", width: width}}>
     {required && <span className="input-modal-required">*</span>}
     <DatePickerField
       modal={true}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericTop from "../components/TopContainer/TopContainer";
-import { UserIcon  } from "@phosphor-icons/react";
+import { CarIcon, UserIcon  } from "@phosphor-icons/react";
 import { Toaster } from "react-hot-toast";
 import VehicleTypeModal from "@renderer/modals/VehicleTypeModal/VehicleTypeModal";
 import { vehicleTypeType } from "@renderer/types/resources/vehicleTypeType";
@@ -45,7 +45,7 @@ export default function TipoVeiculoPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Tabelas de Preços" actionLabel="Cadastrar Tabela de Preço" onAction={handleCreate} actionIcon={<UserIcon size={20} />} />
+      <GenericTop title="Tipo de Veiculo" actionLabel="Cadastrar Tipo de Veiculo" onAction={handleCreate} actionIcon={<CarIcon size={20} />} />
     </main>
     {isVehicleTypeModalOpen && <VehicleTypeModal isOpen={isVehicleTypeModalOpen} closeModal={() => setIsVehicleTypeModalOpen(false)} vehicleType={vehicleTypeDetail}/>}
   </>);

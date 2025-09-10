@@ -35,7 +35,7 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
 	const [idClient, setIdClient] = useState<number | null>(agreement?.idClient|| null);
   const [fixDiscount, setFixDiscount] = useState<string>(agreement?.fixDiscount || '');
   const [percentageDiscount, setPercentageDiscount] = useState<string>(agreement?.percentageDiscount || '');
-  const [dateExpiration, setDateExpiration] = useState<string>(agreement?.dateExpiration || '');
+  const [dateExpiration, setDateExpiration] = useState<string>(agreement?.dateExpiration.split('/').reverse().join('-') || '');
 
   // Options
   const [agreementEnterprises, setClientEnterprises] = useState<SelectOption[]>([]);
@@ -174,7 +174,7 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
     <div className="agreement-modal">
       <div className="inputs-wrapper">
         <div style={{width: "100%", marginBottom: 4}}>
-          <SelectModal width="240px" label="Empresa" options={agreementEnterprises} value={idClient} setValue={setIdClient} />
+          <SelectModal width="240px" label="Empresa" options={agreementEnterprises} value={idClient} setValue={setIdClient} required={true} />
         </div>
         <InputModal width="90px" label="Desconto Fixo" value={fixDiscount} setValue={setFixDiscount} disabled={percentageDiscount != ""} formatInput={formatFixDiscount}/>
         <InputModal width="78px" label="Desconto(%)" value={percentageDiscount} setValue={setPercentageDiscount} disabled={fixDiscount != ""} formatInput={formatPercentageDiscount}/>
@@ -184,6 +184,7 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
           label="Expiração"
           value={dateExpiration}
           setValue={setDateExpiration}
+          required={true}
         />
       </div>
       <div className="btns-wrapper">

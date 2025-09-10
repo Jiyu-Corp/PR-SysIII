@@ -24,3 +24,31 @@
   font-size: 16px;
   color: #C2292E;
 }
+
+.input-modal-password-eye {
+  position: absolute;
+  right: 4px;
+  top: 75%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  padding: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  line-height: 0;
+  border-radius: 6px;
+}
+
+.input-modal-password-eye svg {
+  display: block;
+}
+
+.input-modal-password-eye:focus-visible {
+  outline: 2px solid rgba(74, 135, 232, 0.28);
+}
+
+.input-modal-password-eye:hover {
+  background: rgba(0,0,0,0.03);
+}

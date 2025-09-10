@@ -137,7 +137,7 @@ export default function FinishParkingServiceTab({ parkingService, closeTab, clos
       <div className="fp-header-content">
         <p>Horario de Entrada: {formatDateTime(new Date(parkingService.dateRegister!))}</p>
         <div className="additional-discount-wrapper">
-          <p>Desconto Adicional</p>
+          <p>Desconto</p>
           <InputModal className="additional-discount" value={additionalDiscount} setValue={setAdditionalDiscount} formatInput={formatAdditionalPrice} onChange={updatePrices} placeholder="0,00" width="70px"/>
         </div>
       </div>

@@ -107,7 +107,7 @@ export default function BrandModelDeleteModal({isOpen, closeModal}: BrandModelDe
     try {
       const result = await Swal.fire({
         title: "Confirmação",
-        text: "Tem certeza que deseja excluir esta marca? Isto irá deletar tambem seus modelos relacionados.",
+        text: "Tem certeza que deseja excluir esta marca? Isto irá excluir tambem seus modelos relacionados.",
         icon: "warning",
         showCancelButton: true,
         cancelButtonText: "Cancelar",
@@ -159,16 +159,16 @@ export default function BrandModelDeleteModal({isOpen, closeModal}: BrandModelDe
     }
   }
 
-  return <Modal1 isLoading={isLoading} maxWidth="450px" title={"Deletar Marca/Modelo"} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
+  return <Modal1 isLoading={isLoading} maxWidth="450px" title={"Excluir Marca/Modelo"} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
     <div className="brand-model-modal">
       <div className="inputs-wrapper">
         <SelectModal width="180px" label="Marca" options={brands} value={idBrand} setValue={setIdBrand} />
         <SelectModal width="180px" label="Modelo" options={models} value={idModel} setValue={setIdModel} />
       </div>
       <div className="btns-wrapper">
-        <ButtonModal icon={TrashIcon} text="Deletar Marca" color="#FFFFFF" backgroundColor="#C2292E" action={deleteBrand} isDisabled={idBrand == null}/>
+        <ButtonModal icon={TrashIcon} text="Excluir Marca" color="#FFFFFF" backgroundColor="#C2292E" action={deleteBrand} isDisabled={idBrand == null}/>
         {idModel !== null &&
-          <ButtonModal icon={TrashIcon} text="Deletar Modelo" color="#FFFFFF" backgroundColor="#C2292E" action={deleteModel}/>
+          <ButtonModal icon={TrashIcon} text="Excluir Modelo" color="#FFFFFF" backgroundColor="#C2292E" action={deleteModel}/>
         }
       </div>
     </div>

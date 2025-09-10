@@ -111,7 +111,7 @@ export default function ModeloTicketPage() {
       },
       {
         key: "delete",
-        label: "Deletar",
+        label: "Excluir",
         icon: <TrashIcon size={14} />,
         className: 'icon-btn-delete',
         onClick: (row: ticketModelType) => {
