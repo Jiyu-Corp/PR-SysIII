@@ -43,8 +43,8 @@ export default function ClientesPage() {
             id: String(item.idClient ?? item.id_client ?? item.id ?? ""),
             name: item.name ?? item.nome ?? "",
             cpf_cnpj: formatCpfCnpj(item.cpfCnpj),
-            phone: formatPhone(item.phone),
-            email: item.email ?? "",
+            phone: item.phone ? formatPhone(item.phone) : '---',
+            email: item.email ?? "---",
             enterprise: item.clientEnterprise ? item.clientEnterprise.name : "----",
             type: item.clientType.description,
             idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
