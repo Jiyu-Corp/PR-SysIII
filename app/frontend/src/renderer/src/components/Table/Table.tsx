@@ -1,5 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { TablePagination } from '@mui/material';
+import React, { useState, useMemo, useEffect } from 'react';
+import { TablePagination, Switch } from '@mui/material';
 import './Table.css';
 import { FileCsvIcon } from '@phosphor-icons/react';
 import type { GenericTableProps } from '../../types/TableTypes.ts';
@@ -17,6 +17,27 @@ function Table<T extends Record<string, any>>({
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(perPage);
 
+  const [switchState, setSwitchState] = useState<Record<string, boolean>>({});
+
+  const getRowId = (r: T, rowIndex: number) => (r as any).id ?? `row-${rowIndex}`;
+  const makeSwitchKey = (colKey: string | number, rowId: string) => `${String(colKey)}@@${rowId}`;
+
+  useEffect(() => {
+    const next: Record<string, boolean> = {};
+    for (const col of columns) {
+      if ((col as any).type === 'switch') {
+        rows.forEach((r, idx) => {
+          const rowId = getRowId(r, idx);
+          const sk = makeSwitchKey(String(col.key), rowId);
+          if (!(sk in switchState)) {
+            next[sk] = Boolean((r as any)[col.key]);
+          }
+        });
+      }
+    }
+    if (Object.keys(next).length) setSwitchState(prev => ({ ...prev, ...next }));
+  }, [rows, columns]);
+
   const paginatedRows = useMemo(() => {
     const start = page * rowsPerPage;
     return rows.slice(start, start + rowsPerPage);
@@ -28,9 +49,20 @@ function Table<T extends Record<string, any>>({
     return `${start} - ${end} de ${total ?? rows.length}`;
   }, [page, rowsPerPage, rows.length, total]);
 
+  const handleSwitchChange =
+    (col: any, row: T, rowId: string) => async (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+      const sk = makeSwitchKey(col.key, rowId);
+
+      const canCheck = await col.onToggle?.(row, checked);
+      if(!canCheck) return;
+
+      if (canCheck && !col.controlled) {
+        setSwitchState(prev => ({ ...prev, [sk]: checked }));
+      }
+    };
+
   return (
     <section className={`generic-table ${className}`}>
-      
       <div className="generic-table-header">
         <h2 className="generic-top-title">{title}</h2>
         <button className="btn--small" onClick={onGenerateCSV}>
@@ -41,29 +73,54 @@ function Table<T extends Record<string, any>>({
 
       <div className="generic-table-content">
         <table style={{ marginTop: 20 }}>
-          
           <thead>
             <tr>
               {columns.map(col => <th key={String(col.key)}>{col.label}</th>)}
               {actions.length > 0 && <th className="action-header">Ações</th>}
             </tr>
           </thead>
-          
+
           <tbody>
             {paginatedRows.length === 0
-              ?              
+              ? (
                 <tr className="empty-row">
                   <td colSpan={columns.length + (actions.length > 0 ? 1 : 0)} style={{ textAlign: 'center', padding: '20px' }}>
                     Nenhum dado disponível
                   </td>
                 </tr>
-              : paginatedRows.map((r, rowIndex) => (
+              )
+              : paginatedRows.map((r, rowIndex) => {
+                const rowId = getRowId(r, rowIndex);
+                return (
                   <tr key={(r as any).id ?? rowIndex}>
-                    {columns.map(col => (
-                      <td key={String(col.key)}>
-                        {col.render ? col.render(r) : (r as any)[col.key as keyof T]}
-                      </td>
-                    ))}
+                    {columns.map(col => {
+                      if (col.render) {
+                        return <td key={String(col.key)}>{col.render(r)}</td>;
+                      }
+
+                      if ((col as any).type === 'switch') {
+                        const sk = makeSwitchKey(String(col.key), rowId);
+                        const controlled = Boolean(col.controlled);
+                        const valueFromRow = Boolean((r as any)[col.key]);
+                        const checked = controlled ? valueFromRow : Boolean(switchState[sk]);
+
+                        const extraProps = typeof (col as any).switchProps === 'function'
+                          ? (col as any).switchProps(r)
+                          : (col as any).switchProps ?? {};
+
+                        return (
+                          <td key={String(col.key)}>
+                            <Switch
+                              checked={controlled ? checked : switchState[sk]}
+                              onChange={handleSwitchChange(col, r, rowId)}
+                              {...extraProps}
+                            />
+                          </td>
+                        );
+                      }
+
+                      return <td key={String(col.key)}>{(r as any)[col.key as keyof T]}</td>;
+                    })}
                     {actions.length > 0 && (
                       <td className="generic-table-actions">
                         {actions.map(a => (
@@ -79,7 +136,8 @@ function Table<T extends Record<string, any>>({
                       </td>
                     )}
                   </tr>
-                ))}
+                );
+              })}
           </tbody>
         </table>
       </div>

@@ -92,7 +92,11 @@ export default function ModeloTicketPage() {
   const columns: TableColumn<ticketModelType>[] = [
       { key: "name", label: "Nome do modelo" },
       { key: "dateregister", label: "Data de Cadastro" },
-      { key: "isactive", label: "Habilitada" }
+      { key: "isactive", label: "Habilitada" , type:'switch', controlled: false,
+        onToggle: (row, checked) => {
+          return handleSwitch(row, checked);
+        },
+      }
   ];
   
   const actions = [
@@ -115,6 +119,20 @@ export default function ModeloTicketPage() {
         },
       }
   ];
+
+  const handleSwitch = async (row: ticketModelType, checked: boolean): Promise<boolean> => {
+      try {
+        await requestPRSYS('ticket-model', `manageTicketModelActivity/${row.idTicketModel}`, 'PUT', {
+          isActive: checked
+        });
+        toast.success(`Modelo de Ticket ${checked ? 'ativado' : 'desativado'} com sucesso!`, successToastStyle);
+        return true;
+      } catch (err) {
+        toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+        console.error("handleSwitch erro:", err);
+        return false;
+      }
+  }
 
   const handleSearch = async (values: Record<string, any>) => {
       

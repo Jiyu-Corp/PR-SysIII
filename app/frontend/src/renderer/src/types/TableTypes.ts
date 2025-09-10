@@ -4,6 +4,9 @@ export type TableColumn<T> = {
 	label: string;
 	placeholder?: string;
 	render?: (row: T) => React.ReactNode;
+	controlled?: boolean; 
+	type?: 'text' | 'number' | 'date' | 'switch';
+	onToggle?: (row: T, checked: boolean) => void;
 };
 
 export type TableAction<T> = {

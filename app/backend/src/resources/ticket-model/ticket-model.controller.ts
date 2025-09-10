@@ -40,7 +40,7 @@ export class TicketModelController {
         if(httpError) throw httpError;
     }
 
-    @Put(':idTicketModel')
+    @Put('manageTicketModelActivity/:idTicketModel')
     async manageTicketModelActivity(@Param('idTicketModel') idTicketModel: number) {
         const [httpError] = await promiseCatchErrorHTTPDefault(this.ticketModelService.manageTicketModelActivity(idTicketModel));
         if(httpError) throw httpError;
