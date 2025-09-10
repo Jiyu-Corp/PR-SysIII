@@ -3,6 +3,7 @@ import InputWrapperModal from "../InputWrapperModal/InputWrapperModal";
 
 import "./InputModal.css"
 import { useEffect, useState } from "react";
+import { EyeIcon, EyeSlashIcon } from "@phosphor-icons/react";
 
 type InputModalProps = {
   className?: string;
@@ -82,14 +83,36 @@ export default function InputModal({ className, width, label, value, type, place
     return <InputWrapperModal label={label} width={width}>
       <div style={{width: width}}>
         {required && <span className="input-modal-required">*</span>}
-        <textarea className={`input-modal ${className ?? ""} ${required ? "input-modal-required" : ""}`} value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
+        <textarea className={`input-modal ${className ?? ""}`} value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none", width: "100%"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
       </div>
     </InputWrapperModal>
-  } else return <InputWrapperModal label={label} width={width}>
+  } else {
+    const [visible, setVisible] = useState(false);
+
+    const isPassword = type === 'password'
+    const inputType = isPassword ? (visible ? 'text' : 'password') : type
+
+    return <InputWrapperModal label={label} width={width}>
       <div style={{width: width}}>
         {required && <span className="input-modal-required">*</span>}
-        <input className={`input-modal ${locked ? "input-modal-locked" : ""} ${className ?? ""} ${required ? "input-modal-required" : ""}`} type={type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize, width: width}} placeholder={placeholder} disabled={disabled || locked}/>
+        <input className={`input-modal ${locked ? "input-modal-locked" : ""} ${className ?? ""}`} type={isPassword ? inputType : type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize, width: width}} placeholder={placeholder} disabled={disabled || locked}/>
+        {isPassword && (
+          <button
+            type="button"
+            className="input-modal-password-eye"
+            onClick={() => setVisible(v => !v)}
+            aria-label={visible ? 'Ocultar senha' : 'Mostrar senha'}
+            title={visible ? 'Ocultar senha' : 'Mostrar senha'}
+          >
+            {visible ? (
+              <EyeSlashIcon size={18} weight="regular" />
+            ) : (
+              <EyeIcon size={18} weight="regular" />
+            )}
+          </button>
+        )}
       </div>
     </InputWrapperModal>
+  }
   
 }

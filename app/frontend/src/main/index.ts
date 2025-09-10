@@ -1,7 +1,8 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join } from 'path'
+import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import prsys from '../../resources/prsys.png?asset'
 import startNest from './nestConfig'
 import axios from 'axios'
 
@@ -21,6 +22,7 @@ async function createWindow(): Promise<void> {
         show: false,
         autoHideMenuBar: true,
         ...(process.platform === 'linux' ? { icon } : {}),
+        icon: prsys,
         webPreferences: {
         preload: join(__dirname, '../preload/index.js'),
         sandbox: false

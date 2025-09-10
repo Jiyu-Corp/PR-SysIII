@@ -2,7 +2,7 @@
   min-width: 324px;
 
   position: absolute;
-  right: -49%;
+  left: calc(100% + 16px);
   top: 0px; 
 
   border: 1px solid black;

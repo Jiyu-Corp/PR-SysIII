@@ -207,7 +207,7 @@ export default function VeiculosPage() {
     },
     {
       key: "delete",
-      label: "Deletar",
+      label: "Excluir",
       icon: <TrashIcon size={14} />,
       className: 'icon-btn-delete',
       onClick: (row: vehicleType) => {
@@ -365,7 +365,7 @@ export default function VeiculosPage() {
       />
       <GenericFilters title="Veiculos" fields={filters} onSearch={handleSearch} buttons={[
         <ButtonModal key={0} text="Cadastrar Veiculo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>,
-        <ButtonModal key={0} text="Deletar Marca/Modelo" action={handleDeleteBrandModel} color="#FFFFFF" backgroundColor="#C2292E" icon={CarIcon}/>,
+        <ButtonModal key={0} text="Excluir Marca/Modelo" action={handleDeleteBrandModel} color="#FFFFFF" backgroundColor="#C2292E" icon={CarIcon}/>,
       ]} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

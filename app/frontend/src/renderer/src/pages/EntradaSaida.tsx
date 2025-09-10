@@ -91,7 +91,7 @@ export default function EntradaSaidaPage() {
       },
       {
         key: "delete",
-        label: "Deletar",
+        label: "Excluir",
         icon: <TrashIcon size={14} />,
         className: 'icon-btn-delete',
         onClick: (row: parkingServiceType) => {

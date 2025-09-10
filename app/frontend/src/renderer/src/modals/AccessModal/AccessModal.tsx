@@ -71,10 +71,10 @@ export default function AccessModal({isOpen, closeModal}: AccessModalProps) {
 	return <Modal1 isLoading={isLoading} maxWidth="450px" title="Mudar Senha" isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon} noBackground={true} noExitBtn={true}>
     <div className="access-modal">
       <div className="inputs-wrapper">
-        <InputModal width="180px" label="Login" value={username} setValue={setUsername} locked={true}/>
-        <InputModal width="180px" label="Senha Atual" type="password" value={password} setValue={setPassword}/>
-        <InputModal width="180px" label="Nova Senha" type="password" value={newPassword} setValue={setNewPassword}/>
-        <InputModal width="180px" label="Repita Senha" type="password" value={repeatNewPassword} setValue={setRepeatNewPassword}/>
+        <InputModal width="180px" label="Login" value={username} setValue={setUsername} locked={true} required/>
+        <InputModal width="180px" label="Senha Atual" type="password" value={password} setValue={setPassword} required/>
+        <InputModal width="180px" label="Nova Senha" type="password" value={newPassword} setValue={setNewPassword} required/>
+        <InputModal width="180px" label="Repita Senha" type="password" value={repeatNewPassword} setValue={setRepeatNewPassword} required/>
       </div>
       <div className="btns-wrapper">
         <SaveBtnModal action={changeAccessPassword}/>

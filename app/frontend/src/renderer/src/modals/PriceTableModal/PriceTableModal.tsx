@@ -226,8 +226,8 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
   return <Modal1 isLoading={isLoading} maxWidth="500px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CurrencyDollarIcon}>
     <div className="price-table-modal">
       <div className="inputs-wrapper">
-        <SelectModal width="150px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} />
-        <InputModal width="70px" label="Preço(R$)" value={pricePerHour} setValue={setPricePerHour} formatInput={formatPricePerHour}/>
+        <SelectModal width="150px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required />
+        <InputModal width="70px" label="Preço(R$)" value={pricePerHour} setValue={setPricePerHour} formatInput={formatPricePerHour} required/>
         <InputModal width="90px" label="Tolerancia(min)" value={toleranceMinutes} setValue={setToleranceMinutes} formatInput={formatToleranceTime} />
       </div>
       <div className="btns-wrapper">
