@@ -122,6 +122,21 @@ export class PriceTableService {
     }
     
     async editPriceTable(idPriceTable: number, editPriceTableDto: EditPriceTableDto): Promise<PriceTable> {
+        // Check if exists car parked
+        const [pServiceError, existParkedVehiclesWithThatPriceTable] = await promiseCatchError(this.priceTableRepo
+            .exists({ where: {
+                idPriceTable: idPriceTable,
+                vehicleType: { models: { vehicles: {
+                    parkingServices: {
+                        isParking: true
+                    }
+                }}}
+            }})
+        );
+        if(pServiceError) throw new DatabaseError();
+        if(existParkedVehiclesWithThatPriceTable)
+            throw new ExistParkedVehicleWithinModelUsingThatPriceTable();
+
         const [loadError, priceTableData] = await promiseCatchError(this.priceTableRepo.preload({
             idPriceTable: idPriceTable,
             ... {

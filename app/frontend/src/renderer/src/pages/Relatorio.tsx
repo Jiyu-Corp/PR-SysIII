@@ -160,9 +160,9 @@ export default function EntradaSaidaPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericFilters title="Relatórios" fields={filters} onSearch={handleSearch}/>
+      <GenericFilters title="Listagens" fields={filters} onSearch={handleSearch}/>
 			<div style={{width: "100%", marginBottom: 4}}>
-						<SelectModal width="240px" label="Teste" options={[]} value={null} setValue={(newValue: string) => console.log(newValue)} />
+        <SelectModal width="240px" label="Teste" options={[]} value={null} setValue={(newValue: string) => console.log(newValue)} />
 			</div>
       {loading 
         ? <div style={{ margin: "24px 64px" }}>
@@ -184,6 +184,7 @@ export default function EntradaSaidaPage() {
             perPage={5}
             total={rowsToShow.length}
             onGenerateCSV={handleGenerateCSV}
+            isReport={true}
           />
       }
     </main>

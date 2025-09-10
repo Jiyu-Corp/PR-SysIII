@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { TablePagination, Switch } from '@mui/material';
 import './Table.css';
-import { FileCsvIcon } from '@phosphor-icons/react';
+import { ArticleIcon, FileCsvIcon } from '@phosphor-icons/react';
 import type { GenericTableProps } from '../../types/TableTypes.ts';
 
 function Table<T extends Record<string, any>>({
@@ -13,6 +13,7 @@ function Table<T extends Record<string, any>>({
   total = null,
   onGenerateCSV,
   className = "",
+  isReport
 }: GenericTableProps<T>) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(perPage);
@@ -79,8 +80,11 @@ function Table<T extends Record<string, any>>({
       <div className="generic-table-header">
         <h2 className="generic-top-title">{title}</h2>
         <button className="btn--small" onClick={onGenerateCSV}>
-          Gerar CSV
-          <FileCsvIcon size={20} />
+          Gerar {`${isReport ? "Relatório" : "CSV"}`}
+          {isReport
+            ? <ArticleIcon size={20}/> 
+            : <FileCsvIcon size={20} />
+          }
         </button>
       </div>
 

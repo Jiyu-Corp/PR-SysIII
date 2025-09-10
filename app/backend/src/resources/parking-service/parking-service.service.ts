@@ -205,24 +205,28 @@ export class ParkingServiceService {
         ));
         if(sValuesError) throw sValuesError;
 
-        const serviceTotalCost = 
-            serviceValues.reduce((acc, sCost) => acc+sCost.value, 0) + 
-            (finishParkingServiceDto.additionalDiscount ?? 0);
-        
-        // Client of entrance has priority compared to the client binded to the vehicle
-        const client = parkingService.clientEntry || parkingService.vehicle.client;
-        const agreement = client && client.agreements && client.agreements[0];
-        
-        parkingService.priceTable = parkingService.vehicle.model.vehicleType.priceTables[0];
-        parkingService.agreement = agreement;
-
-        parkingService.price = serviceValues.find(v => v.description.includes("Preço estadia"))!.value;
-        parkingService.discountAdditional = finishParkingServiceDto.additionalDiscount;
-        parkingService.totalPrice = serviceTotalCost;
-
-        parkingService.isParking = false;
-        parkingService.dateCheckout = new Date();
-
-        await this.parkingServiceRepo.save(parkingService);
+        try {
+          const serviceTotalCost = 
+              serviceValues.reduce((acc, sCost) => acc+sCost.value, 0) + 
+              (finishParkingServiceDto.additionalDiscount ?? 0);
+          
+          // Client of entrance has priority compared to the client binded to the vehicle
+          const client = parkingService.clientEntry || parkingService.vehicle.client;
+          const agreement = client && client.agreements && client.agreements[0];
+          
+          parkingService.priceTable = parkingService.vehicle.model.vehicleType.priceTables[0];
+          parkingService.agreement = agreement;
+  
+          parkingService.price = serviceValues.find(v => v.description.includes("Preço estadia"))!.value;
+          parkingService.discountAdditional = finishParkingServiceDto.additionalDiscount;
+          parkingService.totalPrice = serviceTotalCost;
+  
+          parkingService.isParking = false;
+          parkingService.dateCheckout = new Date();
+  
+          await this.parkingServiceRepo.save(parkingService);
+        } catch(err) {
+          throw new DatabaseError();
+        }
     }
 }

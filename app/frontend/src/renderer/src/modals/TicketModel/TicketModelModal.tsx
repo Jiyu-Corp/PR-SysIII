@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Modal1 from "../Modal1/Modal1";
-import { HandshakeIcon} from "@phosphor-icons/react";
+import { ArticleIcon, HandshakeIcon} from "@phosphor-icons/react";
 import InputModal from "../InputModal/InputModal";
 
 import "./TicketModelModal.css"
@@ -102,7 +102,7 @@ export default function TicketModelModal({ticketModel, isOpen, closeModal}: Tick
     }
   }
 
-  return <Modal1 maxWidth="650px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={HandshakeIcon}>
+  return <Modal1 maxWidth="650px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={ArticleIcon}>
     <div className="ticket-model-modal">
       <div className="inputs-wrapper">
         <InputModal width="200px" label="Modelo" value={name} setValue={setName} required/>

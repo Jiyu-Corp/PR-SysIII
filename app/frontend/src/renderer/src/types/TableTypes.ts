@@ -26,4 +26,5 @@ export interface GenericTableProps<T extends Record<string, any>> {
 	total?: number | null;
 	onGenerateCSV?: () => void;
 	className?: string;
+  isReport?: boolean;
 }
