@@ -173,7 +173,7 @@ export default function VeiculosPage() {
     },
     {
       key: "vehicleTypes",
-      label: "Tipo do veiculo",
+      label: "Tipo do veículo",
       type: "select",
       options: vehicleTypes
     },
@@ -364,7 +364,7 @@ export default function VeiculosPage() {
         reverseOrder={true}
       />
       <GenericFilters title="Veiculos" fields={filters} onSearch={handleSearch} buttons={[
-        <ButtonModal key={0} text="Cadastrar Veiculo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>,
+        <ButtonModal key={0} text="Cadastrar Veículo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>,
         <ButtonModal key={0} text="Excluir Marca/Modelo" action={handleDeleteBrandModel} color="#FFFFFF" backgroundColor="#C2292E" icon={CarIcon}/>,
       ]} />
       {loading ? 

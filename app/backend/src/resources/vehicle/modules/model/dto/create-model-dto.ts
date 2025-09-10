@@ -9,18 +9,18 @@ export class CreateModelDto {
 	@IsPositive()
 	readonly idBrand?: number
 
-	@IsDefined({ message: "Marca do modelo é obrigatoria." })
+	@IsDefined({ message: "Marca do modelo é obrigatória." })
 	@IsObject()
 	@ValidateNested()
 	@Type(() => CreateBrandDto)
 	readonly brand?: CreateBrandDto
 
-	@IsDefined({ message: "Tipo do veiculo é obrigatorio." })
+	@IsDefined({ message: "Tipo do veículo é obrigatório." })
 	@IsNumber()
 	@IsPositive()
 	readonly idVehicleType: number
 
-	@IsDefined({ message: "Nome do modelo é obrigatorio." })
+	@IsDefined({ message: "Nome do modelo é obrigatório." })
 	@IsString()
 	readonly nameModel: string
 }

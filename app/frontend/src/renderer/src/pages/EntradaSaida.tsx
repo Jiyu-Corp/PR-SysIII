@@ -248,8 +248,8 @@ export default function EntradaSaidaPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericFilters title="Veiculos Estacionados" fields={filters} onSearch={handleSearch} buttons={[
-        <ButtonModal key={0} text="Estacionar Veiculo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>
+      <GenericFilters title="Veículos Estacionados" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Estacionar Veículo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>
       ]}/>
       {loading 
         ? <div style={{ margin: "24px 64px" }}>

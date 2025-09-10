@@ -1,17 +1,17 @@
 import { IsDefined, IsEmail, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString, Length, Matches } from "class-validator";
 
 export class CreateClientDto {
-    @IsDefined({ message: "O nome é obrigatorio." })
-    @IsString({ message: "O nome é obrigatorio." })
-    @IsNotEmpty({ message: "O nome é obrigatorio." })
+    @IsDefined({ message: "O nome é obrigatório." })
+    @IsString({ message: "O nome é obrigatório." })
+    @IsNotEmpty({ message: "O nome é obrigatório." })
     readonly name: string;
 
-    @IsDefined({ message: "O CPF/CNPJ é obrigatorio." })
-    @IsString({ message: "O CPF/CNPJ é obrigatorio." })
+    @IsDefined({ message: "O CPF/CNPJ é obrigatório." })
+    @IsString({ message: "O CPF/CNPJ é obrigatório." })
     @Matches(/^.{11}$|^.{14}$/, {
       message: 'O CPF/CNPJ esta incompleto.',
     })
-    @IsNotEmpty({ message: "O CPF/CNPJ é obrigatorio." })
+    @IsNotEmpty({ message: "O CPF/CNPJ é obrigatório." })
     readonly cpfCnpj: string;
 
     @IsOptional()

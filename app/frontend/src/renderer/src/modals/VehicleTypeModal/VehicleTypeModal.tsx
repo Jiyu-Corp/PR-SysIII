@@ -39,8 +39,8 @@ export default function VehicleTypeModal({vehicleType, isOpen, closeModal}: Vehi
   
   // Behaviour
   const title = isEdicaoVehicleType
-    ? "Editar Tipo de Veiculo"
-    : "Cadastrar Tipo de Veiculo";
+    ? "Editar Tipo de Veículo"
+    : "Cadastrar Tipo de Veículo";
   
   // Actions
   async function saveVehicleType() {
@@ -53,7 +53,7 @@ export default function VehicleTypeModal({vehicleType, isOpen, closeModal}: Vehi
 
       closeModal();
 
-      toast.success('Tipo de Veiculo criado.', successToastStyle);
+      toast.success('Tipo de Veículo criado.', successToastStyle);
     } catch(err) {
       toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
     }
@@ -68,7 +68,7 @@ export default function VehicleTypeModal({vehicleType, isOpen, closeModal}: Vehi
   return <Modal1 maxWidth="550px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
     <div className="vehicle-type-modal">
       <div className="inputs-wrapper">
-        <InputModal width="160px" label="Tipo de Veiculo" value={description} setValue={setDescription} required/>
+        <InputModal width="160px" label="Tipo de Veículo" value={description} setValue={setDescription} required/>
         <div style={{display: "flex", flexDirection: "column", gap: 5}}>
           <label htmlFor="input-idimage" style={{fontSize: 14}}>Imagem Representativa</label>
           <div className="input-image-wrapper">

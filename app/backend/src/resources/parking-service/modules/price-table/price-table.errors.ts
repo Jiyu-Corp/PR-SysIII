@@ -3,6 +3,6 @@ import { ExpectedError, RedundancyInUniqueError, UnexpectedError } from "src/uti
 export class PriceTableNotFound extends UnexpectedError { constructor(){super("Tabela de preço não encontrada.")} }
 
 export class PriceTableNotExists extends ExpectedError { constructor(){super("Tabela de preço não encontrada.")} }
-export class PriceTableVehicleTypeExists extends RedundancyInUniqueError { constructor(){super("UK_PriceTable_idVehicleType", "Este tipo de veiculo ja possui uma tabela de preços.")} }
-export class PriceTableHourExists extends RedundancyInUniqueError { constructor(){super("UK_PriceTableHour_priceTable_hour", "Horario especial redundante, so pode haver um preço por hora.")} }
+export class PriceTableVehicleTypeExists extends RedundancyInUniqueError { constructor(){super("UK_PriceTable_idVehicleType", "Este tipo de veículo ja possui uma tabela de preços.")} }
+export class PriceTableHourExists extends RedundancyInUniqueError { constructor(){super("UK_PriceTableHour_priceTable_hour", "Horario especial redundante, só pode haver um preço por hora.")} }
 export class ExistParkedVehicleWithinModelUsingThatPriceTable extends ExpectedError { constructor(){super("Existem veículos que utilizam esta tabela de preço estacionados!")} }

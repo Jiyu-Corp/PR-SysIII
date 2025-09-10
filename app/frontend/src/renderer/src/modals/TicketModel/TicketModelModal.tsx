@@ -107,7 +107,7 @@ export default function TicketModelModal({ticketModel, isOpen, closeModal}: Tick
       <div className="inputs-wrapper">
         <InputModal width="200px" label="Modelo" value={name} setValue={setName} required/>
         <InputModal width="400px" label="Cabeçalho" value={header} setValue={setHeader} textAreaData={{rows: 5}} required/>
-        <InputModal width="400px" label="Rodape" value={footer} setValue={setFooter} textAreaData={{rows: 5}} required/>
+        <InputModal width="400px" label="Rodapé" value={footer} setValue={setFooter} textAreaData={{rows: 5}} required/>
       </div>
       <div className="btns-wrapper">
         {isEdicaoTicketModel

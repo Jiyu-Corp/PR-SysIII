@@ -182,7 +182,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
   // Behaviour
   const title = isEdicaoParkingService
     ? "Veiculo estacionado"
-    : "Estacionar Veiculo";
+    : "Estacionar Veículo";
 
   useEffectSkipFirstRender(() => {
     populateModelOptionsWithSelectedBrand();
@@ -374,7 +374,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
         </div>
         <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} required={true} />
         <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} required={true} /> 
-        <SelectModal width="180px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required={true} />
+        <SelectModal width="180px" label="Tipo do Veículo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required={true} />
       </div>
       <div className="btns-wrapper">
         {typeof parkingService === 'undefined' && 

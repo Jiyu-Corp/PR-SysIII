@@ -45,7 +45,7 @@ export default function TipoVeiculoPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericTop title="Tipo de Veiculo" actionLabel="Cadastrar Tipo de Veiculo" onAction={handleCreate} actionIcon={<CarIcon size={20} />} />
+      <GenericTop title="Tipo de Veículo" actionLabel="Cadastrar Tipo de Veículo" onAction={handleCreate} actionIcon={<CarIcon size={20} />} />
     </main>
     {isVehicleTypeModalOpen && <VehicleTypeModal isOpen={isVehicleTypeModalOpen} closeModal={() => setIsVehicleTypeModalOpen(false)} vehicleType={vehicleTypeDetail}/>}
   </>);

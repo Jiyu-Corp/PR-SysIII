@@ -68,8 +68,8 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
 
   // Behaviour
   const title = isEdicaoAgreement
-    ? "Editar convenio"
-    : "Cadastrar convenio";
+    ? "Editar convênio"
+    : "Cadastrar convênio";
 
   const formatFixDiscount = (newValue: string) => {
     let formattedValue = newValue

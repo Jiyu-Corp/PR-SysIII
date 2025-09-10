@@ -255,7 +255,7 @@ export default function TabelaPrecoPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericFilters title="Tabelas de Preços" fields={filters} onSearch={handleSearch} buttons={[
+      <GenericFilters title="Tabela de Preços" fields={filters} onSearch={handleSearch} buttons={[
         <ButtonModal key={0} text="Cadastrar Tabela de Preço" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CurrencyDollarIcon}/>,
       ]}/>
       {loading ? 
@@ -273,7 +273,7 @@ export default function TabelaPrecoPage() {
         </div>
         : 
           <GenericTable
-            title="Listagem de Tabelas de Preços"
+            title="Listagem de Tabela de Preços"
             columns={columns}
             rows={rowsToShow}
             actions={actions}

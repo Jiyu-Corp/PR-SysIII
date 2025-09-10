@@ -272,8 +272,8 @@ export default function ConvenioPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericFilters title="Convenios" fields={filters} onSearch={handleSearch} buttons={[
-        <ButtonModal key={0} text="Cadastrar Convenio" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={HandshakeIcon}/>
+      <GenericFilters title="Convênios" fields={filters} onSearch={handleSearch} buttons={[
+        <ButtonModal key={0} text="Cadastrar Convênio" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={HandshakeIcon}/>
       ]}/>
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

@@ -23,14 +23,14 @@ export class CreateParkingServiceDto {
     @ValidateIf(o => typeof o.vehicleEdit === 'undefined')
     @IsDefined()
     @IsObject()
-    @ValidateNested({message: "Dados do veiculo estão mal formados." })
+    @ValidateNested({message: "Dados do veículo estão mal formados." })
     @Type(() => CreateVehicleDto)
     readonly vehicleCreate?: CreateVehicleDto;
     
     @ValidateIf(o => typeof o.vehicleCreate === 'undefined')
     @IsDefined()
     @IsObject()
-    @ValidateNested({message: "Dados do veiculo estão mal formados." })
+    @ValidateNested({message: "Dados do veículo estão mal formados." })
     @Type(() => EditVehicleDto)
     readonly vehicleEdit?: EditVehicleDto;
 }

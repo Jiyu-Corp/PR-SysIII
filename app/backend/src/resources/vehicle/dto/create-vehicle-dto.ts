@@ -13,7 +13,7 @@ class CreateVehicleModelDto extends PartialType(CreateModelDto) {
 
 export class CreateVehicleDto {
 	//Placa
-	@IsDefined({ message: "Placa é obrigatorio." })
+	@IsDefined({ message: "Placa é obrigatório." })
 	@IsString({ message: "Placa esta fora de padrão." })
 	@IsUppercase({ message: "Todas as letras da placa devem estar em maiusculo." })
 	@MinLength(7, { message: "Placa esta fora de padrão." })
@@ -21,7 +21,7 @@ export class CreateVehicleDto {
 	readonly plate: string
 
 	//Modelo, Marca, Tipo Veiculo
-	@IsDefined({ message: "Modelo é obrigatorio." })
+	@IsDefined({ message: "Modelo é obrigatório." })
 	@IsObject({ message: "Modelo esta fora de padrão." })
 	@ValidateNested()
 	@Type(() => CreateVehicleModelDto)

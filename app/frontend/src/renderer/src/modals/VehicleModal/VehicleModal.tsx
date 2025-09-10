@@ -121,7 +121,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   // Behaviour
   const title = isEdicaoVehicle
   ? "Editar Veiculo"
-  : "Cadastrar Veiculo";
+  : "Cadastrar Veículo";
   
   useEffectSkipFirstRender(() => {
     populateModelOptionsWithSelectedBrand();
@@ -271,7 +271,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
         <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
         <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} required={true}/>
         <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} required={true}/> 
-        <SelectModal width="180px" label="Tipo do Veiculo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required={true}/>
+        <SelectModal width="180px" label="Tipo do Veículo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required={true}/>
         <SelectModal width="180px" label="Cliente" options={clients} value={idClient} setValue={setIdClient}/>
       </div>
       <div className="btns-wrapper">
