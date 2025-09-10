@@ -6,4 +6,5 @@ export type parkingServiceType = {
   vehicle: vehicleType 
   client?: clientType;
   dateRegister?: string;
+  brandModelYear?: string;
 }

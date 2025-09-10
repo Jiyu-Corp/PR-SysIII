@@ -45,9 +45,9 @@ export default function EntradaSaidaPage() {
               vehicle: item.vehicle,
               client: item.clientEntry ?? item.vehicle.client ?? '---',
               clientName: item.clientEntry?.name ?? item.vehicle.client?.name ?? '---',
-              brandModelYear:  `${item.vehicle.model.brand.name} - ${item.vehicle.model.name} - ${item.vehicle.year}`,
+              brandModelYear:  `${item.vehicle.model.brand.name} - ${item.vehicle.model.name}${item.vehicle.year ? ` - ${item.vehicle.year}` : ''}`,
               plate: item.vehicle.plate,
-              color: item.vehicle.color,
+              color: item.vehicle.color ?? '---',
               entry: formatDateTime(new Date(item.dateRegister))
             };
         });    
@@ -122,6 +122,7 @@ export default function EntradaSaidaPage() {
   
         const searchable = [
           row.vehicle.plate,
+          row.brandModelYear,
           row.client?.name,
           row.vehicle.color,
           vehicleAsString,
