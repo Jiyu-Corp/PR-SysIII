@@ -50,16 +50,31 @@ function Table<T extends Record<string, any>>({
   }, [page, rowsPerPage, rows.length, total]);
 
   const handleSwitchChange =
-    (col: any, row: T, rowId: string) => async (_event: React.ChangeEvent<HTMLInputElement>, checked: boolean) => {
+    (col: any, row: T, rowId: string) => async (
+      _event: React.ChangeEvent<HTMLInputElement>,
+      checked: boolean
+    ) => {
       const sk = makeSwitchKey(col.key, rowId);
 
       const canCheck = await col.onToggle?.(row, checked);
-      if(!canCheck) return;
+      if (!canCheck) return;
 
-      if (canCheck && !col.controlled) {
-        setSwitchState(prev => ({ ...prev, [sk]: checked }));
+      if (!col.controlled) {
+        setSwitchState(prev => {
+          if (checked) {
+            // enforce only one active switch
+            const updated: Record<string, boolean> = {};
+            Object.keys(prev).forEach(k => (updated[k] = false));
+            updated[sk] = true;
+            return updated;
+          } else {
+            // allow turning all off
+            return { ...prev, [sk]: false };
+          }
+        });
       }
     };
+
 
   return (
     <section className={`generic-table ${className}`}>
@@ -111,7 +126,7 @@ function Table<T extends Record<string, any>>({
                         return (
                           <td key={String(col.key)}>
                             <Switch
-                              checked={controlled ? checked : switchState[sk]}
+                              checked={Boolean(switchState[sk])}
                               onChange={handleSwitchChange(col, r, rowId)}
                               {...extraProps}
                             />
