@@ -62,13 +62,11 @@ function Table<T extends Record<string, any>>({
       if (!col.controlled) {
         setSwitchState(prev => {
           if (checked) {
-            // enforce only one active switch
             const updated: Record<string, boolean> = {};
             Object.keys(prev).forEach(k => (updated[k] = false));
             updated[sk] = true;
             return updated;
           } else {
-            // allow turning all off
             return { ...prev, [sk]: false };
           }
         });
@@ -117,7 +115,6 @@ function Table<T extends Record<string, any>>({
                         const sk = makeSwitchKey(String(col.key), rowId);
                         const controlled = Boolean(col.controlled);
                         const valueFromRow = Boolean((r as any)[col.key]);
-                        const checked = controlled ? valueFromRow : Boolean(switchState[sk]);
 
                         const extraProps = typeof (col as any).switchProps === 'function'
                           ? (col as any).switchProps(r)
