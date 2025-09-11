@@ -43,7 +43,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   } as SelectOption || null);
   const [idVehicleType, setIdVehicleType] = useState<number | null>(vehicle?.model?.idVehicleType || null);
   const [year, setYear] = useState<string>(vehicle?.year || '');
-  const [color, setColor] = useState<string>(vehicle?.color || '');
+  const [color, setColor] = useState<string>(vehicle?.color && vehicle.color != "---" ? vehicle.color : '');
   const [idClient, setIdClient] = useState<number | null>(vehicle?.idClient || null);
 
   // Options

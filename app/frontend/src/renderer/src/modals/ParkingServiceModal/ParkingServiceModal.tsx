@@ -53,7 +53,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
   } as SelectOption || null);
   const [idVehicleType, setIdVehicleType] = useState<number | null>(parkingService?.vehicle?.model?.idVehicleType || null);
   const [year, setYear] = useState<string>(parkingService?.vehicle?.year || '');
-  const [color, setColor] = useState<string>(parkingService?.vehicle?.color || '');
+  const [color, setColor] = useState<string>(parkingService?.vehicle?.color && parkingService?.vehicle?.color != '---' ? parkingService?.vehicle?.color : '');
 
   // Client
   const [idClient, setIdClient] = useState<number | undefined>(parkingService?.client?.idClient);
@@ -65,7 +65,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
   const cpfCpnjUnformater = (value: string) => value.replace(/\D/g, "");
 	const [phone, setPhone] = useState<string>(parkingService?.client?.phone ?? '');
   const phoneUnformater = (value: string) => value.replace(/\+55/g, '').replace(/\D/g, "");
-	const [email, setEmail] = useState<string>(parkingService?.client?.email || '');
+	const [email, setEmail] = useState<string>(parkingService?.client?.email && parkingService?.client?.email != '---' ? parkingService?.client?.email : '');
 	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(parkingService?.client?.enterprise?.idClient || null);
 
   // Options

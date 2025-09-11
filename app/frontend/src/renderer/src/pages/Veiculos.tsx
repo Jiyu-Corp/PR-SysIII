@@ -63,9 +63,9 @@ export default function VeiculosPage() {
             plate: item.plate,
             model: item.model,
             idBrand: item.model?.brand?.idBrand,
-            brandName: item.model?.brand?.name,
+            brandName: item.model?.brand?.name ?? '---',
             idModel: item.model?.idModel,
-            modelName: item.model?.name,
+            modelName: item.model?.name ?? '---',
             idVehicleType: item.model?.vehicleType?.idVehicleType,
             vehicleType: item.model?.vehicleType?.description ?? '---',
             year: item.year ?? '---',
@@ -253,8 +253,8 @@ export default function VeiculosPage() {
           idVehicle: item.idVehicle,
           plate: item.plate,
           model: item.model,
-          brandName: item.model?.brand?.name,
-          modelName: item.model?.name,
+          brandName: item.model?.brand?.name ?? '---',
+          modelName: item.model?.name ?? '---',
           vehicleType: item.model?.vehicleType?.description ?? '---',
           year: item.year ?? '---',
           color: item.color ?? '---',
@@ -367,7 +367,7 @@ export default function VeiculosPage() {
       />
       <GenericFilters title="Veiculos" fields={filters} onSearch={handleSearch} buttons={[
         <ButtonModal key={0} text="Cadastrar Veículo" action={handleCreate} color="#FFFFFF" backgroundColor="#3BB373" icon={CarIcon}/>,
-        <ButtonModal key={0} text="Excluir Marca/Modelo" action={handleDeleteBrandModel} color="#FFFFFF" backgroundColor="#C2292E" icon={CarIcon}/>,
+        <ButtonModal key={1} text="Excluir Marca/Modelo" action={handleDeleteBrandModel} color="#FFFFFF" backgroundColor="#C2292E" icon={CarIcon}/>,
       ]} />
       {loading ? 
           <div style={{ margin: "24px 64px" }}>

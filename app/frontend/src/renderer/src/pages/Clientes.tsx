@@ -45,7 +45,7 @@ export default function ClientesPage() {
             cpf_cnpj: formatCpfCnpj(item.cpfCnpj),
             phone: item.phone ? formatPhone(item.phone) : '---',
             email: item.email ?? "---",
-            enterprise: item.clientEnterprise ? item.clientEnterprise.name : "----",
+            enterprise: item.clientEnterprise ? item.clientEnterprise.name : "---",
             type: item.clientType.description,
             idClientEnterprise: item.clientEnterprise ? String(item.clientEnterprise.idClient) : undefined
           };

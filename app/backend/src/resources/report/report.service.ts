@@ -19,8 +19,8 @@ export class ReportService {
             const query = this.parkingServiceRepo
                 .createQueryBuilder('parkingService')
                     .innerJoinAndSelect('parkingService.vehicle', 'vehicle')
-                    .innerJoinAndSelect('vehicle.model', 'model')
-                    .innerJoinAndSelect('model.brand', 'brand')
+                    .leftJoinAndSelect('vehicle.model', 'model')
+                    .leftJoinAndSelect('model.brand', 'brand')
                     .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
                 .where('parkingService.isParking = false')
                 .andWhere('parkingService.dateCheckout IS NOT NULL');
@@ -47,7 +47,7 @@ export class ReportService {
             const parkedServicesData = await query.getMany();
             const parkedServices: FinishedParkingServices[] = parkedServicesData.map(ps => ({
                 plate: ps.vehicle.plate,
-                brandModelYear: `${ps.vehicle.model.brand.name} - ${ps.vehicle.model.name} - ${ps.vehicle.year}`,
+                brandModelYear: [ps.vehicle.model?.brand?.name ?? "", ps.vehicle.model?.name ?? "", ps.vehicle.year?.toString() ?? ""].filter(v => v != "").join(" - "),
                 clientName: ps.clientEntry?.name,
                 dateParkingServiceStart: formatDateTime(ps.dateRegister),
                 dateParkingServiceEnd: formatDateTime(ps.dateCheckout),

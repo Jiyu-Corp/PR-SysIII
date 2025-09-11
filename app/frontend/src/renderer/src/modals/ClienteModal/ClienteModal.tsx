@@ -35,7 +35,7 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	const [name, setName] = useState<string>(client?.name || '');
 	const [phone, setPhone] = useState<string>(client?.phone || '');
   const phoneUnformater = (value: string) => value.replace(/\+55/g, '').replace(/\D/g, "");
-	const [email, setEmail] = useState<string>(client?.email || '');
+	const [email, setEmail] = useState<string>(client?.email && client.email != '---' ? client.email : '');
 	const [idClientEnterprise, setIdClientEnterprise] = useState<number | null>(client?.enterprise?.idClient || null);
 
   // Options

@@ -51,7 +51,7 @@ export default function TabelaPrecoPage() {
             return {
                 idPriceTable: item.idPriceTable,
                 pricePerHour: item.pricePerHour,
-                toleranceMinutes: item.toleranceMinutes,
+                toleranceMinutes: item.toleranceMinutes ?? '---',
                 idVehicleType: item.vehicleType?.idVehicleType,
                 priceTableHours: item.priceTableHours,
                 vehicleTypeName: item.vehicleType?.description,
@@ -163,7 +163,7 @@ export default function TabelaPrecoPage() {
         const mapped: priceTableType[] = (arr as any[]).map((item: any) => ({
             idPriceTable: item.idPriceTable,
             pricePerHour: item.pricePerHour,
-            toleranceMinutes: item.toleranceMinutes,
+            toleranceMinutes: item.toleranceMinutes ?? '---',
             idVehicleType: item.vehicleType?.idVehicleType,
             priceTableHours: item.priceTableHours ,
             vehicleTypeName: item.vehicleType?.description,
