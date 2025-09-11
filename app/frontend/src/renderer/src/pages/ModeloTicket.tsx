@@ -21,7 +21,6 @@ export default function ModeloTicketPage() {
   const [isTicketModelModalOpen, setIsTicketModelModalOpen] = useState<boolean>(false);
   const [ticketModelDetail, setTicketModelDetail] = useState<ticketModelType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
-
   
   const [rows, setRows] = useState<ticketModelType[]>([]);
   const [filtered, setFiltered] = useState<ticketModelType[] | null>(null);

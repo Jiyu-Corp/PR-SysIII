@@ -13,6 +13,7 @@ import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { vehicleTypeType } from "@renderer/types/resources/vehicleTypeType";
 import { getErrorMessage } from "@renderer/utils/utils";
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import Swal from "sweetalert2";
 
 type VehicleTypeModalProps = { 
   vehicleType: vehicleTypeType | undefined;
@@ -60,9 +61,50 @@ export default function VehicleTypeModal({vehicleType, isOpen, closeModal}: Vehi
   }
   
   async function editVehicleType() {
+    if(typeof idVehicleType === 'undefined') return;
+
+    const params = {
+      idVehicleType: idVehicleType,
+      description: description,
+      idImage: idImage
+    }
+    try {
+      await requestPRSYS('vehicle-type', idVehicleType.toString(), 'PUT', params);
+
+      closeModal();
+
+      toast.success('Tipo de veículo editado.', successToastStyle);
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   async function deleteVehicleType() {
+    if(typeof idVehicleType === 'undefined') return;
+
+    try {
+
+      const result = await Swal.fire({
+        title: "Confirmação",
+        text: "Tem certeza que deseja excluir este tipo de veículo?",
+        icon: "warning",
+        showCancelButton: true,
+        cancelButtonText: "Cancelar",
+        confirmButtonText: "Sim, excluir",
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+      });
+
+      if (result.isConfirmed) {
+        await requestPRSYS('vehicle-type', idVehicleType.toString(), 'DELETE');
+  
+        closeModal();
+  
+        toast.success('Tipo de veículo excluído.', successToastStyle);
+      }
+    } catch(err) {
+      toast.error(getErrorMessage(err as PrsysError), errorToastStyle);
+    }
   }
 
   return <Modal1 maxWidth="550px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
