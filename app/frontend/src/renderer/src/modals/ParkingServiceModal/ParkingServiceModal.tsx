@@ -382,7 +382,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
         }
         {isEdicaoParkingService
           ? <>
-            <ButtonModal icon={CurrencyDollarIcon} text="Finalizar" color="#FFFFFF" backgroundColor="#3BB373" isDisabled={isFinishServiceTabOpen} action={() => setIsFinishServiceTabOpen(true)}/>
+            <ButtonModal icon={CurrencyDollarIcon} text="Saída" color="#FFFFFF" backgroundColor="#3BB373" isDisabled={isFinishServiceTabOpen} action={() => setIsFinishServiceTabOpen(true)}/>
             <ButtonModal icon={TrashIcon} text="Cancelar" color="#FFFFFF" backgroundColor="#C2292E" action={deleteParkingService}/>
           </>
           : <>

@@ -222,7 +222,10 @@ export class ParkingServiceService {
           parkingService.totalPrice = serviceTotalCost;
   
           parkingService.isParking = false;
-          parkingService.dateCheckout = new Date();
+
+          const currentDateDB = await this.parkingServiceRepo.query("SELECT NOW()");
+          const currentDate = new Date(currentDateDB[0].now);
+          parkingService.dateCheckout = currentDate;
   
           await this.parkingServiceRepo.save(parkingService);
         } catch(err) {

@@ -10,6 +10,7 @@ import { errorToastStyle } from "@renderer/types/ToastTypes";
 import { numeroParaMoeda } from "@renderer/utils/utils";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
+import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import SelectModal from "../modals/SelectModal/SelectModal";
 
 export default function EntradaSaidaPage() {
@@ -47,6 +48,8 @@ export default function EntradaSaidaPage() {
           setRows(mapped);
           setFiltered(null);
         } else {
+          setRows([]);
+          setFiltered(null);
           console.warn("fetchReport: response:", response);
         }
         
@@ -137,22 +140,35 @@ export default function EntradaSaidaPage() {
       Cliente: r.clientName,
       Preço: r.price,
     }));
-
-    const csv = [
-      Object.keys(data[0]).join(";"),
-      ...data.map((row) => Object.values(row).map((v) => `"${String(v ?? "")}"`).join(";")),
-    ].join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  
+    if (!data.length) return;
+  
+    const escapeValue = (v: any) =>
+      `"${String(v ?? "").replace(/"/g, '""')}"`;
+  
+    const header = Object.keys(data[0]).map((h) => escapeValue(h)).join(";");
+    const body = data
+      .map((row) => Object.values(row).map((v) => escapeValue(v)).join(";"))
+      .join("\n");
+  
+    const csv = `${header}\n${body}`;
+  
+    const bom = "\uFEFF";
+    const blob = new Blob([bom + csv], { type: "text/csv;charset=utf-8;" });
+  
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `relatorio.csv`;
+    a.download = `relatorios.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
   
   const rowsToShow = filtered ?? rows;
+  const teste = [({
+          id: 1,
+          label: 'Entradas / Saídas' 
+        } as SelectOption)];
 	
   return (<>
     <main>
@@ -160,10 +176,12 @@ export default function EntradaSaidaPage() {
         position="top-right"
         reverseOrder={true}
       />
-      <GenericFilters title="Listagens" fields={filters} onSearch={handleSearch}/>
-			<div style={{width: "100%", marginBottom: 4}}>
-        <SelectModal width="240px" label="Teste" options={[]} value={null} setValue={(newValue: string) => console.log(newValue)} />
-			</div>
+      <GenericFilters title="Relatórios" fields={filters} onSearch={handleSearch} style="header-flex-start"
+        buttons={[
+          <div style={{width: "100%", display: "flex"}}>
+            <SelectModal width="240px" placeholder='Entradas / Saídas' options={teste} value={'teste'} setValue={() => teste} />
+          </div>]}      
+      />
       {loading 
         ? <div style={{ margin: "24px 64px" }}>
           <Grid

@@ -30,7 +30,10 @@ export class PriceTableService {
         if(loadPTableError) throw new DatabaseError();
         if(!priceTable) throw new PriceTableNotFound();
 
-        const currentDate = new Date();
+        const [curDateDBError, currentDateDB] = await promiseCatchError(this.priceTableRepo.query("SELECT NOW()"));
+        if(curDateDBError) throw new DatabaseError();
+        
+        const currentDate = new Date(currentDateDB[0].now);
         const curDateWithTolerance = new Date(currentDate.getTime() - ((priceTable.toleranceMinutes ?? 0) * 1000 * 60));
         const timeOfServiceInMS = curDateWithTolerance.getTime() - parkingService.dateRegister.getTime();
         const hoursOfService = Math.floor(timeOfServiceInMS / (1000 * 60 * 60));
@@ -165,7 +168,6 @@ export class PriceTableService {
             
             return updatedPriceTable;
         } catch (err) {
-            console.log(err)
             throw buildDatabaseError(err, {
                 UKErrors: [
                     new PriceTableHourExists(),

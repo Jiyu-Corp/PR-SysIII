@@ -22,7 +22,8 @@ export class ReportService {
                     .innerJoinAndSelect('vehicle.model', 'model')
                     .innerJoinAndSelect('model.brand', 'brand')
                     .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
-                .where('parkingService.isParking = false');
+                .where('parkingService.isParking = false')
+                .andWhere('parkingService.dateCheckout IS NOT NULL');
             
             if(getParkedServicesDto.plate) {
                 query.andWhere('vehicle.plate ILIKE :plate', { 
@@ -55,6 +56,7 @@ export class ReportService {
             
             return parkedServices;
         } catch (err) {
+            console.log(err)
             throw new DatabaseError();
         }
     }

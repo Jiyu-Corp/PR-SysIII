@@ -205,7 +205,7 @@ export default function ModeloTicketPage() {
   
         if (result.isConfirmed) {
           await requestPRSYS("ticket-model", `${id}`, "DELETE");
-          toast.success("Ticket desativado com sucesso!", successToastStyle);
+          toast.success("Ticket excluido com sucesso!", successToastStyle);
           fetchTicket();
         }
       } catch (error) {

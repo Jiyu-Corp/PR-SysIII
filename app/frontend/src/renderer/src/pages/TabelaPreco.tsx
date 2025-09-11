@@ -63,6 +63,8 @@ export default function TabelaPrecoPage() {
             setRows(mapped);
             setFiltered(null);
           } else {
+            setRows([]);
+            setFiltered(null);
             console.warn("fetchPrice: response:", response);
           }
           

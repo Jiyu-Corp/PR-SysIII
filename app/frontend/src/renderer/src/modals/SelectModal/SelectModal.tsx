@@ -7,7 +7,7 @@ import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectType
 
 type SelectModalProps = {
   width?: number | string;
-  label: string;
+  label?: string;
   placeholder?: string;
   disabled?: boolean;
   value: string | number | null;

@@ -79,7 +79,7 @@ export class VehicleTypeService {
         if(vTypeError) throw new DatabaseError();
         if(vehicleType === null) throw new VehicleTypeNotExists();
         
-        const existsModels = vehicleType.models.length < 1;
+        const existsModels = vehicleType.models.length > 0;
         if(existsModels) throw new ExistModelsUsingThatVehicleType();
 
         // Check if exists car parked

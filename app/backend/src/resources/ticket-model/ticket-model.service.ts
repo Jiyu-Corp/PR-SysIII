@@ -113,10 +113,10 @@ export class TicketModelService {
     }
 
     async deleteTicketModel(idTicketModel: number): Promise<void> {
-        const [ticketModelError, result] = await promiseCatchError(this.ticketModelRepo
-            .update(idTicketModel, { isActive: false })
-        );
-        if(ticketModelError) throw new DatabaseError();
-        if(result.affected === 0) throw new TicketModelNotExists();
+        try {
+            await promiseCatchError(this.ticketModelRepo.delete(idTicketModel))
+        } catch (err) {
+            throw new DatabaseError();
+        }
     }
 }
