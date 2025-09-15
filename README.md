@@ -10,6 +10,7 @@
 ---
 ## Como foi implementado?
 A linguagem de programação utilizada foi o "Javascript", tanto no server-side como tambem no client-side. 
+
 Vale dizer que o superset "Typescript" tambem foi utilizado em ambos os ambientes.
 Especificamente, foram usado as bibliotecas/frameworks:
 - NestJS(server-side)
