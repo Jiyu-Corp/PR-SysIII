@@ -57,9 +57,19 @@ export class ParkingServiceService {
         const [parkError, park] = await promiseCatchError(this.parkService.getDefaultPark());
         if(parkError) throw parkError;
 
-        
         const clientDto = createParkingServiceDto.clientCreate || createParkingServiceDto.clientEdit;
         const vehicleDto = (createParkingServiceDto.vehicleCreate || createParkingServiceDto.vehicleEdit)!;
+
+        if("idVehicle" in vehicleDto){
+            const [psCheckError, pServiceCheck] = await promiseCatchError(this.parkingServiceRepo.existsBy({
+                vehicle: {
+                    idVehicle: vehicleDto.idVehicle
+                },
+                isParking: true
+            }));
+            if(psCheckError) throw new DatabaseError();
+            if(pServiceCheck) throw new VehicleAlreadyParked();
+        }
 
         const [pTableError, existsPTable] = await promiseCatchError(this.priceTableService.existsPriceTableWithinVehicleType(vehicleDto.model?.idVehicleType!));
         if(pTableError) throw pTableError;
