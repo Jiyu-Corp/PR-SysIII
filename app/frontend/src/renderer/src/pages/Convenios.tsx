@@ -296,7 +296,6 @@ export default function ConvenioPage() {
             columns={columns}
             rows={rowsToShow}
             actions={actions}
-            perPage={5}
             total={rowsToShow.length}
             onGenerateCSV={handleGenerateCSV}
           />

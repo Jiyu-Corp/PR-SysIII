@@ -199,7 +199,6 @@ export default function EntradaSaidaPage() {
             title="Entradas/saídas"
             columns={columns}
             rows={rowsToShow}
-            perPage={5}
             total={rowsToShow.length}
             onGenerateCSV={handleGenerateCSV}
             isReport={true}

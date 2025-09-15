@@ -274,7 +274,6 @@ export default function ClientesPage() {
             columns={columns}
             rows={rowsToShow}
             actions={actions}
-            perPage={5}
             total={rowsToShow.length}
             onGenerateCSV={handleGenerateCSV}
           />

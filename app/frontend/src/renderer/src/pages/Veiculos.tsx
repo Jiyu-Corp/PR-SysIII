@@ -388,7 +388,6 @@ export default function VeiculosPage() {
             columns={columns}
             rows={rowsToShow}
             actions={actions}
-            perPage={5}
             total={rowsToShow.length}
             onGenerateCSV={handleGenerateCSV}
           />

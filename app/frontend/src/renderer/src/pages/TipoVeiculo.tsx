@@ -197,7 +197,6 @@ export default function TipoVeiculoPage() {
             columns={columns}
             rows={rows}
             actions={actions}
-            perPage={5}
             total={rows.length}
             onGenerateCSV={handleGenerateCSV}
           />

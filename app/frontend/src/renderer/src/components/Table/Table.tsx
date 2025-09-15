@@ -9,7 +9,7 @@ function Table<T extends Record<string, any>>({
   columns,
   rows,
   actions = [],
-  perPage = 5,
+  perPage = 10,
   total = null,
   onGenerateCSV,
   className = "",
