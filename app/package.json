@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "cd frontend && npm run dev",
-    "start": "cd frontend && npm run dev",
+    "start": "cd frontend && npm run dev"
   },
   "keywords": [],
   "author": "",
