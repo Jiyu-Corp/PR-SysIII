@@ -5,7 +5,7 @@ import { FindOptionsWhere, Repository, TypeORMError } from 'typeorm';
 import { DatabaseError } from 'src/utils/app.errors';
 import { CreateParkingServiceDto } from './dto/create-parking-service-dto';
 import { CreateVehicleDto } from '../vehicle/dto/create-vehicle-dto';
-import { buildDatabaseError, promiseCatchError } from 'src/utils/utils';
+import { buildDatabaseError, checkAndGetUKError, promiseCatchError } from 'src/utils/utils';
 import { VehicleService } from '../vehicle/vehicle.service';
 import { CreateClientDto } from '../client/dto/create-client-dto';
 import { ClientService } from '../client/client.service';
@@ -101,8 +101,10 @@ export class ParkingServiceService {
 
             return service;
         } catch (err) {
-            if(client) this.clientService.deleteClient(client.idClient);
-            this.vehicleService.deleteVehicle(vehicle.idVehicle);
+            if(!checkAndGetUKError(err)) {
+                if(client) this.clientService.deleteClient(client.idClient);
+                this.vehicleService.deleteVehicle(vehicle.idVehicle);
+            }
 
             throw buildDatabaseError(err, {
                 UKErrors: [
