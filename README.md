@@ -22,8 +22,7 @@ Alem disto, o sistema tambem usa um banco de dados na nuvem, hospedado pela "Neo
 ---
 ## O que é necessário para executar o projeto?
 Requisitos:
-- NodeJS
-- npm
+- NodeJS(18.16.1)
 
 ---
 ## Como executar?
