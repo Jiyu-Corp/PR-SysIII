@@ -53,7 +53,7 @@ export default function VeiculosPage() {
       setLoading(true);
       try {
         const response = await requestPRSYS('vehicle', '', 'GET');
-        
+
         const arr = Array.isArray(response) ? response : response?.data ?? [];
         
         const mapped: vehicleType[] = (arr as any[]).map((item: any) => {
@@ -74,7 +74,7 @@ export default function VeiculosPage() {
             clientName: item.client ? item.client.name : '---'
           };
         });        
-        
+
         if (mapped.length) {
           setRows(mapped);
           setFiltered(null);
@@ -284,12 +284,12 @@ export default function VeiculosPage() {
       idVehicle: row.idVehicle,
       plate: row.plate,
       model: {
-        idModel: row.idModel,
+        idModel: row.idModel || row?.model?.idModel,
         nameModel: row.modelName,
-        idVehicleType: row.idVehicleType,
-        idBrand: row.idBrand,
+        idVehicleType: row.idVehicleType || row?.model?.vehicleType?.idVehicleType,
+        idBrand: row.idBrand || row?.model?.brand?.idBrand,
         brand: {
-          nameBrand: row.brandName
+          nameBrand: row.brandName || row?.model?.brand?.name
         }
       },
       year: row.year,

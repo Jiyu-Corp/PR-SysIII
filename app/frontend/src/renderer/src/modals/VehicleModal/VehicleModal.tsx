@@ -29,7 +29,7 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   // Control Params
   const [isLoading, setIsLoading] = useState(false);
   const isEdicaoVehicle = typeof vehicle !== 'undefined';
-
+  
   // Inputs
   const idVehicle = vehicle?.idVehicle;
   const [plate, setPlate] = useState<string>(vehicle?.plate || '');
