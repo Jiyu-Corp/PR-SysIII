@@ -59,7 +59,9 @@ export default function FinishParkingServiceTab({ parkingService, closeTab, clos
       }[];
 
       setPrices(pricesFormatted);
-      setPriceTotal(pricesFormatted.reduce((acc, cur) => acc + cur.value, 0));
+      
+      const total = pricesFormatted.reduce((acc, cur) => acc + cur.value, 0);
+      setPriceTotal(total < 0 ? 0 : total);
 
     } catch(err) {
       console.error("Erro ao consultar preços do serviço.")

@@ -206,8 +206,8 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
       const vehicle = plateWithVehicle.vehicle;
 
       setIdVehicle(vehicle.idVehicle);
-      setBrand(brands.find(b => b.id === vehicle.model.brand?.idBrand) || null);
-      setModel(brands.flatMap(b => b.models || []).find(m => m.id === vehicle.model.idModel) || null);
+      setBrand(brands.find(b => b.id === vehicle.model?.brand?.idBrand) || null);
+      setModel(brands.flatMap(b => b.models || []).find(m => m.id === vehicle.model?.idModel) || null);
       setColor(vehicle.color || "");
       setYear(vehicle.year || "");
       

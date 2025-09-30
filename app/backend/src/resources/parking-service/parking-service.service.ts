@@ -41,7 +41,13 @@ export class ParkingServiceService {
                     .innerJoinAndSelect('model.vehicleType', 'vehicleType')
                     .innerJoinAndSelect('model.brand', 'brand')
                     .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry', 'clientEntry.isActive = true')
+                    .leftJoinAndSelect('clientEntry.clientEnterprise', 'clientEntryEnterprise', 
+                        'clientEntryEnterprise.isActive = true'
+                    )
                     .leftJoinAndSelect('vehicle.client', 'clientVehicle', 'clientVehicle.isActive = true')
+                    .leftJoinAndSelect('clientVehicle.clientEnterprise', 'clientEnterprise', 
+                        'clientEnterprise.isActive = true'
+                    )
                 .where('parkingService.isParking = true')
                 .orderBy('parkingService.idParkingService', 'DESC')
                 .getMany();
@@ -218,9 +224,10 @@ export class ParkingServiceService {
         if(sValuesError) throw sValuesError;
 
         try {
-          const serviceTotalCost = 
+          let serviceTotalCost = 
               serviceValues.reduce((acc, sCost) => acc+sCost.value, 0) + 
               (finishParkingServiceDto.additionalDiscount ?? 0);
+          if(serviceTotalCost<0) serviceTotalCost = 0;
           
           // Client of entrance has priority compared to the client binded to the vehicle
           const client = parkingService.clientEntry || parkingService.vehicle.client;
