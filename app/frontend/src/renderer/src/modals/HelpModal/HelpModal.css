@@ -1,0 +1,10 @@
+.help-modal {
+  transform: translate(0, -16px);
+}
+
+.help-content {
+  white-space: pre-line;
+  font-size: 14px;
+  max-height: 448px;
+  overflow-y: scroll;
+}

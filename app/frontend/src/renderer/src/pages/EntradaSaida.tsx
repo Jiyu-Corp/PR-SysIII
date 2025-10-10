@@ -15,20 +15,35 @@ import { formatDateTime, getErrorMessage } from "@renderer/utils/utils";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 
 export default function EntradaSaidaPage() {
   const navigate = useNavigate();
   const [isParkingServiceModalOpen, setIsParkingServiceModalOpen] = useState<boolean>(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
   const [parkingServiceDetail, setParkingServiceDetail] = useState<parkingServiceType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
   const [rows, setRows] = useState<parkingServiceType[]>([]);
   const [filtered, setFiltered] = useState<parkingServiceType[] | null>(null);
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     setLoading(true);
 
+    window.addEventListener("keydown", openHelpMenuWithF1);
+
     fetchEntradaSaida().then(() => setLoading(false));
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fetchEntradaSaida = async () => {
@@ -277,5 +292,20 @@ export default function EntradaSaidaPage() {
       }
     </main>
     {isParkingServiceModalOpen && <ParkingServiceModal isOpen={isParkingServiceModalOpen} closeModal={() => setIsParkingServiceModalOpen(false)} parkingService={parkingServiceDetail}/>}
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={UserIcon} 
+      helpTitle="Entrada e Saida de Veiculos" 
+      helpText={
+        `Nesta aba são listados os veiculos estacionados no sistema. Podemos usa-la para:\n`+
+        `1. Dar entrada de novos veiculos no botão "Estacionar Veículo."\n\n` +
+        `2. Ao estacionar um veiculo, podemos cria-lo nesta janela(Placa, Marca e Modelo). Alem disto, podemos tambem criar o cliente que possui este veiculo e esta estacionando ele.\n\n` +
+        `3. NÃO é possivel cadastrar o tipo de veiculo na janela de estacionar veiculo, para isso, acesse o menu "Tipo de Veiculo"\n\n` +
+        `4. Abrir os detalhes do serviço, ao quao apresenta os dados do veiculo estacionado e o cliente vinculado a ele, clicando no botão com icone de lupa no final da tabela\n\n` +
+        `5. Cancelar a operação, removendo o veiculo estacionado nos detalhes do serviço.\n\n` +
+        `6. Dar saida no veiculo estacionado nos detalhes do serviço, clicando no botão "Saída".\n\n` +
+        `7. Na aba de saída do veiculo, podemos adicionar um desconto em um campo de valor na parte superior da janela.\n\n` +
+        `7. Na aba de saída do veiculo, podemos adicionar um desconto em um campo de valor na parte superior da janela.\n\n` +
+        `8. O preço do serviço é calculado com base no tipo de veiculo estacionado e sua tabela de preço. Para verificar as tabelas de preço do sistema, acesse o menu "Tabela de Preços".`
+      }/>
+    }
   </>);
 }
