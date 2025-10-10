@@ -16,18 +16,33 @@ import Swal from 'sweetalert2';
 import { formatCpfCnpj, formatPhone, getErrorMessage } from "@renderer/utils/utils";
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 
 export default function ClientesPage() {
   const navigate = useNavigate();
   const [rows, setRows] = useState<ClientRow[]>([]);
   const [filtered, setFiltered] = useState<ClientRow[] | null>(null);
   const [isClientModalOpen, setIsClientModalOpen] = useState<boolean>(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
   const [clientDetail, setClientDetail] = useState<clientType | undefined>(undefined);
   const [loading, setLoading] = useState(false);  
   const cpfCpnjUnformater = (value: string) => value.replace(/\D/g, "");
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     fetchClient();
+
+    window.addEventListener("keydown", openHelpMenuWithF1);
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fetchClient = async () => {
@@ -280,5 +295,17 @@ export default function ClientesPage() {
     }
     </main>
     {isClientModalOpen && <ClienteModal isOpen={isClientModalOpen} closeModal={() => setIsClientModalOpen(false)} client={clientDetail}/>}
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={UserIcon} 
+        helpTitle="Clientes" 
+        helpText={
+          `Nesta aba são listados os clientes ativos e cadastrados no sistema. Podemos usa-la para:\n`+
+          `1. Cadastrar um novo cliente no botão "Cadastrar Cliente."\n\n` +
+          `2. O campo de CPF/CNPJ define se o cliente será tratado como empresa ou pessoa. Sendo CPF(ou seja, pessoa) ele pode ser vinculado a uma empresa. Caso seja uma empresa, outros clientes do tipo pessoa podem se vincular a ele.\n\n` +
+          `3. Convênios NÃO são cadastrados nesta parte do sistema. Aqui você cadastra a empresa que ira ter um convenio, e então acessa o menu "Convênio" para cadastrar o convênio da empresa, assim todos os clientes vinculados a esta empresa terão o desconto do convênio.\n\n` +
+          `4. Para vincular um cliente a um veiculo, acesse o menu "Veículos".\n\n` +
+          `5. Editar um cliente cadastrado, clicando no botão com icone de lapis no final da tabela.\n\n` +
+          `6. Remover um cliente cadastrado, clicando no botão "Remover" dentro da janela de edição do cliente, aberta ao clicar no icone de lapis no final da tabela.`
+        }/>
+      }
   </>);
 }

@@ -12,18 +12,34 @@ import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import SelectModal from "../modals/SelectModal/SelectModal";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
+import { ArticleIcon } from "@phosphor-icons/react";
 
 export default function EntradaSaidaPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
 
   const [rows, setRows] = useState<reportType[]>([]);
   const [filtered, setFiltered] = useState<reportType[] | null>(null);
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     setLoading(true);
 
+    window.addEventListener("keydown", openHelpMenuWithF1);
+
     fetchReportParking().then(() => setLoading(false));
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fetchReportParking = async () => {
@@ -205,5 +221,13 @@ export default function EntradaSaidaPage() {
           />
       }
     </main>
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={ArticleIcon} 
+      helpTitle="Relatorio" 
+      helpText={
+        `Nesta aba podemos consultar informações do sistema resumidas em listagens:\n`+
+        `1. Selecionar o tipo da listagem na parte superior da tela.\n\n` +
+        `2. Extrair relatorio com os dados consultados.`
+      }/>
+    }
 	</>);
 }

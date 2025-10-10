@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import GenericFilters from "../components/Filters/Filters";
 import GenericTable from "../components/Table/Table";
-import { UserIcon, MagnifyingGlassIcon, TrashIcon, CarIcon  } from "@phosphor-icons/react";
+import { UserIcon, MagnifyingGlassIcon, TrashIcon, CarIcon, LetterCirclePIcon  } from "@phosphor-icons/react";
 import { Toaster, toast } from "react-hot-toast";
 import ParkingServiceModal from "@renderer/modals/ParkingServiceModal/ParkingServiceModal";
 import { parkingServiceType } from "@renderer/types/resources/parkingServiceType";
@@ -292,7 +292,7 @@ export default function EntradaSaidaPage() {
       }
     </main>
     {isParkingServiceModalOpen && <ParkingServiceModal isOpen={isParkingServiceModalOpen} closeModal={() => setIsParkingServiceModalOpen(false)} parkingService={parkingServiceDetail}/>}
-    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={UserIcon} 
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={LetterCirclePIcon} 
       helpTitle="Entrada e Saida de Veiculos" 
       helpText={
         `Nesta aba são listados os veiculos estacionados no sistema. Podemos usa-la para:\n`+
@@ -302,7 +302,6 @@ export default function EntradaSaidaPage() {
         `4. Abrir os detalhes do serviço, ao quao apresenta os dados do veiculo estacionado e o cliente vinculado a ele, clicando no botão com icone de lupa no final da tabela\n\n` +
         `5. Cancelar a operação, removendo o veiculo estacionado nos detalhes do serviço.\n\n` +
         `6. Dar saida no veiculo estacionado nos detalhes do serviço, clicando no botão "Saída".\n\n` +
-        `7. Na aba de saída do veiculo, podemos adicionar um desconto em um campo de valor na parte superior da janela.\n\n` +
         `7. Na aba de saída do veiculo, podemos adicionar um desconto em um campo de valor na parte superior da janela.\n\n` +
         `8. O preço do serviço é calculado com base no tipo de veiculo estacionado e sua tabela de preço. Para verificar as tabelas de preço do sistema, acesse o menu "Tabela de Preços".`
       }/>

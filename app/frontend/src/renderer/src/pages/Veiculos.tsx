@@ -18,11 +18,13 @@ import BrandModelDeleteModal from "@renderer/modals/BrandModelDeleteModal/BrandM
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import { getErrorMessage } from "@renderer/utils/utils";
 import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 
 export default function VeiculosPage() {
   const navigate = useNavigate();
   const [isVehicleModalOpen, setIsVehicleModalOpen] = useState<boolean>(false);
   const [isBrandModelDeleteModalOpen, setIsBrandModelDeleteModalOpen] = useState<boolean>(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
   const [vehicleDetail, setVehicleDetail] = useState<vehicleType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
@@ -36,8 +38,17 @@ export default function VeiculosPage() {
   const [vehicleTypes, setVehicleTypes] = useState<SelectOption[]>([]);
   const [clients, setClients] = useState<SelectOption[]>([]);
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     setLoading(true);
+
+    window.addEventListener("keydown", openHelpMenuWithF1);
 
     const fetches: Promise<void>[] = [
       fetchVeiculos(),
@@ -47,6 +58,10 @@ export default function VeiculosPage() {
     ];
 
     Promise.all(fetches).then(() => setLoading(false));
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fetchVeiculos = async () => {
@@ -395,5 +410,17 @@ export default function VeiculosPage() {
     </main>
     {isVehicleModalOpen && <VehicleModal isOpen={isVehicleModalOpen} closeModal={() => setIsVehicleModalOpen(false)} vehicle={vehicleDetail}/>}
     {isBrandModelDeleteModalOpen && <BrandModelDeleteModal isOpen={isBrandModelDeleteModalOpen} closeModal={() => setIsBrandModelDeleteModalOpen(false)}/>}
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={CarIcon} 
+      helpTitle="Veículos" 
+      helpText={
+        `Nesta aba são listados os veiculos ativos e cadastrados no sistema. Podemos usa-la para:\n`+
+        `1. Cadastrar um novo veiculo no botão "Cadastrar Veiculo."\n\n` +
+        `2. No cadastro de um novo veículo pode-se cadastrar tambem Marcas e Modelos, apenas escrevendo a nova marca/modelo no campo indicado na janela de cadastro.\n\n` +
+        `3. O tipo de veículo NÃO pode ser cadastrado nesta parte do sistema, para isso, navegue para a aba "Tipo de Veiculo".\n\n` +
+        `4. A tabela de preço dos veiculos NÃO podem ser cadastradas nesta parte do sistema, para isso, navegue para a aba "Tabela de Preços".\n\n` +
+        `5. Editar um veiculo cadastrado, clicando no botão com icone de lapis no final da tabela.\n\n` +
+        `6. Remover um veiculo cadastrado, clicando no botão "Remover" dentro da janela de edição do veiculo, aberta ao clicar no icone de lapis no final da tabela.`
+      }/>
+    }
   </>);
 }

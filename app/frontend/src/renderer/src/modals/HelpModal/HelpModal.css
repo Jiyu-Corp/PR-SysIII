@@ -6,5 +6,5 @@
   white-space: pre-line;
   font-size: 14px;
   max-height: 448px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }

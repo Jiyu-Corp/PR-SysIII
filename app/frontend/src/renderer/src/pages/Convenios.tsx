@@ -17,11 +17,13 @@ import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectType
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 
 
 export default function ConvenioPage() {
   const navigate = useNavigate();
   const [isAgreementModalOpen, setIsAgreementModalOpen] = useState<boolean>(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
   const [agreementDetail, setAgreementDetail] = useState<agreementType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   
@@ -30,8 +32,17 @@ export default function ConvenioPage() {
   
   const [agreementEnterprises, setClientEnterprises] = useState<SelectOption[]>([]);
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     setLoading(true);
+
+    window.addEventListener("keydown", openHelpMenuWithF1);
 
     const fetches: Promise<void>[] = [
       fetchConvenios(),
@@ -39,6 +50,10 @@ export default function ConvenioPage() {
     ];
 
     Promise.all(fetches).then(() => setLoading(false));
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fetchConvenios = async () => {
@@ -302,5 +317,17 @@ export default function ConvenioPage() {
       }
     </main>
     {isAgreementModalOpen && <AgreementModal isOpen={isAgreementModalOpen} closeModal={() => setIsAgreementModalOpen(false)} agreement={agreementDetail}/>}
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={HandshakeIcon} 
+        helpTitle="Convênios" 
+        helpText={
+          `Nesta aba são listados os convênios ativos e cadastrados no sistema. Podemos usa-la para:\n`+
+          `1. Cadastrar um novo convênio no botão "Cadastrar Convênio."\n\n` +
+          `2. Para cadastrar um convênio é preciso primeiro ter uma empresa pra vincula-lo.\n\n` +
+          `3. O cadastro da empresa que será vinculada ao convênio NÃO pode ser cadastrado nesta parte do sistema. Para isto acesse a menu "Clientes" e depois retorne para cadastrar o convênio.\n\n` +
+          `4. O convênio pode ter um dos dois tipos de desconto, por percentual ou valor fixo. Para preencher um, basta deixar o outro vazio. Então se buscamos criar um convênio com desconto percentual devemos deixar o campo de desconto fixo vazio e então preencher o campo do desconto percentual.\n\n` +
+          `5. Editar um convênio cadastrado, clicando no botão com icone de lapis no final da tabela.\n\n` +
+          `6. Remover um convênio cadastrado, clicando no botão "Remover" dentro da janela de edição do convênio, aberta ao clicar no icone de lapis no final da tabela.`
+        }/>
+      }
   </>);
 }

@@ -17,10 +17,12 @@ import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectType
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
 import ButtonModal from "@renderer/modals/ButtonModal/ButtonModal";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 
 export default function TabelaPrecoPage() {
   const navigate = useNavigate();
   const [isPriceTableModalOpen, setIsPriceTableModalOpen] = useState<boolean>(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
   const [priceTableDetail, setPriceTableDetail] = useState<priceTableType | undefined>(undefined);
   const [loading, setLoading] = useState(false);
   
@@ -29,8 +31,17 @@ export default function TabelaPrecoPage() {
 
   const [vehicleTypeOptions, setvehicleTypeOptions] = useState<SelectOption[]>([]);
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     setLoading(true);
+
+    window.addEventListener("keydown", openHelpMenuWithF1);
 
     const fetches: Promise<void>[] = [
       fetchPrice(),
@@ -38,6 +49,10 @@ export default function TabelaPrecoPage() {
     ];
 
     Promise.all(fetches).then(() => setLoading(false));
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fetchPrice = async () => {
@@ -285,5 +300,17 @@ export default function TabelaPrecoPage() {
       }
     </main>
     {isPriceTableModalOpen && <PriceTableModal isOpen={isPriceTableModalOpen} closeModal={() => setIsPriceTableModalOpen(false)} priceTable={priceTableDetail}/>}
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={CurrencyDollarIcon} 
+      helpTitle="Tabelas de Preços" 
+      helpText={
+        `Nesta aba são listados as tabelas de preços ativas e cadastradas no sistema. Podemos usa-la para:\n`+
+        `1. Cadastrar uma nova tabela de preço no botão "Cadastrar Tabela de Preço."\n\n` +
+        `2. Para cadastrar uma tabela de preço, é necessario um tipo de veiculo que não possua uma tabela de preço vinculada.\n\n` +
+        `3. O cadastro do tipo de veículo NÃO pode ser feito nesta parte do sistema, para isso acesse o menu "Tipo de Veículo".\n\n` +
+        `4. A tabela de preço não pode ser editada caso tenha algum veiculo vinculada a ela que esteja estacionado.\n\n` +
+        `5. Editar uma tabela de preço cadastrada, clicando no botão com icone de lapis no final da tabela.\n\n` +
+        `6. Remover uma tabela de preço cadastrada, clicando no botão "Remover" dentro da janela de edição da tabela de preço, aberta ao clicar no icone de lapis no final da tabela.`
+      }/>
+    }
   </>);
 }
