@@ -15,11 +15,13 @@ import { Grid } from "react-loader-spinner";
 import { getErrorMessage } from "@renderer/utils/utils";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
+import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 
 export default function TipoVeiculoPage() {
   const navigate = useNavigate();
   const [isVehicleTypeModalOpen, setIsVehicleTypeModalOpen] = useState<boolean>(false);
   const [vehicleTypeDetail, setVehicleTypeDetail] = useState<vehicleTypeType | undefined>(undefined);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
 
   const [rows, setRows] = useState<vehicleTypeType[]>([]);
@@ -35,12 +37,25 @@ export default function TipoVeiculoPage() {
     setIsVehicleTypeModalOpen(true);
   };
 
+  function openHelpMenuWithF1(event: KeyboardEvent): void {
+    if(event.key !== "F1") return;
+    event.preventDefault();
+
+    setIsHelpModalOpen(prev => !prev);
+  }
+
   useEffect(() => {
     setLoading(true);
+
+    window.addEventListener("keydown", openHelpMenuWithF1);
 
     fethTipoVeiculo();
 
     setLoading(false);
+
+    return () => {
+      window.removeEventListener("keydown", openHelpMenuWithF1);
+    }
   }, []);
 
   const fethTipoVeiculo = async () => {
@@ -203,5 +218,16 @@ export default function TipoVeiculoPage() {
       }
     </main>
     {isVehicleTypeModalOpen && <VehicleTypeModal isOpen={isVehicleTypeModalOpen} closeModal={() => setIsVehicleTypeModalOpen(false)} vehicleType={vehicleTypeDetail}/>}
+    {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={CarIcon} 
+      helpTitle="Tipos de Veículos" 
+      helpText={
+        `Nesta aba são listados os tipos de veículos cadastrados no sistema. Podemos usa-la para:\n`+
+        `1. Cadastrar um novo tipo de veículo no botão "Cadastrar Tipo de Veículo."\n\n` +
+        `2. A imagem representativa é apenas simbolica, sem tem impacto no sistema de fato.\n\n` +
+        `3. A tabela de preço NÃO é cadastrada ou vinculada a um tipo de veiculo aqui. Para cadastrar uma tabela de preço e vincula-la a um tipo de veiculo, acesse o menu "Tipo de Veículo"` +
+        `4. Editar um tipo de veículo cadastrado, clicando no botão com icone de lapis no final da tabela.\n\n` +
+        `5. Remover um tipo de veículo cadastrado, clicando no botão "Remover" dentro da janela de edição do tipo de veículo, aberta ao clicar no icone de lapis no final da tabela.`
+      }/>
+    }
   </>);
 }

@@ -222,7 +222,7 @@ export default function EntradaSaidaPage() {
       }
     </main>
     {isHelpModalOpen && <HelpModal isOpen={isHelpModalOpen} closeModal={() => setIsHelpModalOpen(false)} helpIcon={ArticleIcon} 
-      helpTitle="Relatorio" 
+      helpTitle="Relatorios" 
       helpText={
         `Nesta aba podemos consultar informações do sistema resumidas em listagens:\n`+
         `1. Selecionar o tipo da listagem na parte superior da tela.\n\n` +
