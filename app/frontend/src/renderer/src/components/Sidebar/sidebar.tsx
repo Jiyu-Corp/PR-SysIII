@@ -35,7 +35,7 @@ const Sidebar: React.FC = () => {
         </NavLink>
 
         <NavLink to="/relatorio" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
-          <span>Relatórios</span>
+          <span>Consultar</span>
         </NavLink>
 
         <NavLink to="/acesso" className={({isActive}) => isActive ? 'nav-item active' : 'nav-item'}>
