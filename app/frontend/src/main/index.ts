@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron'
 import path, { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -7,6 +7,7 @@ import startNest from './nestConfig'
 import axios from 'axios'
 
 let nestProcess;
+const fs = require('fs');
 
 async function createWindow(): Promise<void> {
     nestProcess = startNest();
@@ -47,6 +48,48 @@ async function createWindow(): Promise<void> {
     }
 
 }
+
+ipcMain.handle('generate-pdf', async (event, { html, defaultFilename = 'relatorio.pdf' }) => {
+  try {
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      title: 'Salvar relatório como PDF',
+      defaultPath: defaultFilename,
+      filters: [{ name: 'PDF', extensions: ['pdf'] }],
+    });
+
+    if (canceled || !filePath) return { canceled: true };
+
+    const pdfWin = new BrowserWindow({
+      show: false,
+      webPreferences: {
+        sandbox: false,
+      }
+    });
+
+    await pdfWin.loadURL('data:text/html;charset=utf-8,' + encodeURIComponent(html));
+
+    await pdfWin.webContents.executeJavaScript('document.fonts ? document.fonts.ready : Promise.resolve()');
+
+    const pdfOptions = {
+      marginsType: 1,
+      printBackground: true,
+      pageSize: 'A4' as any,
+      landscape: false,
+    };
+
+    const pdfBuffer = await pdfWin.webContents.printToPDF(pdfOptions);
+
+    fs.writeFileSync(filePath, pdfBuffer);
+
+    pdfWin.close();
+
+    return { canceled: false, filePath };
+  } catch (err) {
+    console.error('generate-pdf error', err);
+    return { canceled: true, error: String(err) };
+  }
+});
+
  function waitCooldown(cooldownInSeconds: number) {
     return new Promise(resolve => setTimeout(() => resolve(true), cooldownInSeconds * 1000));
 }
