@@ -18,9 +18,10 @@ type SelectCreateModalProps = {
   isGroupSelect?: boolean;
   menuMaxHeight?: number | string;
   required?: boolean;
+  hint?: string;
 };
 
-export default function SelectCreateModal({ width, label, placeholder, disabled, value, setValue, options, setOptions, formatInput, isGroupSelect, menuMaxHeight, required }: SelectCreateModalProps) {
+export default function SelectCreateModal({ width, label, placeholder, disabled, value, setValue, options, setOptions, formatInput, isGroupSelect, menuMaxHeight, required, hint }: SelectCreateModalProps) {
   const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
@@ -76,7 +77,7 @@ export default function SelectCreateModal({ width, label, placeholder, disabled,
     if (value === null) selectRef.current?.clearValue()
   }, [value]);
   
-  return <InputWrapperModal label={label} width={width}><div>
+  return <InputWrapperModal label={label} width={width}><div title={hint}>
     {required && <span className="input-modal-required">*</span>}
     <CreatableSelect
       ref={selectRef}

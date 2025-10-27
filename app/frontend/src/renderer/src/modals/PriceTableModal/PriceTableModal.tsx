@@ -226,9 +226,9 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
   return <Modal1 isLoading={isLoading} maxWidth="500px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CurrencyDollarIcon}>
     <div className="price-table-modal">
       <div className="inputs-wrapper">
-        <SelectModal width="150px" label="Tipo do Veículo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required />
-        <InputModal width="70px" label="Preço(R$)" value={pricePerHour} setValue={setPricePerHour} formatInput={formatPricePerHour} required/>
-        <InputModal width="90px" label="Tolerância(min)" value={toleranceMinutes} setValue={setToleranceMinutes} formatInput={formatToleranceTime} />
+        <SelectModal width="150px" label="Tipo do Veículo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required hint="Selecione o tipo de veículo para vincular a tabela de preço." />
+        <InputModal width="70px" label="Preço(R$)" value={pricePerHour} setValue={setPricePerHour} formatInput={formatPricePerHour} required hint="Insira o preço por hora."/>
+        <InputModal width="90px" label="Tolerância(min)" value={toleranceMinutes} setValue={setToleranceMinutes} formatInput={formatToleranceTime} hint="Insira a tolerância em minutos ate que uma nova hora seja contabilizada."/>
       </div>
       <div className="btns-wrapper">
         <ButtonModal icon={ArrowBendLeftDownIcon} text="Horas Especiais" color="#000000" backgroundColor="#FFFFFF" fontSize={16} action={() => setIsSpecialHoursOpen(true)} isDisabled={isSpecialHoursOpen}/>
@@ -242,7 +242,7 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
           </>
         }
       </div>
-      {isSpecialHoursOpen && <div className="special-hours-wrapper">
+      {isSpecialHoursOpen && <div title="Inserir horas especiais." className="special-hours-wrapper">
         {priceTableHours.map((pth, idx) => <div className="special-hour-wrapper" key={idx}>
           <h1 className="special-hour-idx">#{idx+1}</h1>
           <span className="special-hour-delete" onClick={() => deletePriceTableHour(pth)}>
@@ -251,7 +251,7 @@ export default function PriceTableModal({priceTable, isOpen, closeModal}: PriceT
           <InputModal width="70px" placeholder="Hora" value={pth.hour} setValue={updatePriceTableHour(pth, "hour")} formatInput={formatSpecialHour}/>
           <InputModal width="70px" placeholder="Preço" value={pth.price} setValue={updatePriceTableHour(pth, "price")} formatInput={formatPricePerHour}/>
         </div>)}
-        <div className="special-hour-creator-wrapper" onClick={addNewPriceTableHour}>
+        <div title="Inserir nova hora especial." className="special-hour-creator-wrapper" onClick={addNewPriceTableHour}>
           <PlusSquareIcon size={40} opacity={0.5} cursor={"pointer"}/>
         </div>
       </div>}

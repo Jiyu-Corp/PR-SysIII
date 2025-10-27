@@ -16,9 +16,10 @@ type SelectModalProps = {
   selectClass?: string;
   menuMaxHeight?: number | string;
   required?: boolean;
+  hint?: string;
 };
 
-export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options, selectClass, menuMaxHeight, required}: SelectModalProps) {
+export default function SelectModal({ width, label, placeholder, disabled, value, setValue, options, selectClass, menuMaxHeight, required, hint}: SelectModalProps) {
   // const [inputValue, setInputValue] = useState('');
   const selectRef = useRef<SelectInstance<SelectOption | SelectOptionGroup> | null>(null);
 
@@ -37,7 +38,7 @@ export default function SelectModal({ width, label, placeholder, disabled, value
 
   if(options.length < 1) return <></>;
   
-  return <InputWrapperModal label={label} width={width}><div>
+  return <InputWrapperModal label={label} width={width}><div title={hint}>
     {required && <span className="input-modal-required">*</span>}
     <Select
       ref={selectRef}

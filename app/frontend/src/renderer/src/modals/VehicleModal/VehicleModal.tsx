@@ -266,13 +266,13 @@ export default function VehicleModal({vehicle, isOpen, closeModal}: VehicleModal
   return <Modal1 isLoading={isLoading} maxWidth="450px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={CarIcon}>
     <div className="vehicle-modal">
       <div className="inputs-wrapper">
-        <InputModal width="120px" label="Placa" value={plate} setValue={setPlate} mask={'_______'} replacement={{ _: /[A-Z0-9]/}} onChange={(value:string) => setPlate(value.toUpperCase())} required={true}/>
+        <InputModal width="120px" label="Placa" value={plate} setValue={setPlate} mask={'_______'} replacement={{ _: /[A-Z0-9]/}} onChange={(value:string) => setPlate(value.toUpperCase())} required={true} />
         <InputModal width="170px" label="Cor" value={color} setValue={setColor}/>
         <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
-        <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} required={true}/>
-        <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} required={true}/> 
+        <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} required={true} hint="Selecione ou crie uma marca."/>
+        <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} required={true} hint="Selecione ou crie uma modelo."/> 
         <SelectModal width="180px" label="Tipo do Veículo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required={true}/>
-        <SelectModal width="180px" label="Cliente" options={clients} value={idClient} setValue={setIdClient}/>
+        <SelectModal width="180px" label="Cliente" options={clients} value={idClient} setValue={setIdClient} hint="Selecione o cliente dono deste veículo."/>
       </div>
       <div className="btns-wrapper">
         {isEdicaoVehicle

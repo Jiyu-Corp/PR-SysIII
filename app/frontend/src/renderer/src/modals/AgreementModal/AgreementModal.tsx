@@ -174,11 +174,10 @@ export default function AgreementModal({agreement, isOpen, closeModal}: Agreemen
     <div className="agreement-modal">
       <div className="inputs-wrapper">
         <div style={{width: "100%", marginBottom: 4}}>
-          <SelectModal width="240px" label="Empresa" options={agreementEnterprises} value={idClient} setValue={setIdClient} required={true} />
+          <SelectModal width="240px" label="Empresa" options={agreementEnterprises} value={idClient} setValue={setIdClient} required={true} hint="Selecione a empresa para vincular ao convênio." />
         </div>
-        <InputModal width="90px" label="Desconto Fixo" value={fixDiscount} setValue={setFixDiscount} disabled={percentageDiscount != ""} formatInput={formatFixDiscount}/>
-        <InputModal width="78px" label="Desconto(%)" value={percentageDiscount} setValue={setPercentageDiscount} disabled={fixDiscount != ""} formatInput={formatPercentageDiscount}/>
-        {/* <InputModal width="115px" label="Data de Expiração" value={dateExpiration} setValue={setDateExpiration} placeholder="dd/mm/yyyy" mask="dd/mm/yyyy" replacement={{ d: /\d/, m: /\d/, y: /\d/ }}/> */}
+        <InputModal width="90px" label="Desconto Fixo" value={fixDiscount} setValue={setFixDiscount} disabled={percentageDiscount != ""} formatInput={formatFixDiscount} hint="Para inserir, deixe o desconto percentual vazio."/>
+        <InputModal width="78px" label="Desconto(%)" value={percentageDiscount} setValue={setPercentageDiscount} disabled={fixDiscount != ""} formatInput={formatPercentageDiscount} hint="Para inserir, deixe o desconto fixo vazio."/>
         <DatePickerModal
           width="164px"
           label="Expiração"

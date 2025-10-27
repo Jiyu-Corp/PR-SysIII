@@ -26,9 +26,10 @@ type InputModalProps = {
     cols?: number;
   };
   required?: boolean;
+  hint?: string;
 };
 
-export default function InputModal({ className, width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData, required }: InputModalProps) {
+export default function InputModal({ className, width, label, value, type, placeholder, disabled, locked, setValue, onChange, mask, replacement, unformat, formatInput, fontSize, textAreaData, required, hint }: InputModalProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let value = e.currentTarget.value;
     if(typeof formatInput !== 'undefined')
@@ -64,7 +65,7 @@ export default function InputModal({ className, width, label, value, type, place
     }, [value]);
 
     return <InputWrapperModal label={label} width={width}>
-      <div style={{width: width}}>
+      <div style={{width: width}} title={hint}>
         {required && <span className="input-modal-required">*</span>}
         <input className={`input-modal ${className ?? ""}`} value={value} onChange={handleChange} style={{fontSize: fontSize, width: width}} placeholder={placeholder} disabled={disabled}/>
       </div>
@@ -81,7 +82,7 @@ export default function InputModal({ className, width, label, value, type, place
     };
 
     return <InputWrapperModal label={label} width={width}>
-      <div style={{width: width}}>
+      <div style={{width: width}} title={hint}>
         {required && <span className="input-modal-required">*</span>}
         <textarea className={`input-modal ${className ?? ""}`} value={value} onChange={handleChangeTextArea} style={{fontSize: fontSize, resize: "none", width: "100%"}} rows={textAreaData.rows} cols={textAreaData.cols} placeholder={placeholder} disabled={disabled}/>
       </div>
@@ -93,7 +94,7 @@ export default function InputModal({ className, width, label, value, type, place
     const inputType = isPassword ? (visible ? 'text' : 'password') : type
 
     return <InputWrapperModal label={label} width={width}>
-      <div style={{width: width}}>
+      <div style={{width: width}} title={hint}>
         {required && <span className="input-modal-required">*</span>}
         <input className={`input-modal ${locked ? "input-modal-locked" : ""} ${className ?? ""}`} type={isPassword ? inputType : type ?? "text"} value={value} onChange={handleChange} style={{fontSize: fontSize, width: width}} placeholder={placeholder} disabled={disabled || locked}/>
         {isPassword && (

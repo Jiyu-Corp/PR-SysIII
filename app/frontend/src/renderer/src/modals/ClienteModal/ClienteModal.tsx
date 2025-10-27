@@ -145,11 +145,11 @@ export default function ClienteModal({client, isOpen, closeModal}: ClienteModalP
 	return <Modal1 isLoading={isLoading} maxWidth="550px" title={title} isOpen={isOpen} closeModal={closeModal} entityIcon={UserIcon}>
     <div className="cliente-modal">
       <div className="inputs-wrapper">
-        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater} required={true}/>
+        <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater} required={true} hint="Digite o CPF ou CNPJ sem formatação."/>
         <InputModal width="310px" label="Nome" value={name} setValue={setName} required={true} onChange={(value:string) => setName(value.toUpperCase())}/>
-        <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
+        <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater} hint="Digite o telefone com dd entre parênteses."/>
         <InputModal width="305px" label="Email" value={email} setValue={setEmail}/>
-        <SelectModal width="240px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={120} />
+        <SelectModal width="240px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={120} hint={cpfCnpj.length > 14 ? "Apenas clientes com CPF podem se vincular a empresas." : "Selecione a empresa do cliente para receber o convênio vinculado a ela."}/>
       </div>
       <div className="btns-wrapper">
         {isEdicaoCliente

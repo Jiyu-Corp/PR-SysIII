@@ -371,12 +371,12 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     <div className="parking-service-modal">
       <div className="inputs-wrapper" style={{justifyContent: isClientFieldsEnabled ? "start" : "space-between"}}>
         <div style={{width: !isClientFieldsEnabled ? "100%" : "inherit", display: "flex", gap: "16px"}}>
-          <SelectCreateModal width="160px" label="Placa" options={plates} setOptions={setPlates} value={plate} setValue={setPlate} formatInput={(value:string) => value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 7)} required={true} />
+          <SelectCreateModal width="160px" label="Placa" options={plates} setOptions={setPlates} value={plate} setValue={setPlate} formatInput={(value:string) => value.replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 7)} required={true} hint="Selecione ou crie uma placa." />
           <InputModal width="140px" label="Cor" value={color} setValue={setColor} />
           <InputModal width="58px" label="Ano" value={year} setValue={setYear} mask={'____'} replacement={{ _: /\d/}} />
         </div>
-        <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} required={true} />
-        <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} required={true} /> 
+        <SelectCreateModal width="180px" label="Marca" options={brands} setOptions={setBrands} value={brand} setValue={setBrand} required={true} hint="Selecione ou crie uma marca." />
+        <SelectCreateModal width="180px" label="Modelo" options={models} setOptions={setModels} value={model} setValue={setModel} isGroupSelect={true} required={true} hint="Selecione ou crie uma modelo." /> 
         <SelectModal width="180px" label="Tipo do Veículo" options={vehicleTypes} value={idVehicleType} setValue={setIdVehicleType} required={true} />
       </div>
       <div className="btns-wrapper">
@@ -395,11 +395,11 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
       </div>
       {isClientFieldsEnabled && <> {
         <div className="client-inputs-wrapper">
-          <SelectCreateModal width="270px" label="Nome" options={clientNames} setOptions={setClientNames} value={clientName} setValue={setClientName} menuMaxHeight={160} required={true}/>
-          <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater} required={true}/>
-          <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater}/>
+          <SelectCreateModal width="270px" label="Nome" options={clientNames} setOptions={setClientNames} value={clientName} setValue={setClientName} menuMaxHeight={160} required={true} hint="Selecione ou insirá um novo nome." />
+          <InputModal width="150px" label="CPF/CNPJ" value={cpfCnpj} setValue={setCpfCnpj}  mask={cpfCpnjUnformater(cpfCnpj).length < 12 ? '___.___.___-__' : '__.___.___/____-__'} replacement={{ _: /\d/ }} unformat={cpfCpnjUnformater} required={true} hint="Digite o CPF ou CNPJ sem formatação."/>
+          <InputModal width="155px" label="Telefone" value={phone} setValue={setPhone}  mask={phoneUnformater(phone).length < 11 ? '+55 (__) ____-____' : '+55 (__) _____-____'} replacement={{ _: /\d/ }} unformat={phoneUnformater} hint="Digite o telefone com dd entre parênteses."/>
           <InputModal width="205px" label="Email" value={email} setValue={setEmail}/>
-          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={75}/>
+          <SelectModal width="210px" label="Empresa" disabled={cpfCnpj.length > 14} options={clientEnterprises} value={idClientEnterprise} setValue={setIdClientEnterprise} menuMaxHeight={75} hint={cpfCnpj.length > 14 ? "Apenas clientes com CPF podem se vincular a empresas." : "Selecione a empresa do cliente para receber o convênio vinculado a ela."} />
         </div>
       }</>}
     </div>
