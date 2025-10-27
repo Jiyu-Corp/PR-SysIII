@@ -5,6 +5,7 @@ export type Modal1Props = ModalWrapperProps & {
   className?: string;
   title: string;
   entityIcon: React.ComponentType<IconProps>;
+  minWidth?: string | number;
   maxWidth?: string | number;
   maxHeight?: string | number;
   isLoading?: boolean;

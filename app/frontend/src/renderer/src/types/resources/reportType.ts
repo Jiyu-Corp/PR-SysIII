@@ -1,3 +1,5 @@
+import { ticketModelType } from "./ticketModelType";
+
 export type reportType = {
 	clientName: string;
 	brandModelYear: string;
@@ -5,4 +7,5 @@ export type reportType = {
 	dateParkingServiceStart: string;
 	plate: string;
 	price: string;
+  ticketModel: ticketModelType
 }

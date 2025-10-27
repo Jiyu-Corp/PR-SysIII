@@ -1,4 +1,4 @@
-import { IsDateString, IsDefined, IsNumber, IsOptional, IsString, IsUppercase, MaxLength } from "class-validator";
+import { IsDateString, IsDefined, IsNumber, IsObject, IsOptional, IsString, IsUppercase, MaxLength } from "class-validator";
 
 export class FinishedParkingServices {
     @IsDefined()
@@ -25,5 +25,9 @@ export class FinishedParkingServices {
 
     @IsDefined()
     @IsNumber()
-    readonly price: number
+    readonly price: number;
+
+    @IsOptional()
+    @IsObject()
+    readonly ticketModel: object;
 }

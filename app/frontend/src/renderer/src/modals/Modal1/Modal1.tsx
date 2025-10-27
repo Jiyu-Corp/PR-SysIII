@@ -10,6 +10,7 @@ export default function Modal1({
 	title,
 	entityIcon: EntityIcon,
   isLoading,
+  minWidth,
   maxWidth,
   maxHeight,
 	isOpen,
@@ -19,7 +20,7 @@ export default function Modal1({
 	children
 }: Modal1Props) {
 	return <ModalWrapper isOpen={isOpen} closeModal={closeModal} noBackground={noBackground}>
-		<div className={`modal-1 ${className}`} style={{maxWidth: maxWidth, maxHeight: maxHeight}}>
+		<div className={`modal-1 ${className}`} style={{minWidth: minWidth, maxWidth: maxWidth, maxHeight: maxHeight}}>
 			<div className="entity-icon-wrapper">
 				<EntityIcon size={64} color="#4A87E8"/>
 			</div>

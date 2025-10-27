@@ -1,0 +1,24 @@
+.ticket-wrapper {
+  border: 1px solid black;
+  padding: 8px 16px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ticket-header {
+  font-size: 18px;
+  font-weight: 500;
+  white-space: pre-line;
+}
+
+.ticket-content {
+  white-space: pre-line;
+}
+
+.ticket-footer{
+  font-size: 18px;
+  font-weight: 500;
+  white-space: pre-line;
+}

@@ -28,6 +28,6 @@ export class TicketModel {
   @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
   dateUpdate: string;
 
-  @OneToMany(() => ParkingService, (parkingService) => parkingService.vehicle)
+  @OneToMany(() => ParkingService, (parkingService) => parkingService.ticketModel)
   parkingServices: ParkingService[];
 }

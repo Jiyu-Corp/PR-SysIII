@@ -22,6 +22,7 @@ export class ReportService {
                     .leftJoinAndSelect('vehicle.model', 'model')
                     .leftJoinAndSelect('model.brand', 'brand')
                     .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
+                    .leftJoinAndSelect('parkingService.ticketModel', 'ticketModel')
                 .where('parkingService.isParking = false')
                 .andWhere('parkingService.dateCheckout IS NOT NULL');
             
@@ -51,7 +52,8 @@ export class ReportService {
                 clientName: ps.clientEntry?.name,
                 dateParkingServiceStart: formatDateTime(ps.dateRegister),
                 dateParkingServiceEnd: formatDateTime(ps.dateCheckout),
-                price: ps.totalPrice
+                price: ps.totalPrice,
+                ticketModel: ps.ticketModel || undefined
             } as FinishedParkingServices));
             
             return parkedServices;

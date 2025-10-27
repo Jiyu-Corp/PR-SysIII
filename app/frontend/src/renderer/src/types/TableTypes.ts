@@ -14,6 +14,7 @@ export type TableAction<T> = {
 	label?: string;
 	icon?: React.ReactNode;
 	className?: string;
+  isDisabled?: (row: T) => boolean;
 	onClick?: (row: T) => void;
 };
 

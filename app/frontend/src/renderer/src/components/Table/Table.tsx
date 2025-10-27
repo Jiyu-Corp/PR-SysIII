@@ -139,16 +139,21 @@ function Table<T extends Record<string, any>>({
                     })}
                     {actions.length > 0 && (
                       <td className="generic-table-actions">
-                        {actions.map(a => (
-                          <button
-                            key={a.key}
-                            onClick={() => a.onClick?.(r)}
-                            className={`icon-btn ${a.className ?? ""}`}
-                            title={a.label}
-                          >
-                            {a.icon ?? a.label}
-                          </button>
-                        ))}
+                        {actions.map(a => {
+                          const isDisabled = typeof a.isDisabled === 'function' ? a.isDisabled(r) : false;
+                          console.log(r);
+                          return (
+                            <button
+                              key={a.key}
+                              onClick={() => a.onClick?.(r)}
+                              className={`icon-btn ${a.className ?? ""} ${isDisabled ? "action-disabled" : ""}`}
+                              title={a.label}
+                              disabled={isDisabled}
+                            >
+                              {a.icon ?? a.label}
+                            </button>
+                          )
+                        })}
                       </td>
                     )}
                   </tr>

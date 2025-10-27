@@ -14,11 +14,18 @@ import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectType
 import SelectModal from "../modals/SelectModal/SelectModal";
 import HelpModal from "@renderer/modals/HelpModal/HelpModal";
 import { ArticleIcon } from "@phosphor-icons/react";
+import TicketModal from "@renderer/modals/TicketModal/TicketModal";
+import { parkingServiceType } from "@renderer/types/resources/parkingServiceType";
+import { ticketModelType } from "@renderer/types/resources/ticketModelType";
 
 export default function EntradaSaidaPage() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isHelpModalOpen, setIsHelpModalOpen] = useState<boolean>(false);
+
+  const [isTicketModalOpen, setIsTicketModalOpen] = useState<boolean>(false);
+  const [ticketDataModal, setTicketDataModal] = useState<reportType | null>();
+  const [ticketModelModal, setTicketModelModal] = useState<ticketModelType | null>();
 
   const [rows, setRows] = useState<reportType[]>([]);
   const [filtered, setFiltered] = useState<reportType[] | null>(null);
@@ -56,7 +63,8 @@ export default function EntradaSaidaPage() {
 							dateParkingServiceEnd: item.dateParkingServiceEnd,
 							dateParkingServiceStart: item.dateParkingServiceStart,
 							plate: item.plate, 
-							price: numeroParaMoeda(item.price)
+							price: numeroParaMoeda(item.price),
+              ticketModel: item.ticketModel
             };
         });    
         
@@ -106,8 +114,11 @@ export default function EntradaSaidaPage() {
       label: "Ticket",
       icon: <ArticleIcon size={14} />,
       className: 'icon-btn-view',
+      isDisabled: (row: reportType) => typeof row.ticketModel == 'undefined' || !row.ticketModel,
       onClick: (row: reportType) => {
-        console.log(row);
+        setIsTicketModalOpen(true);
+        setTicketDataModal(row);
+        setTicketModelModal(row.ticketModel);
       },
     },
   ];
@@ -147,7 +158,8 @@ export default function EntradaSaidaPage() {
 					dateParkingServiceEnd: item.dateParkingServiceEnd,
 					dateParkingServiceStart: item.dateParkingServiceStart,
 					plate: item.plate, 
-					price: item.price
+					price: numeroParaMoeda(item.price),
+          ticketModel: item.ticketModel
 			}));
 	
 			setFiltered(mapped);
@@ -305,6 +317,12 @@ export default function EntradaSaidaPage() {
         `1. Selecionar o tipo da listagem na parte superior da tela.\n\n` +
         `2. Extrair relatorio com os dados consultados.`
       }/>
+    }
+    {isTicketModalOpen && ticketDataModal && ticketModelModal && 
+      <TicketModal isOpen={isTicketModalOpen} closeModal={() => setIsTicketModalOpen(false)} 
+        ticketDataModal={ticketDataModal}
+        ticketModel={ticketModelModal}
+      />
     }
 	</>);
 }
