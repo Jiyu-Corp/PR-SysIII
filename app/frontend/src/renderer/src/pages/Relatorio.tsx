@@ -100,6 +100,18 @@ export default function EntradaSaidaPage() {
       { key: "price", label: "Preço" }
   ];
 
+  const actions = [
+    {
+      key: "view",
+      label: "Ticket",
+      icon: <ArticleIcon size={14} />,
+      className: 'icon-btn-view',
+      onClick: (row: reportType) => {
+        console.log(row);
+      },
+    },
+  ];
+
 	const handleSearch = async (values: Record<string, any>) => {
 		
 		const plate = values.plate;
@@ -279,6 +291,7 @@ export default function EntradaSaidaPage() {
             title="Entradas/saídas"
             columns={columns}
             rows={rowsToShow}
+            actions={actions}
             total={rowsToShow.length}
             onGenerateCSV={handleGeneratePDF}
             isReport={true}

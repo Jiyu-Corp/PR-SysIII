@@ -11,6 +11,7 @@ import { Client } from "../client/client.entity";
 import { Park } from "./modules/park/park.entity";
 import { PriceTable } from "./modules/price-table/price-table.entity";
 import { Vehicle } from "../vehicle/vehicle.entity";
+import { TicketModel } from "../ticket-model/ticket-model.entity";
 
 // Limitar estacionar mesmo carro
 @Index("parking_service_pkey", ["idParkingService"], { unique: true })
@@ -95,4 +96,14 @@ export class ParkingService {
   })
   @JoinColumn([{ name: "id_vehicle", referencedColumnName: "idVehicle" }])
   vehicle: Vehicle;
+
+  // Soft delete
+  @ManyToOne(() => TicketModel, (ticketModel) => ticketModel.parkingServices, {
+    onDelete: "SET NULL",
+    onUpdate: "CASCADE",
+    nullable: true,
+    cascade: ['insert','update']
+  })
+  @JoinColumn([{ name: "id_ticket_model", referencedColumnName: "idTicketModel" }])
+  ticketModel: TicketModel;
 }

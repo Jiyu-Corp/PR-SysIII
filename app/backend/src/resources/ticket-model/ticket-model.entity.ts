@@ -1,4 +1,5 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { ParkingService } from "../parking-service/parking-service.entity";
 
 @Index("ticket_model_pkey", ["idTicketModel"], { unique: true })
 
@@ -26,4 +27,7 @@ export class TicketModel {
 
   @Column("date", { name: "date_update", default: () => "CURRENT_DATE" })
   dateUpdate: string;
+
+  @OneToMany(() => ParkingService, (parkingService) => parkingService.vehicle)
+  parkingServices: ParkingService[];
 }

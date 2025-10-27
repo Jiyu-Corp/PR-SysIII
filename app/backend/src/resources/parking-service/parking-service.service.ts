@@ -19,6 +19,7 @@ import { EditVehicleDto } from '../vehicle/dto/edit-vehicle-dto';
 import { EditClientDto } from '../client/dto/edit-client-dto';
 import { FinishParkingServiceDto } from './dto/finish-parking-service-dto';
 import { PriceTableNotExists } from './modules/price-table/price-table.errors';
+import { TicketModelService } from '../ticket-model/ticket-model.service';
 
 @Injectable()
 export class ParkingServiceService {
@@ -29,7 +30,8 @@ export class ParkingServiceService {
         private readonly vehicleService: VehicleService,
         private readonly parkService: ParkService,
         private readonly priceTableService: PriceTableService,
-        private readonly agreementService: AgreementService
+        private readonly agreementService: AgreementService,
+        private readonly ticketModelService: TicketModelService,
     ) {}
 
     async getOpenServices(): Promise<ParkingService[]> {
@@ -107,12 +109,18 @@ export class ParkingServiceService {
         if(vehicle.model === null) 
             throw new VehicleWithoutModel(); // Maybe that will never happen because the handlers of create/edit vehicle
 
+        const [ticketModelError, currentTicketModel] = await promiseCatchError(this.ticketModelService.getCurrentTicketModel());
+        if(ticketModelError) throw ticketModelError;
+
         try {
             const serviceData = await this.parkingServiceRepo.create({
                 park: park,
                 clientEntry: client,
                 vehicle: vehicle
             });
+            if(currentTicketModel) 
+                serviceData.ticketModel = currentTicketModel;
+
             const service = await this.parkingServiceRepo.save(serviceData);
 
             return service;

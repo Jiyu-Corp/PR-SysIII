@@ -119,4 +119,18 @@ export class TicketModelService {
             throw new DatabaseError();
         }
     }
+
+    async getCurrentTicketModel(): Promise<TicketModel | null> {
+        try {  
+            const ticketModel = await this.ticketModelRepo.findOne({where: {
+                isActive: true
+            }, order: {
+                dateRegister: "DESC"
+            }});
+            
+            return ticketModel;
+        } catch (err) {
+            throw new DatabaseError();
+        }
+    }
 }

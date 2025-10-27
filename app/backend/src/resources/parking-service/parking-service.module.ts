@@ -8,6 +8,7 @@ import { PriceTableModule } from './modules/price-table/price-table.module';
 import { AgreementModule } from '../client/modules/agreement/agreement.module';
 import { ClientModule } from '../client/client.module';
 import { VehicleModule } from '../vehicle/vehicle.module';
+import { TicketModelModule } from '../ticket-model/ticket-model.module';
 
 @Module({
     imports: [
@@ -16,7 +17,8 @@ import { VehicleModule } from '../vehicle/vehicle.module';
         VehicleModule,
         ParkModule,
         PriceTableModule,
-        AgreementModule
+        AgreementModule,
+        TicketModelModule
     ],
     controllers: [ParkingServiceController],
     providers: [ParkingServiceService],
