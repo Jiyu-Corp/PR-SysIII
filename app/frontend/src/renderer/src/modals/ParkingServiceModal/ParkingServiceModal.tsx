@@ -215,6 +215,9 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
       if(vehicleWithClient.client){
         setIsClientFieldsEnabled(true);
         selectClientInputsWithClient(vehicleWithClient.client);
+      } else {
+        setIsClientFieldsEnabled(false);
+        selectClientInputsWithClient(null);
       }
     } else {
       setIdVehicle(undefined);
@@ -271,7 +274,7 @@ export default function ParkingServiceModal({parkingService, isOpen, closeModal}
     selectClientInputsWithClient(client);
   }, [clientName]);
 
-  function selectClientInputsWithClient(client: clientType) {
+  function selectClientInputsWithClient(client: clientType | null) {
     if(client) {
       setIdClient(client.idClient);
       setClientName(clientNames.find(cn => cn.id === client.idClient)!)
