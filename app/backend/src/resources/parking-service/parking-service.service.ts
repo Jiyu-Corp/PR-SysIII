@@ -118,7 +118,7 @@ export class ParkingServiceService {
                 clientEntry: client,
                 vehicle: vehicle
             });
-            if(currentTicketModel) 
+            if(currentTicketModel)
                 serviceData.ticketModel = currentTicketModel;
 
             const service = await this.parkingServiceRepo.save(serviceData);
