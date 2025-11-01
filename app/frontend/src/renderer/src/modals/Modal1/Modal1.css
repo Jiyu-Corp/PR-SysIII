@@ -54,12 +54,21 @@
 }
 
 .modal-1-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
   padding-left: 16px;
 }
 
 .modal-1-title {
   font-size: 24px;
   color: black;
+}
+
+.modal-1-fields-required {
+  color: #C2292E;
+  font-size: small;
+  font-weight: 500;
 }
 
 .modal-1-content {
