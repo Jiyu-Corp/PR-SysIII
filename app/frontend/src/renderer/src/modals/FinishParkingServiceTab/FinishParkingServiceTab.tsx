@@ -164,12 +164,12 @@ export default function FinishParkingServiceTab({ parkingService, closeTab, clos
             <div style={{display: "flex", alignItems: "end", justifyContent: "center", width: "5%", marginTop: "7px"}}>
               <ArrowRightIcon size={12}/>
             </div>
-            <span style={{width: "30%", textAlign: "end"}}>{p.value < 0 && "- "}R${Math.abs(p.value).toString()}</span>
+            <span style={{width: "30%", textAlign: "end"}}>{p.value < 0 && "- "}R${Math.abs(p.value).toFixed(2)}</span>
           </div>
           )}
         </div>
         <div className="fp-price-total-wrapper">
-          <span>R${priceTotal!.toString()}</span>
+          <span>R${priceTotal!.toFixed(2)}</span>
         </div>
       </div>
     }
