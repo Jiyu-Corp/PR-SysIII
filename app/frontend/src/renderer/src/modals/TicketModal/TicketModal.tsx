@@ -18,7 +18,7 @@ export default function TicketModal({
   isOpen,
   closeModal
 }: TicketModalProps) {
-  return <Modal1 className="ticket-modal" title={"Ticket"} isOpen={isOpen} closeModal={closeModal} entityIcon={ArticleIcon} minWidth={"500px"} maxWidth={"800px"}>
+  return <Modal1 className="ticket-modal" title={"Ticket"} isOpen={isOpen} closeModal={closeModal} entityIcon={ArticleIcon} minWidth={"500px"} maxWidth={"800px"} noInputs>
     <div className="ticket-wrapper">
       <p className="ticket-header">{ticketModel.header}</p>
       <p className="ticket-content">{

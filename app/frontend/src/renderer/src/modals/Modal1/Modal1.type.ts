@@ -11,4 +11,5 @@ export type Modal1Props = ModalWrapperProps & {
   isLoading?: boolean;
   noBackground?: boolean;
   noExitBtn?: boolean;
+  noInputs?: boolean;
 };

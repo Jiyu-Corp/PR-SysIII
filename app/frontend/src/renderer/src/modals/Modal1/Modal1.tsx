@@ -17,6 +17,7 @@ export default function Modal1({
 	closeModal,
   noBackground,
   noExitBtn,
+  noInputs,
 	children
 }: Modal1Props) {
 	return <ModalWrapper isOpen={isOpen} closeModal={closeModal} noBackground={noBackground}>
@@ -33,7 +34,7 @@ export default function Modal1({
 				<h1 className="modal-1-title">
 					{title}
 				</h1>
-        <p className="modal-1-fields-required">* Campos obrigatórios</p>
+        {!noInputs && <p className="modal-1-fields-required">* Campos obrigatórios</p>}
 			</div>
 			<div className="modal-1-content">
 				{isLoading

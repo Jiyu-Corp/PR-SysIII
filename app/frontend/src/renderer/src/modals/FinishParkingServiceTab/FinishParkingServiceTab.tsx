@@ -116,7 +116,7 @@ export default function FinishParkingServiceTab({ parkingService, closeTab, clos
   async function handleFinishParkingService() {
     const params = {
       idParkingService: parkingService.idParkingService,
-      additionalDiscount: additionalDiscount && additionalDiscount != '' ? additionalDiscount : undefined
+      additionalDiscount: additionalDiscount && additionalDiscount != '' ? Number(additionalDiscount) : undefined
     }
     try {
       await requestPRSYS('parking-service', 'finishService', 'POST', params);
