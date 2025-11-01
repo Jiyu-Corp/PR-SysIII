@@ -24,7 +24,8 @@ export class ReportService {
                     .leftJoinAndSelect('parkingService.clientEntry', 'clientEntry')
                     .leftJoinAndSelect('parkingService.ticketModel', 'ticketModel')
                 .where('parkingService.isParking = false')
-                .andWhere('parkingService.dateCheckout IS NOT NULL');
+                .andWhere('parkingService.dateCheckout IS NOT NULL')
+                .orderBy('parkingService.dateCheckout', 'DESC');
             
             if(getParkedServicesDto.plate) {
                 query.andWhere('vehicle.plate ILIKE :plate', { 

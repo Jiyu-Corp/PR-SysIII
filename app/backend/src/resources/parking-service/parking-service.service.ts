@@ -233,7 +233,7 @@ export class ParkingServiceService {
 
         try {
           let serviceTotalCost = 
-              serviceValues.reduce((acc, sCost) => acc+sCost.value, 0) + 
+              serviceValues.reduce((acc, sCost) => acc+sCost.value, 0) - 
               (finishParkingServiceDto.additionalDiscount ?? 0);
           if(serviceTotalCost<0) serviceTotalCost = 0;
           
