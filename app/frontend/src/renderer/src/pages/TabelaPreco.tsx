@@ -12,7 +12,7 @@ import { TableColumn } from "@renderer/types/TableTypes";
 import { errorToastStyle, successToastStyle } from "@renderer/types/ToastTypes";
 import { requestPRSYS } from '@renderer/utils/http'
 import { Grid } from "react-loader-spinner";
-import { getErrorMessage } from "@renderer/utils/utils";
+import { getErrorMessage, numeroParaMoeda } from "@renderer/utils/utils";
 import { SelectOption, SelectOptionGroup } from "@renderer/types/ReactSelectTypes";
 import Swal from 'sweetalert2';
 import { PrsysError } from "@renderer/types/prsysErrorType";
@@ -66,6 +66,7 @@ export default function TabelaPrecoPage() {
             return {
                 idPriceTable: item.idPriceTable,
                 pricePerHour: item.pricePerHour,
+                pricePerHourTabela: numeroParaMoeda(item.pricePerHour),
                 toleranceMinutes: item.toleranceMinutes ?? '---',
                 idVehicleType: item.vehicleType?.idVehicleType,
                 priceTableHours: item.priceTableHours,
@@ -122,7 +123,7 @@ export default function TabelaPrecoPage() {
 
   const columns: TableColumn<priceTableType>[] = [
     { key: "vehicleTypeName", label: "Tipo de veículo" },
-    { key: "pricePerHour", label: "Preço por hora" },
+    { key: "pricePerHourTabela", label: "Preço por hora" },
     { key: "toleranceMinutes", label: "Tolerância(min)" },
     { key: "dateRegister", label: "Data de cadastro" }
   ];
